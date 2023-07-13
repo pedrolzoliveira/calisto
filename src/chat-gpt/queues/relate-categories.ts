@@ -17,11 +17,13 @@ export const relateCategoriesQueue = createQueue({
 
     const relatedCategories = await relateCategories(content, categories)
 
-    await prismaClient.newsTag.createMany({
-      data: relatedCategories.map((category) => ({
-        newsLink: link,
-        tag: category
-      }))
-    })
+    if (relateCategories.length) {
+      await prismaClient.newsTag.createMany({
+        data: relatedCategories.map((category) => ({
+          newsLink: link,
+          tag: category
+        }))
+      })
+    }
   }
 })

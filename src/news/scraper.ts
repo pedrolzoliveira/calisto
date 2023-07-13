@@ -1,12 +1,12 @@
 import { schedule } from 'node-cron'
-// import { createEstadaoNews } from './estadao/jobs/create-news'
-import { createFolhaNews } from './folha/jobs/create-news'
-// import { createValorNews } from './valor/jobs/create-news'
-// import { createUolNews } from './uol/jobs/create-news'
-// import { createG1News } from './g1/jobs/create-news'
+import { scrapeEstadaoNews } from './estadao/jobs/scrape-news'
+import { scrapeFolhaNews } from './folha/jobs/scrape-news'
+import { scrapeValorNews } from './valor/jobs/scrape-news'
+import { scrapeUolNews } from './uol/jobs/scrape-news'
+import { scrapeG1News } from './g1/jobs/scrape-news'
 
-// schedule('* * * * *', async () => { await createEstadaoNews() }).start()
-schedule('* * * * *', async () => { await createFolhaNews() }).start()
-// schedule('* * * * *', async () => { await createValorNews() }).start()
-// schedule('* * * * *', async () => { await createUolNews() }).start()
-// schedule('* * * * *', async () => { await createG1News() }).start()
+schedule('* * * * *', async () => { await scrapeEstadaoNews() }).start()
+schedule('* * * * *', async () => { await scrapeFolhaNews() }).start()
+schedule('* * * * *', async () => { await scrapeValorNews() }).start()
+schedule('* * * * *', async () => { await scrapeUolNews() }).start()
+schedule('* * * * *', async () => { await scrapeG1News() }).start()

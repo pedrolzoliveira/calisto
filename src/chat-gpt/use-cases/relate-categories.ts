@@ -16,6 +16,7 @@ export const relateCategories = async (content: string, categories: string[]) =>
     prompt
   })
 
+  console.log(response.data.choices[0])
   return z.string().array().parse(
     JSON.parse(response.data.choices[0].text ?? '')
   )
