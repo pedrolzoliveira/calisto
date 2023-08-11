@@ -23,26 +23,27 @@ model News {
 	imageUrl String?
 	content String @db.Text
 	createdAt DateTime @default(now())
-	tags NewsTag[]
+	categories NewsCategory[]
 }
 
 model Profile {
 	id String @id @default(uuid())
 	name String @unique
-	tags ProfileTag[]
+	categories ProfileCategory[]
 	createdAt DateTime @default(now())
 }
 
-model ProfileTag {	
+model ProfileCategory {	
 	profile Profile @relation(fields: [profileId], references: [id])
 	profileId String
-	tag String
-	@@unique([profileId,  tag])
+	category String
+	@@unique([profileId,  category])
 }
 
-model NewsTag {
+model NewsCategory {
 	news News @relation(fields: [newsLink], references: [link])
 	newsLink String
-	tag String
-	@@unique([newsLink, tag])
+	category String
+	@@unique([newsLink, category])
 }
+

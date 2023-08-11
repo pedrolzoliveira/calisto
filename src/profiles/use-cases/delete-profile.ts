@@ -1,10 +1,13 @@
 import { prismaClient } from '@/prisma/client'
 
 export const deleteProfile = async (id: string) => {
-  await prismaClient.profileTag.deleteMany({
-    where: { profileId: id }
-  })
-  await prismaClient.profile.delete({
-    where: { id }
+  await prismaClient.$transaction(async tx => {
+    await tx.profileCategory.deleteMany({
+      where: { profileId: id }
+    })
+
+    await tx.profile.delete({
+      where: { id }
+    })
   })
 }

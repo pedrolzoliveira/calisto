@@ -2,15 +2,15 @@ import { prismaClient } from '@/prisma/client'
 
 interface CreateProfileData {
   name: string
-  tags: string[]
+  categories: string[]
 }
 
-export const CreateProfile = async ({ name, tags }: CreateProfileData) => {
+export const CreateProfile = async ({ name, categories }: CreateProfileData) => {
   return await prismaClient.profile.create({
     data: {
       name,
-      tags: {
-        createMany: { data: tags.map(tag => ({ tag })) }
+      categories: {
+        createMany: { data: categories.map(category => ({ category })) }
       }
     }
   })

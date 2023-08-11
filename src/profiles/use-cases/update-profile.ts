@@ -4,19 +4,21 @@ export const updateProfile = async (
   data: {
     id: string
     name: string
-    tags: string[]
+    categories: string[]
   }
 ) => {
-  await prismaClient.profileTag.deleteMany({ where: { profileId: data.id } })
-  return await prismaClient.profile.update({
-    data: {
-      name: data.name,
-      tags: {
-        createMany: {
-          data: data.tags.map(tag => ({ tag }))
+  return await prismaClient.$transaction(async tx => {
+    await tx.profileCategory.deleteMany({ where: { profileId: data.id } })
+    return await tx.profile.update({
+      data: {
+        name: data.name,
+        categories: {
+          createMany: {
+            data: data.categories.map(category => ({ category }))
+          }
         }
-      }
-    },
-    where: { id: data.id }
+      },
+      where: { id: data.id }
+    })
   })
 }

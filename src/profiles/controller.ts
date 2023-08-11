@@ -10,7 +10,7 @@ export const profilesController = Router()
 profilesController.post('/', async (req, res) => {
   const data = z.object({
     name: z.string(),
-    tags: z.string().array()
+    categories: z.string().array()
   }).parse(req.body)
 
   const profile = await CreateProfile(data)
@@ -22,7 +22,7 @@ profilesController.put('/', async (req, res) => {
   const data = z.object({
     id: z.string().uuid(),
     name: z.string(),
-    tags: z.string().array()
+    categories: z.string().array()
   }).parse(req.body)
 
   const profile = await updateProfile(data)
@@ -42,7 +42,7 @@ profilesController.delete('/', async (req, res) => {
 
 profilesController.get('/', async (req, res) => {
   const profiles = await prismaClient.profile.findMany({
-    select: { id: true, name: true, tags: true },
+    select: { id: true, name: true, categories: true },
     orderBy: { createdAt: 'asc' }
   })
 
