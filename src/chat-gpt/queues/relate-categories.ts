@@ -6,7 +6,7 @@ import { relateCategories } from '../use-cases/relate-categories'
 export const relateCategoriesSchema = z.object({
   link: z.string(),
   content: z.string(),
-  categories: z.string().array().nonempty()
+  categories: z.string().array()
 })
 
 export const relateCategoriesQueue = createQueue({
@@ -16,6 +16,8 @@ export const relateCategoriesQueue = createQueue({
     console.log('queues/relate-categories', link, categories)
 
     const relatedCategories = await relateCategories(content, categories)
+
+    console.log('relatedCategories', relatedCategories)
 
     if (relateCategories.length) {
       await prismaClient.newsCategory.createMany({

@@ -5,6 +5,7 @@ import { z } from 'zod'
 import categorizePrompt from '../prompts/categorize'
 import { openai } from '../client'
 import { MODELS } from '../models'
+import { filterContent } from '../utils/filter-content'
 
 export const relateCategories = async (content: string, categories: string[]) => {
   if (!categories.length) {
@@ -16,7 +17,7 @@ export const relateCategories = async (content: string, categories: string[]) =>
   const messages = [
     {
       role: 'system',
-      content: "Relate the categories with the user's given text. Use the index of the categories to relate and return a valid JSON."
+      content: "Relate the categories with the user's given text. Use the index of the last user's message's categories to relate and return a valid JSON."
     },
     {
       role: 'user',
@@ -29,7 +30,7 @@ export const relateCategories = async (content: string, categories: string[]) =>
     {
       role: 'user',
       content: categorizePrompt
-        .replace('{text}', content.replace('\n', ' '))
+        .replace('{text}', filterContent(content))
         .replace('{categories}', JSON.stringify(categories))
     }
   ] satisfies ChatCompletionRequestMessage[]
