@@ -33,8 +33,8 @@
   },
   "scripts": {
     "dev": "nodemon --w './' --exec 'ts-node --transpileOnly src/run-server' -e ts",
-    "scraper": "ts-node --transpileOnly src/news/scraper",
-    "consumer:relate-categories": "ts-node --transpileOnly src/chat-gpt/consumer"
+    "scraper": "ts-node --transpileOnly src/application/news/scraper",
+    "consumer:relate-categories": "ts-node --transpileOnly src/infra/messaging/consumers/relate-categories"
   },
   "prisma": {
     "seed": "ts-node --transpile-only prisma/seed.ts"
