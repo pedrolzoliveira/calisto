@@ -1,4 +1,5 @@
 import { createNews } from '../../../use-cases/create-news'
+import { relateCategories } from '../../../use-cases/relate-categories'
 import { getHTML } from '../../../utils/get-html'
 import { getOpenGraphMetadata } from '../../../utils/get-open-graph-metadata'
 import { isNewsCreated } from '../../../utils/is-news-created'
@@ -14,5 +15,9 @@ export const createEstadaoNews = async (link: string) => {
   const ogMetadata = getOpenGraphMetadata(html)
   const content = getEstadaoContent(html)
 
-  return await createNews({ sourceCode: 'estadao', link, content, ...ogMetadata })
+  const news = await createNews({ sourceCode: 'estadao', link, content, ...ogMetadata })
+
+  await relateCategories(news)
+
+  return news
 }

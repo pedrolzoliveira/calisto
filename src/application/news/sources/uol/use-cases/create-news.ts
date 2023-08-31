@@ -4,6 +4,7 @@ import { getOpenGraphMetadata } from '../../../utils/get-open-graph-metadata'
 import { isNewsCreated } from '../../../utils/is-news-created'
 import { getUolContent } from './get-content'
 import { blackList } from '../link-black-list'
+import { relateCategories } from '../../../use-cases/relate-categories'
 
 export const createUolNews = async (link: string) => {
   if (
@@ -18,5 +19,9 @@ export const createUolNews = async (link: string) => {
   const ogMetadata = getOpenGraphMetadata(html)
   const content = getUolContent(html)
 
-  return await createNews({ sourceCode: 'uol', link, content, ...ogMetadata })
+  const news = await createNews({ sourceCode: 'uol', link, content, ...ogMetadata })
+
+  await relateCategories(news)
+
+  return news
 }
