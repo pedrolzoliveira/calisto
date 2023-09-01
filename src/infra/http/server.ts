@@ -1,6 +1,8 @@
 import 'express-async-errors'
+
 import express, { json } from 'express'
 import cors from 'cors'
+
 import { env } from '@/src/config/env'
 import { newsController } from '@/src/application/news/controller'
 import { profilesController } from '@/src/application/profiles/controller'
