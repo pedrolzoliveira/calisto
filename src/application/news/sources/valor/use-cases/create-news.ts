@@ -1,3 +1,4 @@
+import { logger } from '@/src/infra/logger'
 import { createNews } from '../../../use-cases/create-news'
 import { relateCategories } from '../../../use-cases/relate-categories'
 import { getHTML } from '../../../utils/get-html'
@@ -6,7 +7,7 @@ import { isNewsCreated } from '../../../utils/is-news-created'
 import { getValorContent } from './get-content'
 
 export const createValorNews = async (link: string) => {
-  console.log('createValorNews')
+  logger.info('createValorNews')
   if (await isNewsCreated(link)) {
     return null
   }

@@ -1,6 +1,7 @@
 import { type Channel } from 'amqplib'
 import { type z, type AnyZodObject } from 'zod'
 import { createChannel } from './create-channel'
+import { logger } from '@/src/infra/logger'
 
 export interface CreateQueueArgs<T extends AnyZodObject = AnyZodObject> {
   name: string
@@ -21,7 +22,7 @@ export const createQueue = <T extends AnyZodObject>(args: CreateQueueArgs<T>) =>
   const consume = async () => {
     await assertQueue()
 
-    console.log('consume', args.name)
+    logger.info('consume', args.name)
     channel.consume(args.name, async (message) => {
       if (message) {
         const data = args.schema.parse(
