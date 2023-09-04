@@ -10,6 +10,12 @@ export const updateProfile = async (
   return await prismaClient.$transaction(async tx => {
     await tx.profileCategory.deleteMany({ where: { profileId: data.id } })
     return await tx.profile.update({
+      select: {
+        id: true,
+        name: true,
+        categories: true,
+        createdAt: true
+      },
       data: {
         name: data.name,
         categories: {
