@@ -1,5 +1,5 @@
-import { type Channel } from 'amqplib'
 import { type z, type AnyZodObject } from 'zod'
+import { type Channel } from 'amqplib'
 import { createChannel } from './create-channel'
 import { logger } from '@/src/infra/logger'
 
