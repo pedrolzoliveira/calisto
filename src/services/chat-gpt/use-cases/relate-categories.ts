@@ -19,7 +19,7 @@ export const relateCategories = async (content: string, categories: string[]) =>
   const messages = [
     {
       role: 'system',
-      content: "Relate the categories with the user's given text. Use the index of the last user's message's categories to relate and return a valid JSON. If there's no category related to the text, return an empty list."
+      content: "Relate the categories with the user's given text. Use the index of the last user's message's categories to relate and return a valid JSON. If no category relates to the text, return an empty list."
     },
     {
       role: 'user',
@@ -65,5 +65,7 @@ export const relateCategories = async (content: string, categories: string[]) =>
   } catch (error) {
     logger.error({ error, request: createChatCompletionRequest, response: response.data })
     throw error
+  } finally {
+    logger.warn({ request: createChatCompletionRequest, response: response.data })
   }
 }
