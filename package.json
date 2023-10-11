@@ -34,8 +34,10 @@
     "zod": "^3.21.4"
   },
   "scripts": {
-    "dev": "nodemon --w './' --exec 'ts-node --transpileOnly src/run-server' -e ts",
-    "scraper": "ts-node --transpileOnly src/application/news/scraper",
+    "server": "nodemon --w './' --exec 'ts-node --transpileOnly src/commands/run-server' -e ts",
+    "scraper": "ts-node --transpileOnly src/commands/run-scraper",
+    "consumer:get-related-categories": "ts-node --transpileOnly src/infra/messaging/consumers/relate-categories",
+    "consumer:news-created": "ts-node --transpileOnly src/infra/messaging/consumers/relate-categories",
     "consumer:relate-categories": "ts-node --transpileOnly src/infra/messaging/consumers/relate-categories"
   },
   "prisma": {

@@ -1,5 +1,5 @@
 import { z } from 'zod'
-import { createQueue } from '@/src/infra/messaging/rabbitmq/create-queue'
+import { Queue } from '@/src/infra/messaging/rabbitmq/queue'
 import { prismaClient } from '@/src/infra/database/prisma/client'
 import { relateCategories } from '../use-cases/relate-categories'
 import { logger } from '@/src/infra/logger'
@@ -10,7 +10,7 @@ export const relateCategoriesSchema = z.object({
   categories: z.string().array()
 })
 
-export const relateCategoriesQueue = createQueue({
+export const relateCategoriesQueue = new Queue({
   name: 'relate-categories',
   schema: relateCategoriesSchema,
   consumeFunction: async ({ link, content, categories }) => {

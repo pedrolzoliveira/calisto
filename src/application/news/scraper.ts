@@ -1,13 +1,59 @@
-import { schedule } from 'node-cron'
-import { scrapeEstadaoNews } from './sources/estadao/jobs/scrape-news'
-import { scrapeFolhaNews } from './sources/folha/jobs/scrape-news'
-import { scrapeValorNews } from './sources/valor/jobs/scrape-news'
-import { scrapeUolNews } from './sources/uol/jobs/scrape-news'
-import { scrapeG1News } from './sources/g1/jobs/scrape-news'
+import { type HTMLElement } from 'node-html-parser'
+import { getHTML } from './utils/get-html'
+import { getOpenGraphMetadata } from './utils/get-open-graph-metadata'
+import { createNews } from './use-cases/create-news'
+import { newsCreatedQueue } from './queues/news-created'
+import { isNewsCreated } from './utils/is-news-created'
 import { logger } from '@/src/infra/logger'
+export interface ScraperArgs {
+  sourceCode: string
+  blackList?: string[]
+  getLinks: () => Promise<string[]>
+  getContent: (html: HTMLElement) => string
+}
 
-schedule('* * * * *', async () => { await scrapeEstadaoNews().catch(logger.error) }).start()
-schedule('* * * * *', async () => { await scrapeFolhaNews().catch(logger.error) }).start()
-schedule('* * * * *', async () => { await scrapeValorNews().catch(logger.error) }).start()
-schedule('* * * * *', async () => { await scrapeUolNews().catch(logger.error) }).start()
-schedule('* * * * *', async () => { await scrapeG1News().catch(logger.error) }).start()
+export class Scraper {
+  private readonly sourceCode: string
+  private readonly blackList: string[]
+  private readonly getLinks: () => Promise<string[]>
+  private readonly getContent: (html: HTMLElement) => string
+
+  constructor (args: ScraperArgs) {
+    this.sourceCode = args.sourceCode
+    this.blackList = args.blackList ?? []
+    this.getLinks = args.getLinks
+    this.getContent = args.getContent
+  }
+
+  public async scrape() {
+    logger.info(`scraping ${this.sourceCode}`)
+    try {
+      const links = await this.getLinks().then(links => {
+        if (!this.blackList.length) {
+          return links
+        }
+
+        return links.filter(link => !this.blackList.includes(link))
+      })
+
+      for (const link of links) try {
+        if (await isNewsCreated(link)) {
+          continue
+        }
+
+        const html = await getHTML(link)
+
+        const ogMetadata = getOpenGraphMetadata(html)
+        const content = this.getContent(html)
+
+        const news = await createNews({
+          sourceCode: this.sourceCode, link, content, ...ogMetadata
+        })
+
+        await newsCreatedQueue.send(news)
+      } catch (error) {
+        logger.error(`error creating news for ${link}`)
+      }
+    } catch (error) { logger.error(error) }
+  }
+}

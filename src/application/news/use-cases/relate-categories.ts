@@ -1,8 +1,12 @@
 import { prismaClient } from '@/src/infra/database/prisma/client'
 import { relateCategoriesQueue } from '@/src/services/chat-gpt/queues/relate-categories'
-import { type News } from '@prisma/client'
 
-export const relateCategories = async ({ link, content }: News) => {
+export interface RelateCategoriesData {
+  link: string
+  content: string
+}
+
+export const relateCategories = async ({ link, content }: RelateCategoriesData) => {
   const categories = await prismaClient.$queryRaw<Array<{ category: string }>>`SELECT DISTINCT category From "ProfileCategory"`
   await relateCategoriesQueue.send({
     link,
