@@ -1,54 +1,48 @@
-import { prismaClient } from '@/src/infra/database/prisma/client'
-import { type Source } from '@prisma/client'
 import { Router } from 'express'
 import { z } from 'zod'
-
+import { getNewsFeed } from './use-cases/get-news-feed'
+import { prismaClient } from '@/src/infra/database/prisma/client'
 export const newsController = Router()
 
 newsController.get('/',
   async (req, res) => {
     const data = z.object({
       limit: z.number({ coerce: true }).default(20),
-      skip: z.number({ coerce: true }).default(0),
-      profileId: z.string().uuid()
+      cursor: z.date({ coerce: true }).default(new Date()),
+      profileId: z.string().uuid().nullable().default(null)
     }).parse(req.query)
 
-    const news = await prismaClient.$queryRaw<Array<{
-      link: string
-      title: string
-      description: string | null
-      imageUrl: string | null
-      createdAt: Date
-      categories: string[]
-      source: Source
-    }>>`SELECT
-          "News"."link",
-          "News"."title",
-          "News"."description",
-          "News"."imageUrl",
-          "News"."createdAt",
-          array_agg("NewsCategory".category) AS categories,
-          row_to_json("Source") AS source
-        FROM
-          "News"
-          LEFT JOIN "Source" ON "Source"."code" = "News"."sourceCode"
-          LEFT JOIN "NewsCategory" ON "NewsCategory"."newsLink" = "News"."link"
-          LEFT JOIN "ProfileCategory" ON "ProfileCategory"."category" = "NewsCategory"."category"
-        WHERE
-          "ProfileCategory"."profileId" = ${data.profileId}
-        GROUP BY
-          "News"."link",
-          "Source"."code"
-        ORDER BY
-          "News"."createdAt" DESC
-        LIMIT
-          ${data.limit}
-        OFFSET
-          ${data.skip};`
+    if (!data.profileId) {
+      const profile = await prismaClient.profile.findFirst({ select: { id: true } })
+      if (profile) {
+        return res.redirect(`?profileId=${profile.id}`)
+      }
 
-    return res.status(200).send({
-      count: news.length,
-      news
-    })
+      return res.render('pages/news', { news: [], profiles: [], selectedProfileId: null })
+    }
+
+    const [news, profiles] = await Promise.all([
+      getNewsFeed({
+        limit: data.limit,
+        cursor: data.cursor,
+        profileId: data.profileId
+      }),
+      prismaClient.profile.findMany({ select: { id: true, name: true } })
+    ])
+
+    return res.render('pages/news', { news, profiles, profileId: data.profileId, selectedProfileId: data.profileId })
   }
 )
+
+newsController.get('/feed', async (req, res) => {
+  const data = z.object({
+    limit: z.number({ coerce: true }).default(20),
+    cursor: z.date({ coerce: true }).default(new Date()),
+    profileId: z.string().uuid()
+  }).parse(req.query)
+
+  const news = await getNewsFeed(data)
+
+  res.setHeader('HX-Push-Url', `/news?profileId=${data.profileId}`)
+  return res.render('components/news-feed', { news, profileId: data.profileId })
+})

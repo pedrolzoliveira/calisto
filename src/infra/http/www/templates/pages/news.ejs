@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html lang="pt">
+<%- include('../partials/head.ejs') %>
+<body class="bg-gray-100">
+	<%- include('../partials/header.ejs', { showSelectProfiles: true, selectedProfileId }) %>
+	<main class="space-y-4 flex justify-center items-center flex-col py-4">
+		<% if (!profiles.length) { %>
+			<p class="text-center">Crie um perfil para ver as notícias!</p>
+			<p class="text-center">Clique em <a href="/profiles/new">Gerenciar Perfis</a> para criar um perfil.</p>
+		<% } else { %>
+			<%- include('../components/news-feed.ejs', { news }) %>	
+		<% } %>
+	</main>
+</body>
+</html>
