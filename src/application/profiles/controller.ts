@@ -8,26 +8,43 @@ import { updateProfile } from './use-cases/update-profile'
 export const profilesController = Router()
 
 profilesController.post('/', async (req, res) => {
-  const data = z.object({
+  const { name, categories } = z.object({
     name: z.string(),
-    categories: z.string().array()
+    categories: z.string()
   }).parse(req.body)
 
-  const profile = await CreateProfile(data)
+  await CreateProfile({
+    name,
+    categories: categories.split(',').filter(Boolean)
+  })
 
-  return res.status(201).send(profile)
+  const profiles = await prismaClient.profile.findMany({
+    select: { id: true, name: true, categories: true },
+    orderBy: { createdAt: 'asc' }
+  })
+
+  return res.render('tables/profiles', { profiles })
 })
 
 profilesController.put('/', async (req, res) => {
-  const data = z.object({
+  const { id, name, categories } = z.object({
     id: z.string().uuid(),
     name: z.string(),
-    categories: z.string().array()
+    categories: z.string()
   }).parse(req.body)
 
-  const profile = await updateProfile(data)
+  await updateProfile({
+    id,
+    name,
+    categories: categories.split('\n').filter(Boolean)
+  })
 
-  return res.status(200).send(profile)
+  const profiles = await prismaClient.profile.findMany({
+    select: { id: true, name: true, categories: true },
+    orderBy: { createdAt: 'asc' }
+  })
+
+  return res.render('tables/profiles', { profiles })
 })
 
 profilesController.delete('/', async (req, res) => {
@@ -37,7 +54,12 @@ profilesController.delete('/', async (req, res) => {
 
   await deleteProfile(id)
 
-  return res.sendStatus(200)
+  const profiles = await prismaClient.profile.findMany({
+    select: { id: true, name: true, categories: true },
+    orderBy: { createdAt: 'asc' }
+  })
+
+  return res.render('tables/profiles', { profiles })
 })
 
 profilesController.get('/', async (req, res) => {
@@ -46,8 +68,22 @@ profilesController.get('/', async (req, res) => {
     orderBy: { createdAt: 'asc' }
   })
 
-  return res.status(200).send({
-    count: profiles.length,
-    profiles
+  return res.render('pages/profiles', { profiles })
+})
+
+profilesController.get('/new', (req, res) => {
+  return res.render('pages/profiles/new')
+})
+
+profilesController.get('/edit', async (req, res) => {
+  const { id } = z.object({
+    id: z.string().uuid()
+  }).parse(req.query)
+
+  const profile = await prismaClient.profile.findFirst({
+    where: { id },
+    select: { id: true, name: true, categories: true }
   })
+
+  return res.render('pages/profiles/edit', { profile })
 })

@@ -18,6 +18,7 @@ module.exports = {
     '@typescript-eslint/no-misused-promises': 'off',
     '@typescript-eslint/no-floating-promises': 'off',
     '@typescript-eslint/restrict-plus-operands': 'off',
-    curly: 'off'
+    curly: 'off',
+    '@typescript-eslint/no-confusing-void-expression': 'off'
   }
 }

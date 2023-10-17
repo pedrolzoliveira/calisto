@@ -29,10 +29,12 @@
     "express-async-errors": "^3.1.1",
     "gpt-tokenizer": "^2.1.1",
     "htmx.org": "^1.9.6",
+    "lit": "^3.0.0",
     "node-cron": "^3.0.2",
     "node-html-parser": "^6.1.5",
     "openai": "^3.2.1",
     "prisma": "^4.14.0",
+    "ts-pattern": "^5.0.5",
     "winston": "^3.10.0",
     "zod": "^3.21.4"
   },
