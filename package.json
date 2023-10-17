@@ -42,8 +42,8 @@
     "server": "nodemon --w './' --exec 'ts-node --transpileOnly src/commands/run-server' -e ts",
     "scraper": "ts-node --transpileOnly src/commands/run-scraper",
     "tailwind": "tailwindcss -i ./src/infra/http/www/tailwind.css -o ./src/infra/http/www/dist/tailwind.css --watch",
-    "consumer:get-related-categories": "ts-node --transpileOnly src/infra/messaging/consumers/relate-categories",
-    "consumer:news-created": "ts-node --transpileOnly src/infra/messaging/consumers/relate-categories",
+    "consumer:get-related-categories": "ts-node --transpileOnly src/infra/messaging/consumers/get-related-categories",
+    "consumer:news-created": "ts-node --transpileOnly src/infra/messaging/consumers/news-created",
     "consumer:relate-categories": "ts-node --transpileOnly src/infra/messaging/consumers/relate-categories"
   },
   "prisma": {
