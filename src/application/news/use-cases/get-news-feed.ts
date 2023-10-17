@@ -3,11 +3,11 @@ import { type Source } from '@prisma/client'
 
 interface getNewsFeedParams {
   limit: number
-  skip: number
   profileId: string
+  cursor: Date
 }
 
-export const getNewsFeed = async ({ limit, skip, profileId }: getNewsFeedParams) => {
+export const getNewsFeed = async ({ limit, profileId, cursor }: getNewsFeedParams) => {
   return await prismaClient.$queryRaw<Array<{
     link: string
     title: string
@@ -31,13 +31,12 @@ export const getNewsFeed = async ({ limit, skip, profileId }: getNewsFeedParams)
         LEFT JOIN "ProfileCategory" ON "ProfileCategory"."category" = "NewsCategory"."category"
       WHERE
         "ProfileCategory"."profileId" = ${profileId}
+        AND "News"."createdAt" < ${cursor}
       GROUP BY
         "News"."link",
         "Source"."code"
       ORDER BY
         "News"."createdAt" DESC
       LIMIT
-        ${limit}
-      OFFSET
-        ${skip};`
+        ${limit};`
 }

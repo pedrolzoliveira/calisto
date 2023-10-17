@@ -1,9 +1,11 @@
-<main class="space-y-4 flex justify-center items-center flex-col py-4">
-	<% if (!news.length) { %>
-	 <p>Nenhuma notícia por enquanto!</p>
-	 <p>Assim que tivemos notícias relacionadas às categorias pedidas elas vão aparecer aqui!</p>
-	<% } %>
-	<% news.forEach(news_ => { %>
+<% if (!news.length) { %>
+	<p>Nenhuma notícia por enquanto!</p>
+	<p>Assim que tivemos notícias relacionadas às categorias pedidas elas vão aparecer aqui!</p>
+<% } else { %>
+	<% news.forEach((news_, index) => { %>
 		<%- include('./news-card.ejs', { news: news_ }) %>
+		<% if (news.length - 1 === index) { %>
+			<div hx-swap="outerHTML" hx-trigger="revealed" hx-get="/news/feed?profileId=<%- profileId %>&cursor=<%- news_.createdAt.toISOString() %>">you see me</div>
+		<% } %>
 	<% }) %>
-</main>
+<% } %>

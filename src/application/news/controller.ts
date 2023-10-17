@@ -8,7 +8,7 @@ newsController.get('/',
   async (req, res) => {
     const data = z.object({
       limit: z.number({ coerce: true }).default(20),
-      skip: z.number({ coerce: true }).default(0),
+      cursor: z.date({ coerce: true }).default(new Date()),
       profileId: z.string().uuid().nullable().default(null)
     }).parse(req.query)
 
@@ -24,25 +24,25 @@ newsController.get('/',
     const [news, profiles] = await Promise.all([
       getNewsFeed({
         limit: data.limit,
-        skip: data.skip,
+        cursor: data.cursor,
         profileId: data.profileId
       }),
       prismaClient.profile.findMany({ select: { id: true, name: true } })
     ])
 
-    return res.render('pages/news', { news, profiles, selectedProfileId: data.profileId })
+    return res.render('pages/news', { news, profiles, profileId: data.profileId, selectedProfileId: data.profileId })
   }
 )
 
 newsController.get('/feed', async (req, res) => {
   const data = z.object({
     limit: z.number({ coerce: true }).default(20),
-    skip: z.number({ coerce: true }).default(0),
+    cursor: z.date({ coerce: true }).default(new Date()),
     profileId: z.string().uuid()
   }).parse(req.query)
 
   const news = await getNewsFeed(data)
 
   res.setHeader('HX-Push-Url', `/news?profileId=${data.profileId}`)
-  return res.render('components/news-feed', { news })
+  return res.render('components/news-feed', { news, profileId: data.profileId })
 })
