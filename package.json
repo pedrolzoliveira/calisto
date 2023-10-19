@@ -7,6 +7,7 @@
     "@types/node-cron": "^3.0.7",
     "@types/winston": "^2.4.4",
     "@typescript-eslint/eslint-plugin": "^5.43.0",
+    "esbuild": "^0.19.5",
     "eslint": "^8.0.1",
     "eslint-config-standard-with-typescript": "^34.0.1",
     "eslint-plugin-import": "^2.25.2",
@@ -39,8 +40,9 @@
     "zod": "^3.21.4"
   },
   "scripts": {
-    "server": "nodemon --w './' --exec 'ts-node --transpileOnly src/commands/run-server' -e ts",
+    "server": "nodemon --w './' --exec ' node esbuild.config.js && tailwindcss -i ./src/infra/http/www/tailwind.css -o ./src/infra/http/www/dist/tailwind.css && ts-node --transpileOnly src/commands/run-server' -e ts",
     "scraper": "ts-node --transpileOnly src/commands/run-scraper",
+    "build": "node esbuild.config.js",
     "tailwind": "tailwindcss -i ./src/infra/http/www/tailwind.css -o ./src/infra/http/www/dist/tailwind.css --watch",
     "consumer:get-related-categories": "ts-node --transpileOnly src/infra/messaging/consumers/get-related-categories",
     "consumer:news-created": "ts-node --transpileOnly src/infra/messaging/consumers/news-created",
