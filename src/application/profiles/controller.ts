@@ -8,7 +8,6 @@ import { sanitizeWhiteSpace } from '@/src/utils/sanitize-white-space'
 
 const formatProfile = (
   profile: { id: string, name: string, categories: Array<{ category: string }> }
-
 ) => ({ ...profile, categories: profile.categories.map(({ category }) => category) })
 
 export const profilesController = Router()
