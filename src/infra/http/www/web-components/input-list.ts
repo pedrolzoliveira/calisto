@@ -29,6 +29,10 @@ export class InputList extends LitElement {
   @property({ type: String })
     inputValue: string = ''
 
+  // TODO: when required don't let the form be submitted
+  @property({ type: Boolean })
+    required: boolean = false
+
   handleKeypress(event: KeyboardEvent) {
     if (event.key === 'Enter') {
       event.preventDefault()
