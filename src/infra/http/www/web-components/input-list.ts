@@ -1,3 +1,4 @@
+import { sanitizeWhiteSpace } from '@/src/utils/sanitize-white-space'
 import { LitElement, html } from 'lit'
 import { customElement, property } from 'lit/decorators.js'
 import { repeat } from 'lit/directives/repeat.js'
@@ -7,11 +8,11 @@ export class InputList extends LitElement {
     return this
   }
 
-  @property({ type: String })
+  @property({ type: String, reflect: true })
     name: string = ''
 
-  @property({ type: Array, reflect: true })
-    values: string[] = ['Brasil']
+  @property({ type: Array })
+    values: string[] = []
 
   @property({ type: String })
     inputValue: string = ''
@@ -20,19 +21,21 @@ export class InputList extends LitElement {
     if (event.key === 'Enter') {
       event.preventDefault()
 
-      if (this.inputValue === '') {
+      if (
+        this.values.includes(this.inputValue) ||
+        this.inputValue === ''
+      ) {
         return
       }
 
-      this.values = [
-        ...this.values,
-        this.inputValue.split(' ').filter(Boolean).join(' ')
-      ]
+      this.values.push(sanitizeWhiteSpace(this.inputValue))
       this.inputValue = ''
-    } else if (event.key === 'Backspace' && this.inputValue === '') {
-      console.log('backspace')
+    }
+  }
+
+  handleKeyDown(event: KeyboardEvent) {
+    if (event.key === 'Backspace' && this.inputValue === '') {
       this.values = this.values.slice(0, -1)
-      console.log(this.values)
     }
   }
 
@@ -42,10 +45,6 @@ export class InputList extends LitElement {
 
   handleRemove(value: string) {
     this.values = this.values.filter(v => v !== value)
-  }
-
-  handleClear() {
-    this.values = []
   }
 
   render() {
@@ -64,7 +63,7 @@ export class InputList extends LitElement {
                   </div>`
               )
             }
-          <input type="text" class="outline-none flex-1 [&:not(:first-child)]:border-b border-gray-100 px-1" .value=${this.inputValue} @input=${this.handleInput} @keypress=${this.handleKeypress}></input>
+          <input type="text" class="outline-none flex-1 [&:not(:first-child)]:border-b border-gray-100 px-1" .value=${this.inputValue} @input=${this.handleInput} @keypress=${this.handleKeypress} @keydown=${this.handleKeyDown}></input>
         </div>
       `
   }

@@ -4,14 +4,15 @@ import { CreateProfile } from './use-cases/create-profile'
 import { prismaClient } from '@/src/infra/database/prisma/client'
 import { deleteProfile } from './use-cases/delete-profile'
 import { updateProfile } from './use-cases/update-profile'
+import { sanitizeWhiteSpace } from '@/src/utils/sanitize-white-space'
 
 export const profilesController = Router()
 
 profilesController.post('/', async (req, res) => {
   console.log(req.body)
   const { name, categories } = z.object({
-    name: z.string(),
-    categories: z.string().array()
+    name: z.string().trim(),
+    categories: z.string().array().transform(value => value.map(sanitizeWhiteSpace))
   }).parse(req.body)
 
   await CreateProfile({ name, categories })
