@@ -3,7 +3,7 @@
 		<a href="/news">Notícias</a>
 		<a href="/profiles">Gerenciar Perfis</a>
 	</div>
-	<% if (showSelectProfiles) { %>
-		<%- include('../components/select-profiles.ejs', { profiles }) %>	
-	<% } %>
+	{{#if showSelectProfiles}}
+		{{> profiles-select profiles=profiles selectedProfileId=selectedProfileId}}
+	{{/if}}
 </header>

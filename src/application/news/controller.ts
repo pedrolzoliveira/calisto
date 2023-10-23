@@ -30,7 +30,7 @@ newsController.get('/',
       prismaClient.profile.findMany({ select: { id: true, name: true } })
     ])
 
-    return res.render('pages/news', { news, profiles, profileId: data.profileId, selectedProfileId: data.profileId })
+    return res.render('pages/news', { news, profiles, profileId: data.profileId, showSelectProfiles: true })
   }
 )
 
@@ -38,11 +38,12 @@ newsController.get('/feed', async (req, res) => {
   const data = z.object({
     limit: z.number({ coerce: true }).default(20),
     cursor: z.date({ coerce: true }).default(new Date()),
-    profileId: z.string().uuid()
+    profileId: z.string().uuid(),
+    'lazy-loaded': z.boolean({ coerce: true }).optional()
   }).parse(req.query)
 
   const news = await getNewsFeed(data)
 
   res.setHeader('HX-Push-Url', `/news?profileId=${data.profileId}`)
-  return res.render('components/news-feed', { news, profileId: data.profileId })
+  return res.render('partials/news-feed', { news, profileId: data.profileId, lazyLoaded: data['lazy-loaded'], layout: false })
 })
