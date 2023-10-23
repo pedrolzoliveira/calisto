@@ -8,22 +8,20 @@ import { updateProfile } from './use-cases/update-profile'
 export const profilesController = Router()
 
 profilesController.post('/', async (req, res) => {
+  console.log(req.body)
   const { name, categories } = z.object({
     name: z.string(),
-    categories: z.string()
+    categories: z.string().array()
   }).parse(req.body)
 
-  await CreateProfile({
-    name,
-    categories: categories.split(',').filter(Boolean)
-  })
+  await CreateProfile({ name, categories })
 
   const profiles = await prismaClient.profile.findMany({
     select: { id: true, name: true, categories: true },
     orderBy: { createdAt: 'asc' }
   })
 
-  return res.render('tables/profiles', { profiles })
+  return res.render('partials/tables/profiles', { profiles, layout: false })
 })
 
 profilesController.put('/', async (req, res) => {
@@ -44,7 +42,7 @@ profilesController.put('/', async (req, res) => {
     orderBy: { createdAt: 'asc' }
   })
 
-  return res.render('tables/profiles', { profiles })
+  return res.render('partials/tables/profiles', { profiles, layout: false })
 })
 
 profilesController.delete('/', async (req, res) => {
@@ -59,7 +57,7 @@ profilesController.delete('/', async (req, res) => {
     orderBy: { createdAt: 'asc' }
   })
 
-  return res.render('tables/profiles', { profiles })
+  return res.render('partials/tables/profiles', { profiles, layout: false })
 })
 
 profilesController.get('/', async (req, res) => {
