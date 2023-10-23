@@ -14,9 +14,9 @@ const formatProfile = (
 export const profilesController = Router()
 
 profilesController.post('/', async (req, res) => {
+  console.log(req.body)
   const { name, categories } = z.object({
     name: z.string().trim(),
-    // TODO: make it able to receive both string and string[] - convert string to string[]
     categories: z.string().array().transform(value => value.map(sanitizeWhiteSpace))
   }).parse(req.body)
 

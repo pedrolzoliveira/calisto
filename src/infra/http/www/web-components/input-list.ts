@@ -72,7 +72,7 @@ export class InputList extends LitElement {
                 value => value,
                 value => html`
                  <div class="text-xs px-2 rounded bg-gray-200 text-gray-700 flex items-center space-x-1 m-1">
-                    <input type="checkbox" checked hidden value=${value} name=${this.name}>${value}</input>
+                    <input type="checkbox" checked hidden value=${value} name="${this.name}[]">${value}</input>
                     <button type="button" class="flex items-center rounded-full p-1" @click=${() => this.handleRemove(value)}>
                         <span class="material-symbols-outlined text-xs">close</span>
                       </button>
