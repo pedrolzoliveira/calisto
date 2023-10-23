@@ -7,16 +7,17 @@ interface getNewsFeedParams {
   cursor: Date
 }
 
-export const getNewsFeed = async ({ limit, profileId, cursor }: getNewsFeedParams) => {
-  return await prismaClient.$queryRaw<Array<{
-    link: string
-    title: string
-    description: string | null
-    imageUrl: string | null
-    createdAt: Date
-    categories: string[]
-    source: Source
-  }>>`SELECT
+export const getNewsFeed = async ({ limit, profileId, cursor }: getNewsFeedParams): Promise<Array<{
+  link: string
+  title: string
+  description: string | null
+  imageUrl: string | null
+  createdAt: Date
+  categories: string[]
+  source: Source
+}>> => {
+  return await prismaClient.$queryRaw`
+      SELECT
         "News"."link",
         "News"."title",
         "News"."description",

@@ -1,6 +1,6 @@
 import { Router } from 'express'
 import { z } from 'zod'
-import { getNewsFeed } from './use-cases/get-news-feed'
+import { getNewsFeed } from './queries/get-news-feed'
 import { prismaClient } from '@/src/infra/database/prisma/client'
 export const newsController = Router()
 
