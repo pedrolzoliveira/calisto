@@ -8,15 +8,7 @@
 	</div>
 	<div class="flex flex-col">
 		<label for="categories">Categorias:</label>
-		<textarea
-			id="categories"
-			name="categories"
-			class="px-2 py-1 rounded border"
-			cols="30"
-			rows="10"
-			required
-		>{{#forEach  profile.categories }}{{this.category}}<br>{{/forEach}}
-		</textarea>
+		<input-list name="categories" values="{{profile.categories}}"></input-list>
 	</div>
 	<div class="flex justify-end space-x-2">
 		<a href="/profiles" class="px-2 py-1 border rounded bg-gray-600 hover:bg-gray-500 text-white">Voltar</a>

@@ -6,10 +6,14 @@ import { deleteProfile } from './use-cases/delete-profile'
 import { updateProfile } from './use-cases/update-profile'
 import { sanitizeWhiteSpace } from '@/src/utils/sanitize-white-space'
 
+const formatProfile = (
+  profile: { id: string, name: string, categories: Array<{ category: string }> }
+
+) => ({ ...profile, categories: profile.categories.map(({ category }) => category) })
+
 export const profilesController = Router()
 
 profilesController.post('/', async (req, res) => {
-  console.log(req.body)
   const { name, categories } = z.object({
     name: z.string().trim(),
     categories: z.string().array().transform(value => value.map(sanitizeWhiteSpace))
@@ -26,17 +30,13 @@ profilesController.post('/', async (req, res) => {
 })
 
 profilesController.put('/', async (req, res) => {
-  const { id, name, categories } = z.object({
+  const data = z.object({
     id: z.string().uuid(),
     name: z.string(),
-    categories: z.string()
+    categories: z.string().array()
   }).parse(req.body)
 
-  await updateProfile({
-    id,
-    name,
-    categories: categories.split('\n').filter(Boolean)
-  })
+  await updateProfile(data)
 
   const profiles = await prismaClient.profile.findMany({
     select: { id: true, name: true, categories: true },
@@ -81,8 +81,21 @@ profilesController.get('/edit', async (req, res) => {
 
   const profile = await prismaClient.profile.findFirst({
     where: { id },
-    select: { id: true, name: true, categories: true }
+    select: {
+      id: true,
+      name: true,
+      categories: {
+        select: {
+          category: true
+        }
+      }
+    }
   })
 
-  return res.render('pages/profiles/edit', { profile })
+  if (!profile) {
+    // TODO: handle this case
+    return res.send('profile not found')
+  }
+
+  return res.render('pages/profiles/edit', { profile: formatProfile(profile) })
 })

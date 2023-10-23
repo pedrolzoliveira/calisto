@@ -11,7 +11,19 @@ export class InputList extends LitElement {
   @property({ type: String, reflect: true })
     name: string = ''
 
-  @property({ type: Array })
+  @property({
+    type: Array,
+    reflect: true,
+    // TODO: refactor converter function
+    // Make it be able to proper mapping the received value and vice versa
+    // Look how the property changes in the developer tools
+    converter(value, type) {
+      if (!value) {
+        return []
+      }
+      return value.split(',')
+    }
+  })
     values: string[] = []
 
   @property({ type: String })
