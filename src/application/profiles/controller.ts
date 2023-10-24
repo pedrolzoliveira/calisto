@@ -13,7 +13,6 @@ const formatProfile = (
 export const profilesController = Router()
 
 profilesController.post('/', async (req, res) => {
-  console.log(req.body)
   const { name, categories } = z.object({
     name: z.string().trim(),
     categories: z.string().array().transform(value => value.map(sanitizeWhiteSpace))
