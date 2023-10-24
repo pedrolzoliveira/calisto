@@ -5,7 +5,7 @@
             <div class="flex space-x-2 items-center">
                 <h1 class="font-semibold">{{news.source.name}}</h1>
                 <p>·</p>
-                <p class="text-sm text-gray-700">{{news.createdAt}}</p>
+                <p class="text-sm text-gray-700">{{formatDate news.createdAt}}</p>
             </div>
             <div class="flex space-x-1 pt-1">
                 {{#each news.categories}}

@@ -12,7 +12,10 @@ export const server = express()
 
 const hbs = create({
   extname: '.hbs',
-  helpers: helpers(),
+  helpers: {
+    ...helpers(),
+    formatDate: (date: Date) => `${date.toLocaleDateString()} ${date.toLocaleTimeString()}`
+  },
   partialsDir: [
     join(__dirname, 'www', 'views', 'partials'),
     join(__dirname, 'www', 'views', 'layouts')
