@@ -1,12 +1,19 @@
 import { sanitizeWhiteSpace } from '@/src/utils/sanitize-white-space'
-import { LitElement, html } from 'lit'
-import { customElement, property } from 'lit/decorators.js'
+import { LitElement, type PropertyValueMap, html } from 'lit'
+import { customElement, property, query } from 'lit/decorators.js'
 import { repeat } from 'lit/directives/repeat.js'
+
 @customElement('input-list')
 export class InputList extends LitElement {
   protected createRenderRoot(): HTMLElement | ShadowRoot {
     return this
   }
+
+  static readonly formAssociated = true
+  private readonly internals: ElementInternals = this.attachInternals()
+
+  @query('input[type="text"]')
+    input!: HTMLInputElement
 
   @property({ type: String, reflect: true })
     name: string = ''
@@ -21,34 +28,49 @@ export class InputList extends LitElement {
       return value.split(',')
     }
   })
-    values: string[] = []
+    value: string[] = []
 
   @property({ type: String })
     inputValue: string = ''
 
-  // TODO: when required don't let the form be submitted
   @property({ type: Boolean })
     required: boolean = false
+
+  validate() {
+    if (this.required && this.value.length === 0) {
+      this.internals.setValidity({ valueMissing: true }, 'Crie ao menos uma categoria.', this.input)
+      return
+    }
+
+    this.internals.setValidity({})
+  }
+
+  protected update(changedProperties: PropertyValueMap<any> | Map<PropertyKey, unknown>): void {
+    super.update(changedProperties)
+    if (changedProperties.has('value')) {
+      this.validate()
+    }
+  }
 
   handleKeypress(event: KeyboardEvent) {
     if (event.key === 'Enter') {
       event.preventDefault()
 
       if (
-        this.values.includes(this.inputValue) ||
+        this.value.includes(this.inputValue) ||
         this.inputValue === ''
       ) {
         return
       }
 
-      this.values.push(sanitizeWhiteSpace(this.inputValue))
+      this.value = [...this.value, sanitizeWhiteSpace(this.inputValue)]
       this.inputValue = ''
     }
   }
 
   handleKeyDown(event: KeyboardEvent) {
     if (event.key === 'Backspace' && this.inputValue === '') {
-      this.values = this.values.slice(0, -1)
+      this.value = this.value.slice(0, -1)
     }
   }
 
@@ -57,7 +79,7 @@ export class InputList extends LitElement {
   }
 
   handleRemove(value: string) {
-    this.values = this.values.filter(v => v !== value)
+    this.value = this.value.filter(v => v !== value)
   }
 
   render() {
@@ -65,11 +87,11 @@ export class InputList extends LitElement {
         <div class="bg-white px-1 py-1 rounded border flex items-center space-x-1 flex-wrap w-96">
             ${
               repeat(
-                this.values,
+                this.value,
                 value => value,
                 value => html`
                  <div class="text-xs px-2 rounded bg-gray-200 text-gray-700 flex items-center space-x-1 m-1">
-                    <input type="checkbox" checked hidden value=${value} name="${this.name}[]">${value}</input>
+                    <p>${value}</p>
                     <button type="button" class="flex items-center rounded-full p-1" @click=${() => this.handleRemove(value)}>
                         <span class="material-symbols-outlined text-xs">close</span>
                       </button>
