@@ -5,9 +5,9 @@ import { z } from 'zod'
 import categorizePrompt from '../prompts/categorize'
 import { openai } from '../client'
 import { MODELS } from '../models'
-import { filterContent } from '../utils/filter-content'
 import { logger } from '@/src/infra/logger'
 import { AxiosError } from 'axios'
+import { sanitizeWhiteSpace } from '@/src/utils/sanitize-white-space'
 
 export const relateCategories = async (content: string, categories: string[]) => {
   if (!categories.length) {
@@ -32,7 +32,7 @@ export const relateCategories = async (content: string, categories: string[]) =>
     {
       role: 'user',
       content: categorizePrompt
-        .replace('{text}', filterContent(content))
+        .replace('{text}', sanitizeWhiteSpace(content))
         .replace('{categories}', JSON.stringify(categories))
     }
   ] satisfies ChatCompletionRequestMessage[]
