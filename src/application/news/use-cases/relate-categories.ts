@@ -1,5 +1,5 @@
 import { prismaClient } from '@/src/infra/database/prisma/client'
-import { relateCategoriesQueue } from '@/src/services/chat-gpt/queues/relate-categories'
+import { relateCategoriesQueue } from '@/src/application/chat-gpt/queues/relate-categories'
 
 export interface RelateCategoriesData {
   link: string
