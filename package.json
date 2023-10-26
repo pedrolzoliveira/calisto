@@ -17,8 +17,8 @@
     "eslint-plugin-tailwindcss": "^3.13.0",
     "nodemon": "^2.0.22",
     "tailwindcss": "^3.3.3",
-    "ts-node": "^10.9.1",
     "tsconfig-paths": "^4.2.0",
+    "tsx": "^3.14.0",
     "typescript": "^5.0.4"
   },
   "dependencies": {
@@ -43,15 +43,14 @@
     "zod": "^3.21.4"
   },
   "scripts": {
-    "server": "nodemon --w './' --exec ' node esbuild.config.js && tailwindcss -i ./src/infra/http/www/tailwind.css -o ./src/infra/http/www/dist/tailwind.css && ts-node --transpileOnly src/commands/run-server' -e ts",
-    "scraper": "ts-node --transpileOnly src/commands/run-scraper",
+    "server": "nodemon --w './' --exec ' node esbuild.config.js && tailwindcss -i ./src/infra/http/www/tailwind.css -o ./src/infra/http/www/dist/tailwind.css && tsx src/commands/run-server' -e ts",
+    "scraper": "tsx src/commands/run-scraper",
     "build": "node esbuild.config.js",
-    "tailwind": "tailwindcss -i ./src/infra/http/www/tailwind.css -o ./src/infra/http/www/dist/tailwind.css --watch",
-    "consumer:get-related-categories": "ts-node --transpileOnly src/infra/messaging/consumers/get-related-categories",
-    "consumer:news-created": "ts-node --transpileOnly src/infra/messaging/consumers/news-created",
-    "consumer:relate-categories": "ts-node --transpileOnly src/infra/messaging/consumers/relate-categories"
+    "test": "node --loader tsx --test src/**/*.test.ts",
+    "test:watch": "node --loader tsx --test --watch src/**/*.test.ts",
+    "tailwind": "tailwindcss -i ./src/infra/http/www/tailwind.css -o ./src/infra/http/www/dist/tailwind.css --watch"
   },
   "prisma": {
-    "seed": "ts-node --transpile-only prisma/seed.ts"
+    "seed": "tsx prisma/seed.ts"
   }
 }
