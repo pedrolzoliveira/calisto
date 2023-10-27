@@ -22,6 +22,7 @@
     "typescript": "^5.0.4"
   },
   "dependencies": {
+    "@lit-labs/ssr": "^3.1.8",
     "@prisma/client": "4.14.0",
     "amqplib": "^0.10.3",
     "axios": "^1.4.0",
@@ -51,6 +52,7 @@
     "tailwind": "tailwindcss -i ./src/infra/http/www/tailwind.css -o ./src/infra/http/www/dist/tailwind.css --watch"
   },
   "prisma": {
-    "seed": "tsx prisma/seed.ts"
+    "schema": "src/infra/database/prisma/schema.prisma",
+    "seed": "tsx src/infra/database/prisma/seed.ts"
   }
 }
