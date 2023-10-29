@@ -5,6 +5,8 @@ import { prismaClient } from '@/src/infra/database/prisma/client'
 import { deleteProfile } from './use-cases/delete-profile'
 import { updateProfile } from './use-cases/update-profile'
 import { sanitizeWhiteSpace } from '@/src/utils/sanitize-white-space'
+import { layout } from '@/src/infra/http/www/templates/layout'
+import { profilesPage } from '@/src/infra/http/www/templates/pages/profiles'
 
 const formatProfile = (
   profile: { id: string, name: string, categories: Array<{ category: string }> }
@@ -66,7 +68,13 @@ profilesController.get('/', async (req, res) => {
     orderBy: { createdAt: 'asc' }
   })
 
-  return res.render('pages/profiles', { profiles })
+  return res.renderTemplate(
+    layout({
+      header: null,
+      body: profilesPage({ profiles })
+    })
+  )
+  // return res.render('pages/profiles', { profiles })
 })
 
 profilesController.get('/new', (req, res) => {

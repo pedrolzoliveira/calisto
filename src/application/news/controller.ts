@@ -2,9 +2,10 @@ import { Router } from 'express'
 import { z } from 'zod'
 import { getNewsFeed } from './queries/get-news-feed'
 import { prismaClient } from '@/src/infra/database/prisma/client'
-import { render } from '@lit-labs/ssr'
-import { newsCard } from '@/src/infra/http/www/views/partials/news-card'
-import { RenderResultReadable } from '@lit-labs/ssr/lib/render-result-readable.js'
+import { layout } from '@/src/infra/http/www/templates/layout'
+import { newsPage } from '@/src/infra/http/www/templates/pages/news'
+import { header } from '@/src/infra/http/www/templates/header'
+import { newsFeed } from '@/src/infra/http/www/templates/components/news-feed'
 
 export const newsController = Router()
 
@@ -22,7 +23,12 @@ newsController.get('/',
         return res.redirect(`?profileId=${profile.id}`)
       }
 
-      return res.render('pages/news', { news: [], profiles: [], selectedProfileId: null })
+      return res.renderTemplate(
+        layout({
+          header: header(),
+          body: newsPage({ news: [], profileId: null })
+        })
+      )
     }
 
     const [news, profiles] = await Promise.all([
@@ -34,7 +40,12 @@ newsController.get('/',
       prismaClient.profile.findMany({ select: { id: true, name: true } })
     ])
 
-    return res.render('pages/news', { news, profiles, profileId: data.profileId, showSelectProfiles: true })
+    return res.renderTemplate(
+      layout({
+        header: header({ profiles, profileId: data.profileId }),
+        body: newsPage({ news, profileId: data.profileId })
+      })
+    )
   }
 )
 
@@ -48,25 +59,8 @@ newsController.get('/feed', async (req, res) => {
   const news = await getNewsFeed(data)
 
   res.setHeader('HX-Push-Url', `/news?profileId=${data.profileId}`)
-  return res.render('partials/news-feed', { news, profileId: data.profileId, layout: false })
-})
 
-newsController.get('/testing-lit', async (req, res) => {
-  const [news] = await getNewsFeed({
-    profileId: 'b6394d0f-e3d0-4b3d-8154-b4ae2c54679d',
-    limit: 1,
-    cursor: new Date()
-  })
-
-  const result = render(newsCard(news))
-
-  res.setHeader('Content-Type', 'text/html; charset=utf-8')
-  res.setHeader('Transfer-Encoding', 'chunked')
-
-  const readableResult = new RenderResultReadable(result)
-  // res.write(readableResult.read())
-
-  res.send(readableResult.read())
-
-  // res.write()
+  return res.renderTemplate(
+    newsFeed({ news, profileId: data.profileId })
+  )
 })

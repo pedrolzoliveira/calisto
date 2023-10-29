@@ -1,20 +1,20 @@
 import { type Source } from '@prisma/client'
 import { html } from 'lit'
 
-export function newsCard(
-  { source, categories, ...news }: {
-    link: string
-    title: string
-    description: string | null
-    imageUrl: string | null
-    createdAt: Date
-    categories: string[]
-    source: Source
-  }
-) {
+export interface NewsCardProps {
+  link: string
+  title: string
+  description: string | null
+  imageUrl: string | null
+  createdAt: Date
+  categories: string[]
+  source: Source
+  lastRow: boolean
+}
+
+export function newsCard({ source, categories, ...news }: NewsCardProps) {
   return html`
     <div class="flex flex-col w-1/3 border rounded bg-white">
-      <input-list></input-list>
       <div class="p-4 flex border-b justify-between">
           <img src="${source.avatarUrl ?? ''}" alt="news source image" class="rounded-full w-10 h-10">
           <div class="flex-1 flex flex-col px-4">
