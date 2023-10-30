@@ -39,8 +39,8 @@ export function profilesTable({ profiles }: ProfilesTableProps) {
                           ${profile.categories.join(', ')}
                         </td>
                         <td class="px-6 py-4 space-x-2">
-                            <a href="/profiles/edit?id={{profile.id}}" class="font-medium text-blue-600 hover:underline">Edit</a>
-                            <a hx-delete="?id={{profile.id}}" hx-push-url="false" hx-target="#profiles-table" class="font-medium text-red-600 hover:underline hover:cursor-pointer">Delete</a>
+                            <a href="/profiles/edit?id=${profile.id}" class="font-medium text-blue-600 hover:underline">Edit</a>
+                            <a hx-delete="?id=${profile.id}" hx-push-url="false" hx-target="#profiles-table" class="font-medium text-red-600 hover:underline hover:cursor-pointer">Delete</a>
                         </td>
                     </tr> 
                   `)

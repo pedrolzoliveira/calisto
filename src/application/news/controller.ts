@@ -6,6 +6,7 @@ import { layout } from '@/src/infra/http/www/templates/layout'
 import { newsPage } from '@/src/infra/http/www/templates/pages/news'
 import { header } from '@/src/infra/http/www/templates/header'
 import { newsFeed } from '@/src/infra/http/www/templates/components/news-feed'
+import { noNewsFound } from '@/src/infra/http/www/templates/components/no-news-found'
 
 export const newsController = Router()
 
@@ -59,6 +60,12 @@ newsController.get('/feed', async (req, res) => {
   const news = await getNewsFeed(data)
 
   res.setHeader('HX-Push-Url', `/news?profileId=${data.profileId}`)
+
+  if (!news.length) {
+    return res.renderTemplate(
+      noNewsFound()
+    )
+  }
 
   return res.renderTemplate(
     newsFeed({ news, profileId: data.profileId })

@@ -12,6 +12,14 @@ export interface NewsCardProps {
   lastRow: boolean
 }
 
+const formatter = new Intl.DateTimeFormat('default', {
+  weekday: 'short',
+  day: 'numeric',
+  month: 'short',
+  hour: 'numeric',
+  minute: 'numeric'
+})
+
 export function newsCard({ source, categories, ...news }: NewsCardProps) {
   return html`
     <div class="flex flex-col w-1/3 border rounded bg-white">
@@ -21,7 +29,7 @@ export function newsCard({ source, categories, ...news }: NewsCardProps) {
               <div class="flex space-x-2 items-center">
                   <h1 class="font-semibold">${source.name}</h1>
                   <p>·</p>
-                  <p class="text-sm text-gray-700">${news.createdAt.toISOString()}</p>
+                  <p class="text-sm text-gray-700">${formatter.format(news.createdAt)}</p>
               </div>
               <div class="flex space-x-1 pt-1">
                 ${

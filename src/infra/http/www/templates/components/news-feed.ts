@@ -7,7 +7,6 @@ export interface NewsFeedProps {
 }
 
 export function newsFeed({ news, profileId }: NewsFeedProps) {
-  console.log(news.length)
   if (!news.length) {
     return []
   }
