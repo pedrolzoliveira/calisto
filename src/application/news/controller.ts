@@ -2,6 +2,12 @@ import { Router } from 'express'
 import { z } from 'zod'
 import { getNewsFeed } from './queries/get-news-feed'
 import { prismaClient } from '@/src/infra/database/prisma/client'
+import { layout } from '@/src/infra/http/www/templates/layout'
+import { newsPage } from '@/src/infra/http/www/templates/pages/news'
+import { header } from '@/src/infra/http/www/templates/header'
+import { newsFeed } from '@/src/infra/http/www/templates/components/news-feed'
+import { noNewsFound } from '@/src/infra/http/www/templates/components/no-news-found'
+
 export const newsController = Router()
 
 newsController.get('/',
@@ -18,7 +24,12 @@ newsController.get('/',
         return res.redirect(`?profileId=${profile.id}`)
       }
 
-      return res.render('pages/news', { news: [], profiles: [], selectedProfileId: null })
+      return res.renderTemplate(
+        layout({
+          header: header(),
+          body: newsPage({ news: [], profileId: null })
+        })
+      )
     }
 
     const [news, profiles] = await Promise.all([
@@ -30,7 +41,12 @@ newsController.get('/',
       prismaClient.profile.findMany({ select: { id: true, name: true } })
     ])
 
-    return res.render('pages/news', { news, profiles, profileId: data.profileId, showSelectProfiles: true })
+    return res.renderTemplate(
+      layout({
+        header: header({ profiles, profileId: data.profileId }),
+        body: newsPage({ news, profileId: data.profileId })
+      })
+    )
   }
 )
 
@@ -44,5 +60,14 @@ newsController.get('/feed', async (req, res) => {
   const news = await getNewsFeed(data)
 
   res.setHeader('HX-Push-Url', `/news?profileId=${data.profileId}`)
-  return res.render('partials/news-feed', { news, profileId: data.profileId, layout: false })
+
+  if (!news.length) {
+    return res.renderTemplate(
+      noNewsFound()
+    )
+  }
+
+  return res.renderTemplate(
+    newsFeed({ news, profileId: data.profileId })
+  )
 })

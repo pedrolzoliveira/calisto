@@ -5,10 +5,12 @@ import { prismaClient } from '@/src/infra/database/prisma/client'
 import { deleteProfile } from './use-cases/delete-profile'
 import { updateProfile } from './use-cases/update-profile'
 import { sanitizeWhiteSpace } from '@/src/utils/sanitize-white-space'
-
-const formatProfile = (
-  profile: { id: string, name: string, categories: Array<{ category: string }> }
-) => ({ ...profile, categories: profile.categories.map(({ category }) => category) })
+import { layout } from '@/src/infra/http/www/templates/layout'
+import { profilesPage } from '@/src/infra/http/www/templates/pages/profiles'
+import { header } from '@/src/infra/http/www/templates/header'
+import { profilesTable } from '@/src/infra/http/www/templates/tables/profiles'
+import { newProfilePage } from '@/src/infra/http/www/templates/pages/new-profile'
+import { editProfilePage } from '@/src/infra/http/www/templates/pages/edit-profile'
 
 export const profilesController = Router()
 
@@ -21,11 +23,24 @@ profilesController.post('/', async (req, res) => {
   await CreateProfile({ name, categories })
 
   const profiles = await prismaClient.profile.findMany({
-    select: { id: true, name: true, categories: true },
+    select: {
+      id: true,
+      name: true,
+      categories: {
+        select: { category: true }
+      }
+    },
     orderBy: { createdAt: 'asc' }
-  })
+  }).then(profiles =>
+    profiles.map(profile => ({
+      ...profile,
+      categories: profile.categories.map(({ category }) => category)
+    }))
+  )
 
-  return res.render('partials/tables/profiles', { profiles, layout: false })
+  return res.renderTemplate(
+    profilesTable({ profiles })
+  )
 })
 
 profilesController.put('/', async (req, res) => {
@@ -38,11 +53,24 @@ profilesController.put('/', async (req, res) => {
   await updateProfile(data)
 
   const profiles = await prismaClient.profile.findMany({
-    select: { id: true, name: true, categories: true },
+    select: {
+      id: true,
+      name: true,
+      categories: {
+        select: { category: true }
+      }
+    },
     orderBy: { createdAt: 'asc' }
-  })
+  }).then(profiles =>
+    profiles.map(profile => ({
+      ...profile,
+      categories: profile.categories.map(({ category }) => category)
+    }))
+  )
 
-  return res.render('partials/tables/profiles', { profiles, layout: false })
+  return res.renderTemplate(
+    profilesTable({ profiles })
+  )
 })
 
 profilesController.delete('/', async (req, res) => {
@@ -53,24 +81,58 @@ profilesController.delete('/', async (req, res) => {
   await deleteProfile(id)
 
   const profiles = await prismaClient.profile.findMany({
-    select: { id: true, name: true, categories: true },
+    select: {
+      id: true,
+      name: true,
+      categories: {
+        select: { category: true }
+      }
+    },
     orderBy: { createdAt: 'asc' }
-  })
+  }).then(
+    profiles => profiles.map(profile => ({
+      ...profile,
+      categories: profile.categories.map(({ category }) => category)
+    }))
+  )
 
-  return res.render('partials/tables/profiles', { profiles, layout: false })
+  return res.renderTemplate(
+    profilesTable({ profiles })
+  )
 })
 
 profilesController.get('/', async (req, res) => {
   const profiles = await prismaClient.profile.findMany({
-    select: { id: true, name: true, categories: true },
+    select: {
+      id: true,
+      name: true,
+      categories: {
+        select: { category: true }
+      }
+    },
     orderBy: { createdAt: 'asc' }
-  })
+  }).then(profiles =>
+    profiles.map(profile => ({
+      ...profile,
+      categories: profile.categories.map(({ category }) => category)
+    }))
+  )
 
-  return res.render('pages/profiles', { profiles })
+  return res.renderTemplate(
+    layout({
+      header: header(),
+      body: profilesPage({ profiles })
+    })
+  )
 })
 
 profilesController.get('/new', (req, res) => {
-  return res.render('pages/profiles/new')
+  return res.renderTemplate(
+    layout({
+      header: header(),
+      body: newProfilePage()
+    })
+  )
 })
 
 profilesController.get('/edit', async (req, res) => {
@@ -89,12 +151,26 @@ profilesController.get('/edit', async (req, res) => {
         }
       }
     }
+  }).then(profile => {
+    if (!profile) {
+      return null
+    }
+
+    return {
+      ...profile,
+      categories: profile.categories.map(({ category }) => category)
+    }
   })
 
   if (!profile) {
     // TODO: handle this case
     return res.send('profile not found')
   }
-
-  return res.render('pages/profiles/edit', { profile: formatProfile(profile) })
+  
+  return res.renderTemplate(
+    layout({
+      header: header(),
+      body: editProfilePage({ profile })
+    })
+  )
 })

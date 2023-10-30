@@ -1,6 +1,6 @@
 import { sanitizeWhiteSpace } from '@/src/utils/sanitize-white-space'
 import { LitElement, type PropertyValueMap, html } from 'lit'
-import { customElement, property, query } from 'lit/decorators.js'
+import { customElement, property,  query } from 'lit/decorators.js'
 import { repeat } from 'lit/directives/repeat.js'
 
 @customElement('input-list')
@@ -19,13 +19,16 @@ export class InputList extends LitElement {
     name: string = ''
 
   @property({
-    type: Array,
+    type: String,
     reflect: true,
-    converter: (value) => {
-      if (!value) {
-        return []
-      }
-      return value.split(',')
+    converter: {
+      fromAttribute: (value) => {
+        if (!value) {
+          return []
+        }
+        return value.split(';')
+      },
+      toAttribute: (value: string[]) => value.join(';')
     }
   })
     value: string[] = []

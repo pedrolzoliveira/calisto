@@ -1,9 +1,0 @@
-<main class="space-y-4 flex justify-center items-center flex-col py-4">
-		{{#if profileId}} <div hx-ext="sse" sse-connect="/news/watch?profileId={{profileId}}" sse-swap="message"></div> {{/if}}
-		{{#if profiles.length}}
-				{{> news-feed news=news}}
-		{{else}}
-				<p class="text-center">Crie um perfil para ver as notícias!</p>
-				<p class="text-center">Clique em <a href="/profiles/new">Gerenciar Perfis</a> para criar um perfil.</p>
-		{{/if}}
-</main>
