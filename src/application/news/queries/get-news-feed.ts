@@ -32,7 +32,7 @@ export const getNewsFeed = async ({ limit, profileId, cursor }: getNewsFeedParam
           "News"
           LEFT JOIN "Source" ON "Source"."code" = "News"."sourceCode"
           LEFT JOIN "NewsCategory" ON "NewsCategory"."newsLink" = "News"."link"
-          LEFT JOIN "ProfileCategory" ON "ProfileCategory"."category" = "NewsCategory"."category"
+          LEFT JOIN "ProfileCategory" ON "ProfileCategory"."category" = "NewsCategory"."category" AND "NewsCategory".related = true
         WHERE
           "ProfileCategory"."profileId" = ${profileId}
           AND "News"."createdAt" < ${cursor}

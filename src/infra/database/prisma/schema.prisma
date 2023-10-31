@@ -44,6 +44,8 @@ model NewsCategory {
 	news News @relation(fields: [newsLink], references: [link])
 	newsLink String
 	category String
+	related Boolean @default(false)
+	processed Boolean @default(false)
 	@@unique([newsLink, category])
 }
 

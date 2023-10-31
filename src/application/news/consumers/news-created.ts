@@ -1,4 +1,6 @@
+import { populateNewsCategory } from '../queries/populate-news-category'
 import { newsCreatedQueue } from '../queues/news-created'
-import { relateCategories } from '../use-cases/relate-categories'
 
-newsCreatedQueue.consume(async data => await relateCategories(data))
+newsCreatedQueue.consume(async ({ link }) => {
+  await populateNewsCategory(link)
+})

@@ -43,6 +43,7 @@
   "scripts": {
     "server": "nodemon --w './' --exec ' node esbuild.config.js && tailwindcss -i ./src/infra/http/www/tailwind.css -o ./src/infra/http/www/dist/tailwind.css && tsx src/commands/run-server' -e ts",
     "scraper": "tsx src/commands/run-scraper",
+    "consumer": "tsx src/commands/run-consumer",
     "build": "node esbuild.config.js",
     "test": "node --loader tsx --test src/**/*.test.ts",
     "test:watch": "node --loader tsx --test --watch src/**/*.test.ts",

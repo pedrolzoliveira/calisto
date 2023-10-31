@@ -50,7 +50,7 @@ export class Scraper {
           sourceCode: this.sourceCode, link, content, ...ogMetadata
         })
 
-        await newsCreatedQueue.send(news)
+        await newsCreatedQueue.send({ link: news.link })
       } catch (error) {
         logger.error(`error creating news for ${link}`)
       }
