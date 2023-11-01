@@ -5,6 +5,8 @@ import { createNews } from './use-cases/create-news'
 import { newsCreatedQueue } from './queues/news-created'
 import { isNewsCreated } from './utils/is-news-created'
 import { logger } from '@/src/infra/logger'
+import { AxiosError } from 'axios'
+
 export interface ScraperArgs {
   sourceCode: string
   blackList?: string[]
@@ -54,6 +56,12 @@ export class Scraper {
       } catch (error) {
         logger.error(`error creating news for ${link}`)
       }
-    } catch (error) { logger.error(error) }
+    } catch (error) {
+      if (error instanceof AxiosError) {
+        logger.error({ error: error.toJSON(), response: error.response?.data })
+      } else {
+        logger.error({ error })
+      }
+    }
   }
 }

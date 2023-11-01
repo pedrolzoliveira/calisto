@@ -1,12 +1,23 @@
 import winston from 'winston'
 
-const { combine, timestamp, prettyPrint } = winston.format
+const { combine, timestamp, printf, colorize, prettyPrint } = winston.format
 
-const format = combine(timestamp(), prettyPrint())
+const consoleFormat = combine(
+  colorize(),
+  printf((data) => {
+    if (typeof data.message === 'object') {
+      data.message = JSON.stringify(data.message, null, 2)
+    }
+
+    return `[${data.level}]: ${data.message}`
+  })
+)
+
+const fileFormat = combine(timestamp(), prettyPrint())
 
 export const logger = winston.createLogger({
   transports: [
-    new winston.transports.Console({ format }),
-    new winston.transports.File({ format, filename: 'logs/combined.log', level: 'warn' })
+    new winston.transports.Console({ format: consoleFormat }),
+    new winston.transports.File({ format: fileFormat, filename: 'logs/combined.log', level: 'warn' })
   ]
 })

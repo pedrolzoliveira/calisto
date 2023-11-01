@@ -6,7 +6,7 @@ export const populateNewsCategory = async (newsLink: string) => {
       "NewsCategory" ("category", "newsLink", "related", "processed")
     SELECT DISTINCT
       "category",
-      '${newsLink}',
+      ${newsLink},
       false,
       false
     FROM

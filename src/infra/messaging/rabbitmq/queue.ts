@@ -27,7 +27,7 @@ export class Queue<T extends AnyZodObject = AnyZodObject> {
 
   public async consume(consumeFunction: (data: z.infer<T>) => any) {
     await this.assertQueue()
-    logger.info('consume', this.name)
+    logger.info(`consume: ${this.name}`)
 
     this.channel.consume(this.name, async (message) => {
       if (message) {
