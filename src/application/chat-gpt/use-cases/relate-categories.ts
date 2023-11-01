@@ -51,7 +51,7 @@ export const relateCategories = async (content: string, categories: string[]) =>
 
   const response = await openai.createChatCompletion(createChatCompletionRequest).catch(error => {
     if (error instanceof AxiosError) {
-      logger.error({ error, request: createChatCompletionRequest, response: error.response?.data })
+      logger.error({ error: error.toJSON(), request: createChatCompletionRequest, response: error.response?.data })
     } else {
       logger.error({ error, request: createChatCompletionRequest })
     }
