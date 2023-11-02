@@ -3,7 +3,7 @@
     "@types/amqplib": "^0.10.1",
     "@types/cors": "^2.8.13",
     "@types/express": "^4.17.17",
-    "@types/node": "^20.1.1",
+    "@types/node": "^20.8.10",
     "@types/node-cron": "^3.0.7",
     "@types/winston": "^2.4.4",
     "@typescript-eslint/eslint-plugin": "^5.43.0",
@@ -46,12 +46,15 @@
     "scraper": "tsx src/commands/run-scraper",
     "consumer": "tsx src/commands/run-consumer",
     "build": "node esbuild.config.js",
-    "test": "node --loader tsx --test src/**/*.test.ts",
-    "test:watch": "node --loader tsx --test --watch src/**/*.test.ts",
+    "test": "node --import tsx --test src/**/*.test.ts",
+    "test:watch": "node --import tsx --test --watch src/**/*.test.ts",
     "tailwind": "tailwindcss -i ./src/infra/http/www/tailwind.css -o ./src/infra/http/www/dist/tailwind.css --watch"
   },
   "prisma": {
     "schema": "src/infra/database/prisma/schema.prisma",
     "seed": "tsx src/infra/database/prisma/seed.ts"
+  },
+  "engines": {
+    "node": ">=20.0.0"
   }
 }
