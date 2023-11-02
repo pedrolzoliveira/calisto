@@ -1,4 +1,6 @@
-import { html } from 'lit-html'
+import { html } from 'lit'
+import { map } from 'lit/directives/map.js'
+import { when } from 'lit/directives/when.js'
 import { newsCard, type NewsCardProps } from './news-card'
 
 export interface NewsFeedProps {
@@ -13,14 +15,16 @@ export function newsFeed({ news, profileId }: NewsFeedProps) {
 
   const lastNews = news[news.length - 1]
   return [
-    ...news.map(newsCard),
-    ...(!lastNews.lastRow
-      ? [
-          html`
-            <div hx-swap="outerHTML" hx-trigger="revealed" hx-get="/news/feed?profileId=${profileId}&cursor=${lastNews.createdAt.toISOString()}">
-              <span id="spinner" class="material-symbols-outlined animate-spin">progress_activity</span>
-            </div>`
-        ]
-      : [])
+    ...map(news, newsCard),
+    ...when(
+      !lastNews.lastRow,
+      () => [
+        html`
+          <div hx-swap="outerHTML" hx-trigger="revealed" hx-get="/news/feed?profileId=${profileId}&cursor=${lastNews.createdAt.toISOString()}">
+            <span id="spinner" class="material-symbols-outlined animate-spin">progress_activity</span>
+          </div>`
+      ],
+      () => []
+    ),
   ]
 }
