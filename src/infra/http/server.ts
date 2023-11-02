@@ -15,7 +15,7 @@ server.use((req, res, next) => {
   res.renderTemplate = (template: TemplateResult | TemplateResult[]) => {
     res.setHeader('Content-Type', 'text/html; charset=utf-8')
     const readableResult = new RenderResultReadable(render(template))
-    res.send(readableResult.read())
+    readableResult.pipe(res)
   }
   next()
 })

@@ -51,5 +51,8 @@ processingRelationsQueue.consume(async ({ link }) => {
 		if (unprocessedCategories > 0) {
 			await processingRelationsQueue.send({ link })
 		}
+	}, {
+		maxWait: 5000,
+		timeout: 10000
 	})
 })
