@@ -1,4 +1,5 @@
 import { html } from 'lit'
+import { button } from '../components/button'
 
 interface EditProfilePageProps {
   profile: {
@@ -23,8 +24,12 @@ export function editProfilePage({ profile }: EditProfilePageProps) {
 					<input-list name="categories[]" value="${profile.categories.join(';')}" required></input-list>
 				</div>
 				<div class="flex justify-end space-x-2">
-					<a href="/profiles" class="px-2 py-1 border rounded bg-gray-600 hover:bg-gray-500 text-white">Voltar</a>
-					<button type="submit" class="px-2 py-1 border rounded bg-blue-700 hover:bg-blue-600 text-white">Salvar</button>
+					<a href="/profiles">
+						${button({ className: 'bg-gray-600 hover:bg-gray-500', content: 'Voltar' })}
+					</a>
+					<button type="submit">
+						${button({ content: 'Salvar' })}
+					</button>
 				</div>
 			</form>
 		</main>`

@@ -1,4 +1,5 @@
 import { html } from 'lit'
+import { button } from '../components/button'
 
 export function newProfilePage() {
   return html`
@@ -14,8 +15,8 @@ export function newProfilePage() {
         <input-list name="categories[]" required></input-list>
       </div>
       <div class="flex justify-end space-x-2">
-        <a href="/profiles" class="px-2 py-1 border rounded bg-gray-600 hover:bg-gray-500 text-white">Voltar</a>
-        <button type="submit" class="px-2 py-1 border rounded bg-blue-700 hover:bg-blue-600 text-white">Criar</button>
+        <a href="/profiles">${button({ type: 'button', content: 'Voltar', className: 'bg-gray-600 hover:bg-gray-500' })}</a>
+        ${button({ type: 'submit', content: 'Criar' })}
       </div>
       </form>
     </main>`

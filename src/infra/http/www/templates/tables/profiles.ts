@@ -1,4 +1,5 @@
 import { html } from 'lit'
+import { button } from '../components/button'
 
 export interface ProfilesTableProps {
   profiles: Array<{
@@ -12,7 +13,9 @@ export function profilesTable({ profiles }: ProfilesTableProps) {
   return html`
     <div class="rounded space-y-4" id="profiles-table">
         <div class="flex justify-end">
-            <a href="/profiles/new" class="rounded bg-blue-700 hover:bg-blue-600 text-white px-3 py-2">Criar Perfil</a>
+            <a href="/profiles/new">
+              ${button({ type: 'button', content: 'Criar Perfil' })}  
+            </a>
         </div>
         <table class="w-full text-sm text-left text-gray-500 rounded">
             <thead class="text-xs text-gray-700 uppercase bg-gray-50">
