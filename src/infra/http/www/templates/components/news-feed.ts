@@ -1,5 +1,4 @@
 import { html } from 'lit'
-import { map } from 'lit/directives/map.js'
 import { when } from 'lit/directives/when.js'
 import { newsCard, type NewsCardProps } from './news-card'
 
@@ -15,7 +14,7 @@ export function newsFeed({ news, profileId }: NewsFeedProps) {
 
   const lastNews = news[news.length - 1]
   return [
-    ...map(news, newsCard),
+    ...news.map(newsCard),
     ...when(
       !lastNews.lastRow,
       () => [
