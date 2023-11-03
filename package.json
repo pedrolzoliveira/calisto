@@ -26,9 +26,9 @@
     "amqplib": "^0.10.3",
     "axios": "^1.4.0",
     "cors": "^2.8.5",
-    "dotenv": "^16.0.3",
     "express": "^4.18.2",
     "express-async-errors": "^3.1.1",
+    "glob": "^10.3.10",
     "gpt-tokenizer": "^2.1.1",
     "htmx.org": "^1.9.6",
     "lit": "^3.0.0",
@@ -42,12 +42,11 @@
     "zod": "^3.21.4"
   },
   "scripts": {
-    "server": "nodemon --w './' --exec ' node esbuild.config.js && tailwindcss -i ./src/infra/http/www/tailwind.css -o ./src/infra/http/www/dist/tailwind.css && tsx src/commands/run-server' -e ts",
-    "scraper": "tsx src/commands/run-scraper",
-    "consumer": "tsx src/commands/run-consumer",
+    "server": "nodemon --w './' --exec ' node esbuild.config.js && tailwindcss -i ./src/infra/http/www/tailwind.css -o ./src/infra/http/www/dist/tailwind.css && tsx --env-file=.env src/commands/run-server' -e ts",
+    "scraper": "tsx --env-file=.env src/commands/run-scraper",
+    "consumer": "tsx --env-file=.env src/commands/run-consumer",
     "build": "node esbuild.config.js",
-    "test": "node --import tsx --test src/**/*.test.ts",
-    "test:watch": "node --import tsx --test --watch src/**/*.test.ts",
+    "test": "tsx --env-file=.env.test ./src/commands/run-tests.ts",
     "tailwind": "tailwindcss -i ./src/infra/http/www/tailwind.css -o ./src/infra/http/www/dist/tailwind.css --watch"
   },
   "prisma": {
