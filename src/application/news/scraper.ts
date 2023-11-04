@@ -35,7 +35,7 @@ export class Scraper {
           return links
         }
 
-        return links.filter(link => !this.blackList.includes(link))
+        return links.filter(link => !this.blackList.some(blackListedLink => link.includes(blackListedLink)))
       })
 
       for (const link of links) try {
