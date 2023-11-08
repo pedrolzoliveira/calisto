@@ -8,13 +8,13 @@ processingRelationsQueue.consume(async ({ link }) => {
 	await prismaClient.$transaction(async (transaction) => {
 		const [data] = await transaction.$queryRaw<{ batchId: string; content: string; categories: string[] }[]>`
 			WITH Batch AS (
-					INSERT INTO "Batch" ("newsLink")
-					VALUES (${link})
+					INSERT INTO "ProcessBatch" ("id", "newsLink", "createdAt")
+					VALUES (gen_random_uuid(), ${link}, now())
 					RETURNING "id"
 			),
 			ProcessedCategories AS (
 					UPDATE "NewsCategory"
-					SET "processed" = true
+					SET "processed" = true, "batchId" = Batch."id"
 					FROM Batch
 					WHERE "processed" = false
 						AND "newsLink" = ${link}
@@ -22,11 +22,11 @@ processingRelationsQueue.consume(async ({ link }) => {
 			)
 			SELECT
 					"News"."content",
-					"ProcessedCategories"."batchId",
-					array_agg("ProcessedCategories"."category") AS categories
+					ProcessedCategories."batchId",
+					array_agg(ProcessedCategories."category") AS categories
 			FROM "News"
-			JOIN ProcessedCategories ON "ProcessedCategories"."newsLink" = "News"."link"
-			GROUP BY "News"."content", "ProcessedCategories"."batchId";`
+			JOIN ProcessedCategories ON ProcessedCategories."newsLink" = "News"."link"
+			GROUP BY "News"."content", ProcessedCategories."batchId";`
 
 		if (!data) {
 			return;
