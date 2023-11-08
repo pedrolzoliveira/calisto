@@ -24,6 +24,7 @@ model News {
 	content String @db.Text
 	createdAt DateTime @default(now())
 	categories NewsCategory[]
+	batches ProcessBatch[]
 }
 
 model Profile {
@@ -46,6 +47,18 @@ model NewsCategory {
 	category String
 	related Boolean @default(false)
 	processed Boolean @default(false)
+	batchId String?
+	batch ProcessBatch? @relation(fields: [batchId], references: [id])
 	@@unique([newsLink, category])
 }
 
+model ProcessBatch {
+	id String @id @default(uuid())
+	request Json?
+	response Json?
+	error Json?
+	createdAt DateTime @default(now())
+	newsLink String
+	news News @relation(fields: [newsLink], references: [link])
+	categories NewsCategory[]
+}
