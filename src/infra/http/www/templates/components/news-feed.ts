@@ -24,6 +24,6 @@ export function newsFeed({ news, profileId }: NewsFeedProps) {
           </div>`
       ],
       () => []
-    ),
+    )
   ]
 }

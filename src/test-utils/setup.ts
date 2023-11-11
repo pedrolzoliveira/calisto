@@ -1,8 +1,8 @@
 import { spawn } from 'child_process'
 
 async function initiateDatabase() {
-  return new Promise<void>((resolve, reject) => {
-    const childProcess = spawn('yarn',  ['prisma', 'db', 'push'], { env: process.env })  
+  return await new Promise<void>((resolve, reject) => {
+    const childProcess = spawn('yarn', ['prisma', 'db', 'push'], { env: process.env })
 
     childProcess.on('exit', resolve)
     childProcess.on('error', reject)

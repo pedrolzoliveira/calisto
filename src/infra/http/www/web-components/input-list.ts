@@ -1,6 +1,6 @@
 import { sanitizeWhiteSpace } from '@/src/utils/sanitize-white-space'
 import { LitElement, type PropertyValueMap, html } from 'lit'
-import { customElement, property,  query } from 'lit/decorators.js'
+import { customElement, property, query } from 'lit/decorators.js'
 import { repeat } from 'lit/directives/repeat.js'
 
 @customElement('input-list')

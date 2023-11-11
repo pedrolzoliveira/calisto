@@ -1,5 +1,5 @@
-import { tryParseJson } from "@/src/utils/try-parse-json";
-import { ProcessBatch } from "@prisma/client";
+import { tryParseJson } from '@/src/utils/try-parse-json'
+import { type ProcessBatch } from '@prisma/client'
 
 export const processBatchFormatter = <T extends Partial<ProcessBatch>>(data: T) => {
   return {

@@ -1,4 +1,4 @@
-import { html } from "lit"
+import { html } from 'lit'
 
 export const processBatchesPage = (request: any, response: any) => {
   const requestJson = JSON.stringify(request, null, 2)

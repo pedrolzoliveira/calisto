@@ -1,5 +1,4 @@
 import { html } from 'lit'
-import { newsCard } from './news-card'
 
 type JsonValue = string | number | boolean | null | JsonValue[] | { [key: string]: JsonValue }
 

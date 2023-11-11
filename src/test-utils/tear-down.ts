@@ -1,4 +1,4 @@
-import { prismaClient } from "../infra/database/prisma/client"
+import { prismaClient } from '../infra/database/prisma/client'
 
 async function truncateDatabase() {
   return await prismaClient.$executeRaw`

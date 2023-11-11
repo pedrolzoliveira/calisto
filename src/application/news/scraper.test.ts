@@ -1,10 +1,10 @@
-import { faker } from "@faker-js/faker"
-import axios from "axios"
-import assert from "node:assert"
-import test from "node:test"
-import { sourceFactory } from "@/src/test-utils/factories/source-factory"
-import { Scraper } from "./scraper"
-import { prismaClient } from "@/src/infra/database/prisma/client"
+import { faker } from '@faker-js/faker'
+import axios from 'axios'
+import assert from 'node:assert'
+import test from 'node:test'
+import { sourceFactory } from '@/src/test-utils/factories/source-factory'
+import { Scraper } from './scraper'
+import { prismaClient } from '@/src/infra/database/prisma/client'
 import { newsCreatedQueue } from '@/src/application/news/queues/news-created'
 
 const makeHTML = (title: string) => `<html><meta property="og:title" content="${title}"></html>`
@@ -12,14 +12,14 @@ const makeHTML = (title: string) => `<html><meta property="og:title" content="${
 test('scraper', async (t) => {
   const axiosGetMock = t.mock.method(axios, 'get', async () => ({ data: makeHTML(title) }))
   const sendToQueueMock = t.mock.method(newsCreatedQueue, 'send', async () => {})
-  
+
   const sourceCode = faker.word.words()
   const link = faker.internet.url()
   const title = faker.lorem.sentence()
   const content = faker.lorem.paragraph()
 
   await sourceFactory.create({ code: sourceCode })
-  
+
   const scraper = new Scraper({
     sourceCode,
     getLinks: async () => [link],
@@ -29,7 +29,7 @@ test('scraper', async (t) => {
   await scraper.scrape()
 
   const news = await prismaClient.news.findFirst({ where: { link } })
-  
+
   await t.test('should create news with right values', () => {
     assert.ok(news)
     assert.strictEqual(news?.title, title)

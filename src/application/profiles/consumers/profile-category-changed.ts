@@ -1,6 +1,6 @@
-import { prismaClient } from "@/src/infra/database/prisma/client";
-import { profileCategoryChangedQueue } from "../queues/profile-category-changed";
-import { processingRelationsQueue } from "../../chat-gpt/queues/processing-relations";
+import { prismaClient } from '@/src/infra/database/prisma/client'
+import { profileCategoryChangedQueue } from '../queues/profile-category-changed'
+import { processingRelationsQueue } from '../../chat-gpt/queues/processing-relations'
 
 profileCategoryChangedQueue.consume(async ({ profileId }) => {
   await prismaClient.$transaction(async tx => {
@@ -40,9 +40,9 @@ profileCategoryChangedQueue.consume(async ({ profileId }) => {
       FROM
         InsertedData;
     `.then(data => data.map(({ newsLink }) => newsLink))
-  
+
     await Promise.all(
-      newsLinks.map(link => processingRelationsQueue.send({ link }))
+      newsLinks.map(async link => await processingRelationsQueue.send({ link }))
     )
   })
 })

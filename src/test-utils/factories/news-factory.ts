@@ -1,9 +1,8 @@
-import { News } from "@prisma/client";
-import { Factory } from "./factory";
+import { type News } from '@prisma/client'
+import { type Factory } from './factory'
 import { faker } from '@faker-js/faker'
-import { z } from "zod";
-import { prismaClient } from "@/src/infra/database/prisma/client";
-
+import { z } from 'zod'
+import { prismaClient } from '@/src/infra/database/prisma/client'
 
 class NewsFactory implements Factory<News> {
   async create(attributes?: Partial<News> | undefined): Promise<News> {
@@ -14,9 +13,9 @@ class NewsFactory implements Factory<News> {
       description: z.string().default(faker.lorem.paragraph()),
       content: z.string().default(faker.lorem.paragraphs()),
       imageUrl: z.string().url().default(faker.internet.avatar()),
-      createdAt: z.date().default(new Date()),
+      createdAt: z.date().default(new Date())
     })
-    
+
     return await prismaClient.news.create({ data: newsSchema.parse(attributes) })
   }
 }

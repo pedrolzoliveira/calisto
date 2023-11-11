@@ -1,5 +1,5 @@
-import { Queue } from "@/src/infra/messaging/rabbitmq/queue";
-import { z } from "zod";
+import { Queue } from '@/src/infra/messaging/rabbitmq/queue'
+import { z } from 'zod'
 
 export const profileCategoryChangedSchema = z.object({
   profileId: z.string()
