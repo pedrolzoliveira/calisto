@@ -6,16 +6,16 @@ import { tearDown } from '../test-utils/tear-down';
 import { setup } from '../test-utils/setup';
 
 async function runTests(args: string[]) {
-	const files = await glob('**/*.test.ts', { ignore: 'node_modules/**' })
-	const testStream = run({
-		only: args.includes('--only'),
-		watch: args.includes('--watch'),
-		setup,
-		files,
-	})
+  const files = await glob('**/*.test.ts', { ignore: 'node_modules/**' })
+  const testStream = run({
+    only: args.includes('--only'),
+    watch: args.includes('--watch'),
+    setup,
+    files,
+  })
 
-	testStream.compose(new spec).pipe(process.stdout)
-	testStream.on('end', tearDown)
+  testStream.compose(new spec).pipe(process.stdout)
+  testStream.on('end', tearDown)
 }
 
 runTests(process.argv)

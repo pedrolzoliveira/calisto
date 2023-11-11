@@ -8,57 +8,57 @@ datasource db {
 }
 
 model Source {
-	code String @id
-	name String
-	avatarUrl String?
-	news News[]
+  code String @id
+  name String
+  avatarUrl String?
+  news News[]
 }
 
 model News {
-	link String @id
-	title String
-	description String?
-	sourceCode String
-	source Source @relation(fields: [sourceCode], references: [code])
-	imageUrl String?
-	content String @db.Text
-	createdAt DateTime @default(now())
-	categories NewsCategory[]
-	batches ProcessBatch[]
+  link String @id
+  title String
+  description String?
+  sourceCode String
+  source Source @relation(fields: [sourceCode], references: [code])
+  imageUrl String?
+  content String @db.Text
+  createdAt DateTime @default(now())
+  categories NewsCategory[]
+  batches ProcessBatch[]
 }
 
 model Profile {
-	id String @id @default(uuid())
-	name String @unique
-	categories ProfileCategory[]
-	createdAt DateTime @default(now())
+  id String @id @default(uuid())
+  name String @unique
+  categories ProfileCategory[]
+  createdAt DateTime @default(now())
 }
 
-model ProfileCategory {	
-	profile Profile @relation(fields: [profileId], references: [id])
-	profileId String
-	category String
-	@@unique([profileId,  category])
+model ProfileCategory {  
+  profile Profile @relation(fields: [profileId], references: [id])
+  profileId String
+  category String
+  @@unique([profileId,  category])
 }
 
 model NewsCategory {
-	news News @relation(fields: [newsLink], references: [link])
-	newsLink String
-	category String
-	related Boolean @default(false)
-	processed Boolean @default(false)
-	batchId String?
-	batch ProcessBatch? @relation(fields: [batchId], references: [id])
-	@@unique([newsLink, category])
+  news News @relation(fields: [newsLink], references: [link])
+  newsLink String
+  category String
+  related Boolean @default(false)
+  processed Boolean @default(false)
+  batchId String?
+  batch ProcessBatch? @relation(fields: [batchId], references: [id])
+  @@unique([newsLink, category])
 }
 
 model ProcessBatch {
-	id String @id @default(uuid())
-	request Json?
-	response Json?
-	error Json?
-	createdAt DateTime @default(now())
-	newsLink String
-	news News @relation(fields: [newsLink], references: [link])
-	categories NewsCategory[]
+  id String @id @default(uuid())
+  request Json?
+  response Json?
+  error Json?
+  createdAt DateTime @default(now())
+  newsLink String
+  news News @relation(fields: [newsLink], references: [link])
+  categories NewsCategory[]
 }
