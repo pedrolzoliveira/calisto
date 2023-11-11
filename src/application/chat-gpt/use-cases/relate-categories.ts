@@ -9,6 +9,7 @@ import { logger } from '@/src/infra/logger'
 import { AxiosError, AxiosResponse } from 'axios'
 import { sanitizeWhiteSpace } from '@/src/utils/sanitize-white-space'
 import { PrismaTransaction } from '@/src/infra/database/prisma/types/transaction'
+import { tryParseJson } from '@/src/utils/try-parse-json'
 
 interface RelateCategoriesParams {
   batchId: string
@@ -75,7 +76,7 @@ export const relateCategories = async ({ batchId, content, categories, transacti
     const response = await openai.createChatCompletion(chatCompletionRequest) as AxiosResponse<CreateChatCompletionResponse, any>
 
     await transaction.processBatch.update({
-      data: { request: JSON.stringify(chatCompletionRequest), response: JSON.stringify(response.data) },
+      data: { request: tryParseJson(chatCompletionRequest), response: tryParseJson(response.data) },
       where: { id: batchId }
     })
 
@@ -86,8 +87,8 @@ export const relateCategories = async ({ batchId, content, categories, transacti
       logger.error(`(batch: ${batchId}): error when making request to OpenAI API`)
       await transaction.processBatch.update({
         data: {
-          request: JSON.stringify(chatCompletionRequest),
-          response: error.response?.data,
+          request: tryParseJson(chatCompletionRequest),
+          response: tryParseJson(error.response?.data),
           error: error.toJSON() 
         },
         where: { id: batchId }
