@@ -71,19 +71,24 @@ export const batchAnalyser = (batch: BatchAnalyserProps) => {
             </details>
         </div>
       </div>
-      <div class="flex flex-col w-1/2 border rounded bg-white h-[90vh] overflow-y-scroll">
-        <div>
-          <h2>Categorias analisadas</h2>
-          <ul>
-            ${categories.map(({ category }) => html`<li>${category}</li>`)}
-          </ul>
-        </div>
-        <div>
-          <h2>Categorias relacionadas</h2>
-          <ul>
-            ${categories.filter(({ related }) => related).map(({ category }) => html`<li>${category}</li>`)}
-          </ul>
-        </div>
+      <div class="flex flex-col w-1/2 border rounded bg-white h-[90vh] overflow-y-scroll p-4">
+        <details open>
+          <summary>Categorias</summary>
+          <div class="flex w-full justify-between">
+            <div>
+              <h2>Categorias analisadas</h2>
+              <ul>
+                ${categories.map(({ category }) => html`<li>${category}</li>`)}
+              </ul>
+            </div>
+            <div>
+              <h2>Categorias relacionadas</h2>
+              <ul>
+                ${categories.filter(({ related }) => related).map(({ category }) => html`<li>${category}</li>`)}
+              </ul>
+            </div>
+          </div>
+        </details>
       </div>
     </div>
   `
