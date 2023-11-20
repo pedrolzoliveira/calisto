@@ -21,7 +21,7 @@ export function editProfilePage({ profile }: EditProfilePageProps) {
         </div>
         <div class="flex flex-col">
           <label for="categories">Categorias:</label>
-          <input-list name="categories[]" value="${profile.categories.join(';')}" required></input-list>
+          <input-list name="categories[]" value="${JSON.stringify(profile.categories)}" required></input-list>
         </div>
         <div class="flex justify-end space-x-2">
           <a href="/profiles">
