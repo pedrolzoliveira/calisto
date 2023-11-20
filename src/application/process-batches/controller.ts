@@ -1,28 +1,12 @@
 import { prismaClient } from '@/src/infra/database/prisma/client'
 import { Router } from 'express'
-import { processBatchesPage } from '@/src/infra/http/www/templates/pages/process-batchs'
-import { tryParseJson } from '@/src/utils/try-parse-json'
 import { layout } from '@/src/infra/http/www/templates/layout'
 import { header } from '@/src/infra/http/www/templates/header'
-import { batchAnalyser } from '@/src/infra/http/www/templates/components/batch-analyser'
+import { tryParseJson } from '@/src/utils/try-parse-json'
+import { BatchAnalyser } from '@/src/infra/http/www/web-components/batch-analyser'
+import { html } from 'lit'
 
 export const processBatchesController = Router()
-
-processBatchesController.get('/', async (req, res) => {
-  const batch = await prismaClient.processBatch.findFirst()
-
-  if (!batch) {
-    throw new Error()
-  }
-
-  return res.renderTemplate(
-    layout({
-      header: header(),
-      body: processBatchesPage(tryParseJson(batch.request), tryParseJson(batch.response))
-    })
-
-  )
-})
 
 processBatchesController.get('/:id', async (req, res) => {
   const batch = await prismaClient.processBatch.findUniqueOrThrow({
@@ -62,10 +46,15 @@ processBatchesController.get('/:id', async (req, res) => {
     error: tryParseJson(batch.error)
   }))
 
+  console.log(batch)
+  console.log(
+    JSON.stringify(batch)
+  )
+
   return res.renderTemplate(
     layout({
       header: header(),
-      body: batchAnalyser(batch)
+      body: html`<batch-analyser batch=${JSON.stringify(batch)}></batch-analyser>`
     })
   )
 })
