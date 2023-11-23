@@ -1,4 +1,4 @@
-import { html } from 'lit'
+import { html } from '@lit-labs/ssr'
 import { when } from 'lit/directives/when.js'
 import { newsCard, type NewsCardProps } from './news-card'
 
@@ -24,6 +24,6 @@ export function newsFeed({ news, profileId }: NewsFeedProps) {
           </div>`
       ],
       () => []
-    ),
+    )
   ]
 }

@@ -8,6 +8,7 @@ import { profilesController } from '@/src/application/profiles/controller'
 import { type TemplateResult } from 'lit'
 import { render } from '@lit-labs/ssr'
 import { RenderResultReadable } from '@lit-labs/ssr/lib/render-result-readable'
+import { processBatchesController } from '@/src/application/process-batches/controller'
 
 export const server = express()
 
@@ -25,3 +26,4 @@ server.use(urlencoded({ extended: true }))
 
 server.use('/news', newsController)
 server.use('/profiles', profilesController)
+server.use('/process-batches', processBatchesController)

@@ -1,4 +1,4 @@
-import { html } from 'lit'
+import { html } from '@lit-labs/ssr'
 import { P, match } from 'ts-pattern'
 import { type NewsCardProps } from '../components/news-card'
 import { newsFeed } from '../components/news-feed'

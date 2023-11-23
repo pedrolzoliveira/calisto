@@ -1,4 +1,4 @@
-import { html } from 'lit'
+import { html } from '@lit-labs/ssr'
 import { type ProfilesTableProps, profilesTable } from '../tables/profiles'
 
 interface ProfilesPageProps {

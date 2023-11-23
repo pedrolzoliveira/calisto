@@ -1,11 +1,11 @@
 import { sanitizeWhiteSpace } from '@/src/utils/sanitize-white-space'
 import { LitElement, type PropertyValueMap, html } from 'lit'
-import { customElement, property,  query } from 'lit/decorators.js'
+import { customElement, property, query } from 'lit/decorators.js'
 import { repeat } from 'lit/directives/repeat.js'
 
 @customElement('input-list')
 export class InputList extends LitElement {
-  protected createRenderRoot(): HTMLElement | ShadowRoot {
+  createRenderRoot() {
     return this
   }
 
@@ -18,19 +18,7 @@ export class InputList extends LitElement {
   @property({ type: String, reflect: true })
     name: string = ''
 
-  @property({
-    type: String,
-    reflect: true,
-    converter: {
-      fromAttribute: (value) => {
-        if (!value) {
-          return []
-        }
-        return value.split(';')
-      },
-      toAttribute: (value: string[]) => value.join(';')
-    }
-  })
+  @property({ type: Array })
     value: string[] = []
 
   @property({ type: String })

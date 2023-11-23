@@ -1,4 +1,4 @@
-import { html } from 'lit'
+import { html } from '@lit-labs/ssr'
 import { button } from '../components/button'
 
 export interface ProfilesTableProps {

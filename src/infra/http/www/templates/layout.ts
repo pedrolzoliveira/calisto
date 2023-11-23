@@ -1,4 +1,5 @@
-import { html, type TemplateResult } from 'lit'
+import { html } from '@lit-labs/ssr'
+import { type TemplateResult } from 'lit'
 
 interface LayoutProps {
   header: TemplateResult
@@ -17,7 +18,7 @@ export function layout({ header, body }: LayoutProps) {
         <link rel="stylesheet" href="/dist/tailwind.css">
         <title>Calisto</title>
       </head>
-      <body class="bg-gray-100">
+      <body class="bg-gray-100 flex flex-col">
         ${header}
         ${body}
       </body>

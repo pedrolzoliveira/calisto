@@ -1,4 +1,4 @@
-import { html } from 'lit'
+import { html } from '@lit-labs/ssr'
 import { profilesSelect } from './components/profiles-select'
 
 export interface HeaderProps {

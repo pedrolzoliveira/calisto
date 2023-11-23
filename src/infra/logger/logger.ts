@@ -9,6 +9,7 @@ const consoleFormat = combine(
       data.message = JSON.stringify(data.message, null, 2)
     }
 
+    // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
     return `[${data.level}]: ${data.message}`
   })
 )
