@@ -1,5 +1,2 @@
-import { glob } from 'glob'
-
-glob.sync('**/*.ts', { cwd: __dirname, ignore: '**/index.ts' }).forEach(file => {
-  import(`./${file}`)
-})
+import './batch-analyser'
+import './input-list'

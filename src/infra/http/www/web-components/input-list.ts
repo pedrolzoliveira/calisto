@@ -5,7 +5,7 @@ import { repeat } from 'lit/directives/repeat.js'
 
 @customElement('input-list')
 export class InputList extends LitElement {
-  protected createRenderRoot() {
+  createRenderRoot() {
     return this
   }
 
