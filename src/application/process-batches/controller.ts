@@ -45,11 +45,6 @@ processBatchesController.get('/:id', async (req, res) => {
     error: tryParseJson(batch.error)
   }))
 
-  console.log(batch)
-  console.log(
-    JSON.stringify(batch)
-  )
-
   return res.renderTemplate(
     layout({
       header: header(),
