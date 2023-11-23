@@ -10,6 +10,8 @@ import { render } from '@lit-labs/ssr'
 import { RenderResultReadable } from '@lit-labs/ssr/lib/render-result-readable'
 import { processBatchesController } from '@/src/application/process-batches/controller'
 
+import './www/server-components'
+
 export const server = express()
 
 server.use((req, res, next) => {

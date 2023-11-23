@@ -1,9 +1,11 @@
-import { type GenericJson } from '../infra/http/www/templates/components/batch-analyser'
+import { type GenericJson } from '../infra/http/types/generic-json'
 
-export function tryParseJson(data: any, fallbackValue: any = null): GenericJson | null {
+export function tryParseJson<T extends GenericJson>(
+  data: string
+): T | null {
   try {
     return JSON.parse(data)
   } catch (_) {
-    return fallbackValue
+    return null
   }
 }

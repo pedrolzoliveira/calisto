@@ -1,7 +1,7 @@
-import { LitElement, html } from 'lit'
+import { LitElement, html, unsafeCSS } from 'lit'
 import { customElement, property } from 'lit/decorators.js'
 import { type GenericJson } from '../../types/generic-json'
-import { parseScapedJson } from '../utils/parse-scaped-json'
+import { readFileSync } from 'fs'
 
 interface BatchAnalyserProps {
   id: string
@@ -34,24 +34,13 @@ const formatter = new Intl.DateTimeFormat('default', {
   minute: 'numeric'
 })
 
+const styles = readFileSync('./src/infra/http/www/dist/tailwind.css')
+
 @customElement('batch-analyser')
 export class BatchAnalyser extends LitElement {
-  protected createRenderRoot(): HTMLElement | ShadowRoot {
-    return this
-  }
+  static styles = unsafeCSS(styles)
 
-  @property({
-    type: String,
-    reflect: false,
-    converter: value => {
-      try {
-        return parseScapedJson(value as string)
-      } catch (error) {
-        // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-        throw new Error(`Error parsing batch: ${error as any}`)
-      }
-    }
-  })
+  @property({ type: Object })
     batch!: BatchAnalyserProps
 
   renderObject({ title, data }: { title: string, data: GenericJson | null }) {
@@ -85,6 +74,7 @@ export class BatchAnalyser extends LitElement {
     const { source } = news
 
     return html`
+      <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" />
       <div class="flex p-4 space-x-4">
         <div class="flex flex-col w-1/2 border rounded bg-white max-h-[90vh] overflow-y-scroll">
           <div class="p-4 flex border-b justify-between">

@@ -2,11 +2,10 @@ import { sanitizeWhiteSpace } from '@/src/utils/sanitize-white-space'
 import { LitElement, type PropertyValueMap, html } from 'lit'
 import { customElement, property, query } from 'lit/decorators.js'
 import { repeat } from 'lit/directives/repeat.js'
-import { parseScapedJson } from '../utils/parse-scaped-json'
 
 @customElement('input-list')
 export class InputList extends LitElement {
-  protected createRenderRoot(): HTMLElement | ShadowRoot {
+  protected createRenderRoot() {
     return this
   }
 
@@ -19,15 +18,7 @@ export class InputList extends LitElement {
   @property({ type: String, reflect: true })
     name: string = ''
 
-  @property({
-    type: String,
-    converter: value => {
-      if (!value) {
-        return []
-      }
-      return parseScapedJson(value)
-    }
-  })
+  @property({ type: Array })
     value: string[] = []
 
   @property({ type: String })

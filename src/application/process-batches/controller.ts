@@ -3,7 +3,6 @@ import { Router } from 'express'
 import { layout } from '@/src/infra/http/www/templates/layout'
 import { header } from '@/src/infra/http/www/templates/header'
 import { tryParseJson } from '@/src/utils/try-parse-json'
-import { BatchAnalyser } from '@/src/infra/http/www/web-components/batch-analyser'
 import { html } from 'lit'
 
 export const processBatchesController = Router()
@@ -54,7 +53,7 @@ processBatchesController.get('/:id', async (req, res) => {
   return res.renderTemplate(
     layout({
       header: header(),
-      body: html`<batch-analyser batch=${JSON.stringify(batch)}></batch-analyser>`
+      body: html`<batch-analyser .batch=${batch}></batch-analyser>`
     })
   )
 })
