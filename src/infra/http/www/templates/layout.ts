@@ -1,4 +1,5 @@
-import { html, type TemplateResult } from 'lit'
+import { html } from '@lit-labs/ssr'
+import { type TemplateResult } from 'lit'
 
 interface LayoutProps {
   header: TemplateResult

@@ -1,4 +1,5 @@
-import { type TemplateResult, html } from 'lit'
+import { html } from '@lit-labs/ssr'
+import { type TemplateResult } from 'lit'
 import { ifDefined } from 'lit/directives/if-defined.js'
 import { type ClassNameValue, twMerge } from 'tailwind-merge'
 

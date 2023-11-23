@@ -1,5 +1,5 @@
+import { html } from '@lit-labs/ssr'
 import { type Source } from '@prisma/client'
-import { html } from 'lit'
 
 export interface NewsCardProps {
   link: string
