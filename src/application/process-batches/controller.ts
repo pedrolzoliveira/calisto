@@ -3,7 +3,7 @@ import { Router } from 'express'
 import { layout } from '@/src/infra/http/www/templates/layout'
 import { header } from '@/src/infra/http/www/templates/header'
 import { tryParseJson } from '@/src/utils/try-parse-json'
-import { html } from '@lit-labs/ssr'
+import { batchAnalyserPage } from '@/src/infra/http/www/templates/pages/batch-analyser'
 
 export const processBatchesController = Router()
 
@@ -40,6 +40,10 @@ processBatchesController.get('/:id', async (req, res) => {
     }
   }).then(batch => ({
     ...batch,
+    news: {
+      ...batch.news,
+      createdAt: batch.news.createdAt.toISOString()
+    },
     request: tryParseJson(batch.request),
     response: tryParseJson(batch.response),
     error: tryParseJson(batch.error)
@@ -48,7 +52,7 @@ processBatchesController.get('/:id', async (req, res) => {
   return res.renderTemplate(
     layout({
       header: header(),
-      body: html`<batch-analyser batch=${JSON.stringify(batch)}></batch-analyser>`
+      body: batchAnalyserPage(batch)
     })
   )
 })

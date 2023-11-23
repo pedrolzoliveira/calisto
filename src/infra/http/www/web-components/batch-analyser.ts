@@ -1,10 +1,10 @@
 import '@lit-labs/ssr-client/lit-element-hydrate-support.js'
 
-import { LitElement, type PropertyValueMap, html } from 'lit'
+import { LitElement, html } from 'lit'
 import { customElement, property } from 'lit/decorators.js'
 import { type GenericJson } from '../../types/generic-json'
 
-interface BatchAnalyserProps {
+export interface BatchAnalyserProps {
   id: string
   request: GenericJson | null
   response: GenericJson | null
