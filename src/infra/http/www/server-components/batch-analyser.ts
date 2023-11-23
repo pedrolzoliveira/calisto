@@ -1,7 +1,6 @@
-import { LitElement, html, unsafeCSS } from 'lit'
+import { LitElement, css, html, unsafeCSS } from 'lit'
 import { customElement, property } from 'lit/decorators.js'
 import { type GenericJson } from '../../types/generic-json'
-import { readFileSync } from 'fs'
 
 interface BatchAnalyserProps {
   id: string
@@ -34,12 +33,8 @@ const formatter = new Intl.DateTimeFormat('default', {
   minute: 'numeric'
 })
 
-const styles = readFileSync('./src/infra/http/www/dist/tailwind.css')
-
 @customElement('batch-analyser')
 export class BatchAnalyser extends LitElement {
-  static styles = unsafeCSS(styles)
-
   @property({ type: Object })
     batch!: BatchAnalyserProps
 
@@ -51,6 +46,7 @@ export class BatchAnalyser extends LitElement {
     const stringified = JSON.stringify(data, null, 2)
 
     function handleClick() {
+      alert('Copiado para a área de transferência')
       navigator.clipboard.writeText(stringified)
     }
 
@@ -75,6 +71,8 @@ export class BatchAnalyser extends LitElement {
 
     return html`
       <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" />
+      <link rel="stylesheet" href="/dist/tailwind.css" />
+
       <div class="flex p-4 space-x-4">
         <div class="flex flex-col w-1/2 border rounded bg-white max-h-[90vh] overflow-y-scroll">
           <div class="p-4 flex border-b justify-between">
