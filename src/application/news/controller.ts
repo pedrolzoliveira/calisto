@@ -41,6 +41,8 @@ newsController.get('/',
       prismaClient.profile.findMany({ select: { id: true, name: true } })
     ])
 
+    console.log(news)
+
     return res.renderTemplate(
       layout({
         header: header({ profiles, profileId: data.profileId }),

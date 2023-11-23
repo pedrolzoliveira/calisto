@@ -110,7 +110,7 @@ export class BatchAnalyser extends LitElement {
           </div>
         </div>
         <div class="flex flex-col w-1/2 border rounded bg-white h-[90vh] overflow-y-scroll p-4">
-          <details>
+          <details open>
             <summary class="flex justify-between border-b p-4">
               <p class="cursor-pointer">Categorias</p>
             </summary>
