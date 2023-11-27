@@ -5,7 +5,7 @@ import { type ClassNameValue, twMerge } from 'tailwind-merge'
 
 interface ButtonProps {
   type?: 'button' | 'submit' | 'reset' | 'menu'
-  className?: ClassNameValue
+  className?: ClassNameValue | string
   content: TemplateResult | TemplateResult[] | string
 }
 

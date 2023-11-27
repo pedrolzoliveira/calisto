@@ -7,10 +7,12 @@ import { newsPage } from '@/src/infra/http/www/templates/pages/news'
 import { header } from '@/src/infra/http/www/templates/header'
 import { newsFeed } from '@/src/infra/http/www/templates/components/news-feed'
 import { noNewsFound } from '@/src/infra/http/www/templates/components/no-news-found'
+import { userAuthenticated } from '../users/middlewares/user-authenticated'
 
 export const newsController = Router()
 
 newsController.get('/',
+  // userAuthenticated,
   async (req, res) => {
     const data = z.object({
       limit: z.number({ coerce: true }).default(20),
@@ -50,24 +52,26 @@ newsController.get('/',
   }
 )
 
-newsController.get('/feed', async (req, res) => {
-  const data = z.object({
-    limit: z.number({ coerce: true }).default(20),
-    cursor: z.date({ coerce: true }).default(new Date()),
-    profileId: z.string().uuid()
-  }).parse(req.query)
+newsController.get('/feed',
+  userAuthenticated,
+  async (req, res) => {
+    const data = z.object({
+      limit: z.number({ coerce: true }).default(20),
+      cursor: z.date({ coerce: true }).default(new Date()),
+      profileId: z.string().uuid()
+    }).parse(req.query)
 
-  const news = await getNewsFeed(data)
+    const news = await getNewsFeed(data)
 
-  res.setHeader('HX-Push-Url', `/news?profileId=${data.profileId}`)
+    res.setHeader('HX-Push-Url', `/news?profileId=${data.profileId}`)
 
-  if (!news.length) {
+    if (!news.length) {
+      return res.renderTemplate(
+        noNewsFound()
+      )
+    }
+
     return res.renderTemplate(
-      noNewsFound()
+      newsFeed({ news, profileId: data.profileId })
     )
-  }
-
-  return res.renderTemplate(
-    newsFeed({ news, profileId: data.profileId })
-  )
-})
+  })
