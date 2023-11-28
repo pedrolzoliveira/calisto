@@ -8,6 +8,8 @@ import { signUpPage } from '@/src/infra/http/www/templates/pages/sign-up'
 import { signIn } from './use-cases/sign-in'
 import { signUp } from './use-cases/sign-up'
 import { userUnauthenticated } from './middlewares/user-unauthenticated'
+import { emailAvailable } from './use-cases/email-available'
+import { signUpForm } from '@/src/infra/http/www/templates/forms/sign-up'
 
 export const usersController = Router()
 
@@ -69,6 +71,27 @@ usersController.post('/sign-up',
       `
       )
     }
+  })
+
+usersController.post('/sign-up/email',
+  async (req, res) => {
+    const validation = z.string().email('Email invalido').safeParse(req.body.email)
+
+    let error: string | undefined
+    let email = String(req.body.email)
+
+    if (validation.success) {
+      email = validation.data
+      const emailIsAvailable = await emailAvailable(email)
+
+      if (!emailIsAvailable) {
+        error = 'Email já cadastrado'
+      }
+    } else {
+      error = validation.error.errors[0].message
+    }
+
+    return res.renderTemplate(signUpForm.email(email, error))
   })
 
 usersController.get('/sign-out',
