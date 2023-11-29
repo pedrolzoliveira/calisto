@@ -1,6 +1,6 @@
 import { html } from '@lit-labs/ssr'
 import { ifDefined } from 'lit/directives/if-defined.js'
-import { inputClass } from '../components/input'
+import { inputClass } from '../styles/input'
 import { button } from '../components/button'
 
 const email = (value?: string, error?: string) => {

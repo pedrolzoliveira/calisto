@@ -1,5 +1,5 @@
 import { html } from '@lit-labs/ssr'
-import { inputClass } from '../components/input'
+import { inputClass } from '../styles/input'
 import { button } from '../components/button'
 import { ifDefined } from 'lit/directives/if-defined.js'
 
