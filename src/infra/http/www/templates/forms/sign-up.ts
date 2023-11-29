@@ -1,5 +1,5 @@
 import { html } from '@lit-labs/ssr'
-import { input, inputClass } from '../components/input'
+import { inputClass } from '../components/input'
 import { button } from '../components/button'
 import { ifDefined } from 'lit/directives/if-defined.js'
 
@@ -58,14 +58,14 @@ const confirmPassword = (value?: string) => {
 interface SignUpFormProps {
   error?: string
   email: {
-    data: string
+    value: string
     error?: string
   }
   password: {
-    data: string
+    value: string
   }
   confirmPassword: {
-    data: string
+    value: string
   }
 }
 
@@ -73,9 +73,9 @@ export const signUpForm = (data?: SignUpFormProps) => {
   return html`
     <form hx-post="/users/sign-up" hx-swap="outerHTML" class="flex flex-col space-y-4 w-96">
       <h1 class="font-bold text-lg">Criar conta</h1>
-      ${email(data?.email.data, data?.email.error)}
-      ${password(data?.password.data)}
-      ${confirmPassword(data?.confirmPassword.data)}
+      ${email(data?.email.value, data?.email.error)}
+      ${password(data?.password.value)}
+      ${confirmPassword(data?.confirmPassword.value)}
       ${data?.error && html`<p class="text-red-600 italic">${data.error}</p>`}
       ${button({ type: 'submit', content: 'Criar conta' })}
       <p class="text-sm w-full">Já tem uma conta? <a class="text-blue-600 italic hover:underline" href="/users/sign-in">Entrar</a></p>

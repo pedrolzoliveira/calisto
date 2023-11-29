@@ -70,13 +70,13 @@ usersController.post('/sign-up',
     } catch (error) {
       const signUpFormData = {
         email: {
-          data: data.email
+          value: data.email
         },
         password: {
-          data: data.password
+          value: data.password
         },
         confirmPassword: {
-          data: data.password
+          value: data.password
         }
       }
       if (error instanceof Error && error.message === 'Email já cadastrado') {
