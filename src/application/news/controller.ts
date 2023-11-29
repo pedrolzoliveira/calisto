@@ -21,7 +21,7 @@ newsController.get('/',
     }).parse(req.query)
 
     if (!data.profileId) {
-      const profile = await prismaClient.profile.findFirst({ select: { id: true } })
+      const profile = await prismaClient.profile.findFirst({ select: { id: true }, where: { userId: req.session.user!.id } })
       if (profile) {
         return res.redirect(`?profileId=${profile.id}`)
       }
@@ -40,7 +40,7 @@ newsController.get('/',
         cursor: data.cursor,
         profileId: data.profileId
       }),
-      prismaClient.profile.findMany({ select: { id: true, name: true } })
+      prismaClient.profile.findMany({ select: { id: true, name: true }, where: { userId: req.session.user!.id } })
     ])
 
     return res.renderTemplate(

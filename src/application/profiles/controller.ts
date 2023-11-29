@@ -23,7 +23,7 @@ profilesController.post('/',
       categories: z.string().array().transform(value => value.map(sanitizeWhiteSpace))
     }).parse(req.body)
 
-    await CreateProfile({ name, categories })
+    await CreateProfile({ name, categories, userId: req.session.user!.id })
 
     const profiles = await prismaClient.profile.findMany({
       select: {
@@ -33,7 +33,8 @@ profilesController.post('/',
           select: { category: true }
         }
       },
-      orderBy: { createdAt: 'asc' }
+      orderBy: { createdAt: 'asc' },
+      where: { userId: req.session.user!.id }
     }).then(profiles =>
       profiles.map(profile => ({
         ...profile,
@@ -65,7 +66,8 @@ profilesController.put('/',
           select: { category: true }
         }
       },
-      orderBy: { createdAt: 'asc' }
+      orderBy: { createdAt: 'asc' },
+      where: { userId: req.session.user!.id }
     }).then(profiles =>
       profiles.map(profile => ({
         ...profile,
@@ -95,7 +97,8 @@ profilesController.delete('/',
           select: { category: true }
         }
       },
-      orderBy: { createdAt: 'asc' }
+      orderBy: { createdAt: 'asc' },
+      where: { userId: req.session.user!.id }
     }).then(
       profiles => profiles.map(profile => ({
         ...profile,
@@ -119,7 +122,8 @@ profilesController.get('/',
           select: { category: true }
         }
       },
-      orderBy: { createdAt: 'asc' }
+      orderBy: { createdAt: 'asc' },
+      where: { userId: req.session.user!.id }
     }).then(profiles =>
       profiles.map(profile => ({
         ...profile,
@@ -154,7 +158,7 @@ profilesController.get('/edit',
     }).parse(req.query)
 
     const profile = await prismaClient.profile.findFirst({
-      where: { id },
+      where: { id, userId: req.session.user!.id },
       select: {
         id: true,
         name: true,
