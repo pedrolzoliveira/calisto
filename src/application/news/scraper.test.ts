@@ -1,6 +1,7 @@
 import { faker } from '@faker-js/faker'
 import axios from 'axios'
 import assert from 'node:assert'
+import { stub } from 'sinon'
 import test from 'node:test'
 import { sourceFactory } from '@/src/test-utils/factories/source-factory'
 import { Scraper } from './scraper'
@@ -9,9 +10,9 @@ import { newsCreatedQueue } from '@/src/application/news/queues/news-created'
 
 const makeHTML = (title: string) => `<html><meta property="og:title" content="${title}"></html>`
 
-test('scraper', async (t) => {
-  const axiosGetMock = t.mock.method(axios, 'get', async () => ({ data: makeHTML(title) }))
-  const sendToQueueMock = t.mock.method(newsCreatedQueue, 'send', async () => {})
+test.only('scraper', async (t) => {
+  const axiosGetStub = stub(axios, 'get').callsFake(async () => ({ data: makeHTML(title) }))
+  const sendToQueueStub = stub(newsCreatedQueue, 'send').callsFake(async () => true)
 
   const sourceCode = faker.word.words()
   const link = faker.internet.url()
@@ -37,23 +38,23 @@ test('scraper', async (t) => {
   })
 
   await t.test('should send news to queue', () => {
-    assert.strictEqual(sendToQueueMock.mock.callCount(), 1)
-    assert.deepStrictEqual(sendToQueueMock.mock.calls[0].arguments[0], { link })
+    assert.ok(sendToQueueStub.calledOnce)
+    assert.deepStrictEqual(sendToQueueStub.getCall(0).args[0], { link })
   })
 
   await t.test('when news is already created', async (t) => {
-    axiosGetMock.mock.resetCalls()
+    axiosGetStub.resetHistory()
 
     await scraper.scrape()
 
     await t.test('should return early', async () => {
-      assert.strictEqual(axiosGetMock.mock.callCount(), 0)
+      assert.ok(axiosGetStub.notCalled)
     })
   })
 
   await t.test('when news is in blacklist', async (t) => {
-    axiosGetMock.mock.resetCalls()
-    sendToQueueMock.mock.resetCalls()
+    axiosGetStub.resetHistory()
+    sendToQueueStub.resetHistory()
 
     const blackListSubdomain = faker.internet.domainName()
 
@@ -67,11 +68,11 @@ test('scraper', async (t) => {
     await scraper.scrape()
 
     await t.test('should not scrape the link', async () => {
-      assert.strictEqual(axiosGetMock.mock.callCount(), 0)
+      assert.ok(axiosGetStub.notCalled)
     })
 
     await t.test('should not send news to queue', async () => {
-      assert.strictEqual(sendToQueueMock.mock.callCount(), 0)
+      assert.ok(sendToQueueStub.notCalled)
     })
   })
 })
