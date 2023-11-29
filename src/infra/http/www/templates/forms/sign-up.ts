@@ -2,59 +2,96 @@ import { html } from '@lit-labs/ssr'
 import { input, inputClass } from '../components/input'
 import { button } from '../components/button'
 import { ifDefined } from 'lit/directives/if-defined.js'
-import { twMerge } from 'tailwind-merge'
 
 const email = (value?: string, error?: string) => {
   return html`
     <div hx-target="this" hx-swap="outerHTML" class="flex flex-col">
       <label for="email">Email</label>
       <input
-        class=${twMerge(inputClass, 'data-[error]:border-red-600 after:content-[attr(data-error)]')}
+        class=${inputClass}
         id="email"
-        name="email"        
-        onchange="something()"
+        name="email"
+        type="email"
+        required
         value=${ifDefined(value)}
         data-error=${ifDefined(error)}
         hx-post="/users/sign-up/email"
-      ></input>
-      <script>
-        function something() {
-          console.log('running something')
-          email.setCustomValidity('teste')
-          console.log('something runned')
-        }
-      </script>
+      />
+      ${error && html`<script>email.setCustomValidity(email.getAttribute('data-error'))</script>`}
     </div>
   `
 }
 
-const password = (value?: string, error?: string) => {
+const password = (value?: string) => {
   return html`
     <div class="flex flex-col">
       <label for="password">Senha</label>
-      ${input({ id: 'password', type: 'password', name: 'password', required: true, minlength: 8 })}
+      <input
+        class=${inputClass}
+        id="password"
+        name="password"
+        type="password"
+        required
+        minlength="8"
+        value=${ifDefined(value)}
+      />
     </div>
   `
 }
 
-const confirmPassword = (value?: string, error?: string) => {
+const confirmPassword = (value?: string) => {
   return html`
      <div class="flex flex-col">
       <label for="confirm_password">Confirmar Senha</label>
-      ${input({ id: 'confirm_password', type: 'password', required: true })}
+      <input
+        class=${inputClass}
+        id="confirm_password"
+        name="confirm_password"
+        type="password"
+        required
+        value=${ifDefined(value)}
+      />
     </div>
   `
 }
 
-export const signUpForm = () => {
+interface SignUpFormProps {
+  error?: string
+  email: {
+    data: string
+    error?: string
+  }
+  password: {
+    data: string
+  }
+  confirmPassword: {
+    data: string
+  }
+}
+
+export const signUpForm = (data?: SignUpFormProps) => {
   return html`
-    <form method="post" action="/users/sign-up" class="flex flex-col space-y-4 w-96">
+    <form hx-post="/users/sign-up" hx-swap="outerHTML" class="flex flex-col space-y-4 w-96">
       <h1 class="font-bold text-lg">Criar conta</h1>
-      ${email()}
-      ${password()}
-      ${confirmPassword()}
+      ${email(data?.email.data, data?.email.error)}
+      ${password(data?.password.data)}
+      ${confirmPassword(data?.confirmPassword.data)}
+      ${data?.error && html`<p class="text-red-600 italic">${data.error}</p>`}
       ${button({ type: 'submit', content: 'Criar conta' })}
       <p class="text-sm w-full">Já tem uma conta? <a class="text-blue-600 italic hover:underline" href="/users/sign-in">Entrar</a></p>
+
+      <script>
+        function checkPasswordsMatch() {
+          if (confirm_password.value !== password.value) {
+            return confirm_password.setCustomValidity('As senhas não conferem')
+          } 
+          
+          return confirm_password.setCustomValidity('')
+        }
+
+        password.addEventListener('input', checkPasswordsMatch)
+        confirm_password.addEventListener('input', checkPasswordsMatch)
+      </script>
     </form>
   `
 }

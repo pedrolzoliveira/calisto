@@ -63,12 +63,40 @@ usersController.post('/sign-up',
 
     try {
       req.session.user = await signUp(data)
-      return res.redirect('/news')
+      return res
+        .setHeader('HX-Push-Url', '/news')
+        .setHeader('HX-Redirect', '/news')
+        .end()
     } catch (error) {
+      const signUpFormData = {
+        email: {
+          data: data.email
+        },
+        password: {
+          data: data.password
+        },
+        confirmPassword: {
+          data: data.password
+        }
+      }
+      if (error instanceof Error && error.message === 'Email já cadastrado') {
+        return res.renderTemplate(
+          signUpForm({
+            ...signUpFormData,
+            error: error.message,
+            email: {
+              ...signUpFormData.email,
+              error: error.message
+            }
+          })
+        )
+      }
+
       return res.renderTemplate(
-        html`
-        <div>Error ao se cadastrar</div>
-      `
+        signUpForm({
+          ...signUpFormData,
+          error: 'Erro desconhecido ao cadastrar'
+        })
       )
     }
   })

@@ -12,7 +12,7 @@ import { userAuthenticated } from '../users/middlewares/user-authenticated'
 export const newsController = Router()
 
 newsController.get('/',
-  // userAuthenticated,
+  userAuthenticated,
   async (req, res) => {
     const data = z.object({
       limit: z.number({ coerce: true }).default(20),

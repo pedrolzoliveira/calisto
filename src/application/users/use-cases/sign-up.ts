@@ -15,7 +15,7 @@ export const signUp = async (data: SignUpData) => {
     const emailTaken = await transaction.user.count({ where: { email: data.email } })
     console.log(emailTaken)
     if (emailTaken) {
-      throw new Error('email already taken')
+      throw new Error('Email já cadastrados')
     }
 
     const hash = createHash('sha256').update(data.password).digest('hex')
