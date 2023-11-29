@@ -29,9 +29,12 @@ model News {
 
 model Profile {
   id String @id @default(uuid())
-  name String @unique
+  name String
   categories ProfileCategory[]
+  userId String
+  user User @relation(fields: [userId], references: [id])
   createdAt DateTime @default(now())
+  @@unique([userId, name])
 }
 
 model ProfileCategory {  
@@ -61,4 +64,23 @@ model ProcessBatch {
   newsLink String
   news News @relation(fields: [newsLink], references: [link])
   categories NewsCategory[]
+}
+
+enum userRole {
+  admin
+  user
+}
+
+model User {
+  id String @id @default(uuid())
+  email String @unique
+  password UserPassword?
+  profiles Profile[]
+  role userRole @default(user)
+}
+
+model UserPassword {
+  userId String @id
+  user User @relation(fields: [userId], references: [id])
+  hash String
 }

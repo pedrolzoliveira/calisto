@@ -2,11 +2,11 @@ import { html } from '@lit-labs/ssr'
 import { type TemplateResult } from 'lit'
 
 interface LayoutProps {
-  header: TemplateResult
-  body: TemplateResult
+  header?: TemplateResult | TemplateResult[] | null
+  body?: TemplateResult | TemplateResult[] | null
 }
 
-export function layout({ header, body }: LayoutProps) {
+export function layout({ header = null, body = null }: LayoutProps) {
   return html`
     <!DOCTYPE html>
     <html lang="pt">

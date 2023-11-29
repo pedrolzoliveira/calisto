@@ -20,6 +20,7 @@ module.exports = {
     '@typescript-eslint/restrict-plus-operands': 'off',
     '@typescript-eslint/array-type': 'off',
     curly: 'off',
-    '@typescript-eslint/no-confusing-void-expression': 'off'
+    '@typescript-eslint/no-confusing-void-expression': 'off',
+    '@typescript-eslint/no-non-null-assertion': 'off'
   }
 }

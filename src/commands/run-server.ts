@@ -8,6 +8,6 @@ prismaClient.$connect().then(() => {
     logger.info(`listening on port ${env.PORT}`)
   })
 }).catch((error) => {
-  logger.error(error)
+  logger.error('error connecting to database:', error)
   process.exit(1)
 })
