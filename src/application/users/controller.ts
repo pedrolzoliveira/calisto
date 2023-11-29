@@ -10,6 +10,7 @@ import { signUp } from './use-cases/sign-up'
 import { userUnauthenticated } from './middlewares/user-unauthenticated'
 import { emailAvailable } from './use-cases/email-available'
 import { signUpForm } from '@/src/infra/http/www/templates/forms/sign-up'
+import { signInForm } from '@/src/infra/http/www/templates/forms/sign-in'
 
 export const usersController = Router()
 
@@ -33,12 +34,34 @@ usersController.post('/sign-in',
 
     try {
       req.session.user = await signIn(data)
-      return res.redirect('/news')
+      return res
+        .setHeader('HX-Push-Url', '/news')
+        .setHeader('HX-Redirect', '/news')
+        .end()
     } catch (error) {
+      const signInFormData = {
+        email: {
+          value: data.email
+        },
+        password: {
+          value: data.password
+        }
+      }
+
+      if (error instanceof Error && error.message === 'Email ou senha incorretos') {
+        return res.renderTemplate(
+          signInForm({
+            ...signInFormData,
+            error: error.message
+          })
+        )
+      }
+
       return res.renderTemplate(
-        html`
-        <div>Error ao se logar</div>
-      `
+        signInForm({
+          ...signInFormData,
+          error: 'Erro desconhecido ao logar'
+        })
       )
     }
   })

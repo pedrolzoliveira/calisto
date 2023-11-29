@@ -8,14 +8,20 @@ interface SignInData {
 
 /**
  *
- * @throws {NotFoundError} user not found
+ * @throws {Error} Email ou senha incorretos
  */
 export const signIn = async ({ email, password }: SignInData) => {
   const hash = createHash('sha256').update(password).digest('hex')
-  return await prismaClient.user.findFirstOrThrow({
+  const user = await prismaClient.user.findFirst({
     where: {
       email,
       password: { hash }
     }
   })
+
+  if (!user) {
+    throw new Error('Email ou senha incorretos')
+  }
+
+  return user
 }

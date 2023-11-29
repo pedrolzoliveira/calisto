@@ -1,6 +1,7 @@
 import { html } from '@lit-labs/ssr'
 import { ifDefined } from 'lit/directives/if-defined.js'
 import { inputClass } from '../components/input'
+import { button } from '../components/button'
 
 const email = (value?: string, error?: string) => {
   return html`
@@ -46,12 +47,12 @@ interface SignInFormProps {
 
 export const signInForm = (data?: SignInFormProps) => {
   return html`
-    <form method="post" action="/users/sign-in" class="flex flex-col space-y-4 w-96">
+    <form hx-post="/users/sign-in" hx-swap="outerHTML" class="flex flex-col space-y-4 w-96">
       <h1 class="font-bold text-lg">Logar</h1>
       ${email(data?.email.value)}
       ${password(data?.password.value)}
       ${data?.error && html`<p class="text-red-600 italic">${data.error}</p>`}
-      <button type="submit" class="px-3 py-2 rounded border">Entrar</button>
+      ${button({ type: 'submit', content: 'Entrar' })}
       <p class="text-sm w-full">
         Não tem conta ainda?
         <a class="text-blue-600 italic hover:underline" href="/users/sign-up">Inscreva-se</a>
