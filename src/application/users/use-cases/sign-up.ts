@@ -8,12 +8,11 @@ interface SignUpData {
 
 /**
  *
- * @throws {Error} email already taken
+ * @throws {Error} Email já cadastrados
  */
 export const signUp = async (data: SignUpData) => {
   return await prismaClient.$transaction(async transaction => {
     const emailTaken = await transaction.user.count({ where: { email: data.email } })
-    console.log(emailTaken)
     if (emailTaken) {
       throw new Error('Email já cadastrados')
     }
