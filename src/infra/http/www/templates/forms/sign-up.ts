@@ -78,7 +78,10 @@ export const signUpForm = (data?: SignUpFormProps) => {
       ${confirmPassword(data?.confirmPassword.value)}
       ${data?.error && html`<p class="text-red-600 italic">${data.error}</p>`}
       ${button({ type: 'submit', content: 'Criar conta' })}
-      <p class="text-sm w-full">Já tem uma conta? <a class="text-blue-600 italic hover:underline" href="/users/sign-in">Entrar</a></p>
+      <p class="text-sm w-full">
+        Já tem uma conta?
+        <a class="text-blue-600 italic hover:underline" href="/users/sign-in">Entrar</a>
+      </p>
 
       <script>
         function checkPasswordsMatch() {
