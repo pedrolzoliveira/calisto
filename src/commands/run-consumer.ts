@@ -1,4 +1,7 @@
 import { logger } from '../infra/logger'
+import { processingRelationsConsumer } from '@/src/application/chat-gpt/consumers/processing-relations'
+import { newsCreatedConsumer } from '@/src/application/news/consumers/news-created'
+import { profileCategoryChangedConsumer } from '@/src/application/profiles/consumers/profile-category-changed'
 
 (async () => {
   const queueName = process.argv[2]
@@ -10,15 +13,15 @@ import { logger } from '../infra/logger'
   switch (queueName) {
     case 'processing-relations':
       logger.info('Starting processing-relations consumer')
-      require('../application/chat-gpt/consumers/processing-relations')
+      await processingRelationsConsumer.run()
       break
     case 'news-created':
       logger.info('Starting news-created consumer')
-      require('../application/news/consumers/news-created')
+      await newsCreatedConsumer.run()
       break
     case 'profile-category-changed':
       logger.info('Starting profile-category-changed consumer')
-      require('../application/profiles/consumers/profile-category-changed')
+      await profileCategoryChangedConsumer.run()
       break
     default:
       throw new Error(`Queue "${queueName}" not found. available queues: ${queues.join(', ')}`)

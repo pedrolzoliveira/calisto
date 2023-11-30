@@ -3,7 +3,7 @@ import { processingRelationsQueue } from '../queues/processing-relations'
 import { relateCategories } from '../use-cases/relate-categories'
 import { logger } from '@/src/infra/logger'
 
-processingRelationsQueue.consume(async ({ link }) => {
+export const processingRelationsConsumer = processingRelationsQueue.createConsumer(async ({ link }) => {
   logger.info(`processing-relations consumer: ${link}`)
   await prismaClient.$transaction(async (transaction) => {
     const [data] = await transaction.$queryRaw<{ batchId: string, content: string, categories: string[] }[]>`

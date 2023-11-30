@@ -2,7 +2,7 @@ import { prismaClient } from '@/src/infra/database/prisma/client'
 import { profileCategoryChangedQueue } from '../queues/profile-category-changed'
 import { processingRelationsQueue } from '../../chat-gpt/queues/processing-relations'
 
-profileCategoryChangedQueue.consume(async ({ profileId }) => {
+export const profileCategoryChangedConsumer = profileCategoryChangedQueue.createConsumer(async ({ profileId }) => {
   await prismaClient.$transaction(async tx => {
     const newsLinks = await tx.$queryRaw<{ newsLink: string }[]>`
       WITH

@@ -25,17 +25,22 @@ export class Queue<T extends AnyZodObject = AnyZodObject> {
     }
   }
 
-  public async consume(consumeFunction: (data: z.infer<T>) => any) {
-    await this.assertQueue()
-    logger.info(`consume: ${this.name}`)
+  public createConsumer(consumeFunction: (data: z.infer<T>) => any) {
+    logger.info(`creating consumer: ${this.name}`)
 
-    this.channel.consume(this.name, async (message) => {
-      if (message) {
-        const data = this.schema.parse(JSON.parse(message.content.toString()))
-        await consumeFunction(data)
-        this.channel.ack(message)
+    return {
+      run: async () => {
+        logger.info(`running consumer: ${this.name}`)
+        await this.assertQueue()
+        this.channel.consume(this.name, async (message) => {
+          if (message) {
+            const data = this.schema.parse(JSON.parse(message.content.toString()))
+            await consumeFunction(data)
+            this.channel.ack(message)
+          }
+        })
       }
-    })
+    }
   }
 
   public async send(data: z.infer<T>) {
