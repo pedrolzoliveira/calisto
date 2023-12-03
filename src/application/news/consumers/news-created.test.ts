@@ -1,4 +1,4 @@
-import { after, before, describe, it, test } from 'node:test'
+import { after, before, describe, it } from 'node:test'
 import { newsCreatedQueue } from '../queues/news-created'
 import assert from 'node:assert'
 import { newsFactory } from '@/src/test-utils/factories/news-factory'
