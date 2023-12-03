@@ -1,5 +1,5 @@
 import { prismaClient } from '@/src/infra/database/prisma/client'
-import { profileCategoryChangedQueue } from '../queues/profile-category-changed'
+import { publisher } from '../../publisher'
 
 interface CreateProfileData {
   userId: string
@@ -7,7 +7,7 @@ interface CreateProfileData {
   categories: string[]
 }
 
-export const CreateProfile = async ({ name, categories, userId }: CreateProfileData) => {
+export const createProfile = async ({ name, categories, userId }: CreateProfileData) => {
   const profile = await prismaClient.profile.create({
     data: {
       userId,
@@ -16,7 +16,7 @@ export const CreateProfile = async ({ name, categories, userId }: CreateProfileD
     }
   })
 
-  // await profileCategoryChangedQueue.send({ profileId: profile.id })
+  publisher.publish('profile-category-changed', { profileId: profile.id })
 
   return profile
 }

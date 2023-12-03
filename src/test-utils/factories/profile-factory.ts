@@ -3,8 +3,8 @@ import { type Factory } from './factory'
 import { z } from 'zod'
 import { faker } from '@faker-js/faker'
 
-import { CreateProfile } from '@/src/application/profiles/use-cases/create-profile'
 import { userFactory } from './user-factory'
+import { prismaClient } from '@/src/infra/database/prisma/client'
 
 class ProfileFactory implements Factory<Profile & { categories: string[] }> {
   async create(attributes?: Partial<Omit<Profile, 'id' | 'createdAt'>> & { categories?: string[] }): Promise<Profile & { categories: string[] }> {
@@ -19,10 +19,23 @@ class ProfileFactory implements Factory<Profile & { categories: string[] }> {
 
     const { name, categories } = profileSchema.parse(attributes)
 
-    return {
-      ...CreateProfile({ name, categories, userId: foreignKeys.userId }),
-      categories
-    } as any
+    return await prismaClient.profile.create({
+      select: {
+        id: true,
+        name: true,
+        userId: true,
+        createdAt: true,
+        categories: { select: { category: true } }
+      },
+      data: {
+        userId: foreignKeys.userId,
+        name,
+        categories: { createMany: { data: categories.map(category => ({ category })) } }
+      }
+    }).then(profile => ({
+      ...profile,
+      categories: profile.categories.map(({ category }) => category)
+    }))
   }
 }
 

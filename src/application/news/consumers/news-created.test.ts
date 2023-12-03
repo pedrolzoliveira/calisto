@@ -79,7 +79,6 @@ describe('news-created consumer', async () => {
   })
 
   it('sends a message to processing-relations queue', () => {
-    assert.deepEqual(publisherStub.getCall(0).args[0], 'processing-relations')
-    assert.deepEqual(publisherStub.getCall(0).args[1], { link })
+    assert.deepEqual(publisherStub.getCall(0).args, ['processing-relations', { link }])
   })
 })

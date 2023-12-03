@@ -45,9 +45,7 @@ describe('scraper', async () => {
   })
 
   it('should send news to queue', () => {
-    assert.ok(publisherStub.calledOnce)
-    assert.deepStrictEqual(publisherStub.getCall(0).args[0], 'news-created')
-    assert.deepStrictEqual(publisherStub.getCall(0).args[1], { link })
+    assert.deepStrictEqual(publisherStub.getCall(0).args, ['news-created', { link }])
   })
 
   describe('when news is already created', async () => {

@@ -1,6 +1,6 @@
 import { Router } from 'express'
 import { z } from 'zod'
-import { CreateProfile } from './use-cases/create-profile'
+import { createProfile } from './use-cases/create-profile'
 import { prismaClient } from '@/src/infra/database/prisma/client'
 import { deleteProfile } from './use-cases/delete-profile'
 import { updateProfile } from './use-cases/update-profile'
@@ -23,7 +23,7 @@ profilesController.post('/',
       categories: z.string().array().transform(value => value.map(sanitizeWhiteSpace))
     }).parse(req.body)
 
-    await CreateProfile({ name, categories, userId: req.session.user!.id })
+    await createProfile({ name, categories, userId: req.session.user!.id })
 
     const profiles = await prismaClient.profile.findMany({
       select: {
