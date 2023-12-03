@@ -16,7 +16,7 @@ export const CreateProfile = async ({ name, categories, userId }: CreateProfileD
     }
   })
 
-  await profileCategoryChangedQueue.send({ profileId: profile.id })
+  // await profileCategoryChangedQueue.send({ profileId: profile.id })
 
   return profile
 }
