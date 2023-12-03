@@ -1,25 +1,25 @@
 import { faker } from '@faker-js/faker'
 import axios from 'axios'
 import assert from 'node:assert'
-import { stub } from 'sinon'
-import test from 'node:test'
+import { type SinonStub, stub } from 'sinon'
+import { before, beforeEach, describe, it } from 'node:test'
 import { sourceFactory } from '@/src/test-utils/factories/source-factory'
 import { Scraper } from './scraper'
 import { prismaClient } from '@/src/infra/database/prisma/client'
 import { publisher } from '../publisher'
+import { type News } from '@prisma/client'
 
 const makeHTML = (title: string) => `<html><meta property="og:title" content="${title}"></html>`
 
-test('scraper', async (t) => {
-  const axiosGetStub = stub(axios, 'get').callsFake(async () => ({ data: makeHTML(title) }))
-  const publisherStub = stub(publisher, 'publish')
+describe('scraper', async () => {
+  let axiosGetStub: SinonStub
+  let publisherStub: SinonStub
+  let news: News | null
 
   const sourceCode = faker.word.words()
   const link = faker.internet.url()
   const title = faker.lorem.sentence()
   const content = faker.lorem.paragraph()
-
-  await sourceFactory.create({ code: sourceCode })
 
   const scraper = new Scraper({
     sourceCode,
@@ -27,52 +27,62 @@ test('scraper', async (t) => {
     getContent: () => content
   })
 
-  await scraper.scrape()
+  before(async () => {
+    axiosGetStub = stub(axios, 'get').callsFake(async () => ({ data: makeHTML(title) }))
+    publisherStub = stub(publisher, 'publish')
 
-  const news = await prismaClient.news.findFirst({ where: { link } })
+    await sourceFactory.create({ code: sourceCode })
 
-  await t.test('should create news with right values', () => {
+    await scraper.scrape()
+
+    news = await prismaClient.news.findFirst({ where: { link } })
+  })
+
+  it('should create news with right values', () => {
     assert.ok(news)
     assert.strictEqual(news?.title, title)
     assert.strictEqual(news?.content, content)
   })
 
-  await t.test('should send news to queue', () => {
+  it('should send news to queue', () => {
     assert.ok(publisherStub.calledOnce)
     assert.deepStrictEqual(publisherStub.getCall(0).args[0], 'news-created')
     assert.deepStrictEqual(publisherStub.getCall(0).args[1], { link })
   })
 
-  await t.test('when news is already created', async (t) => {
-    axiosGetStub.resetHistory()
+  describe('when news is already created', async () => {
+    before(async () => {
+      axiosGetStub.resetHistory()
+      await scraper.scrape()
+    })
 
-    await scraper.scrape()
-
-    await t.test('should return early', async () => {
+    it('should return early', () => {
       assert.ok(axiosGetStub.notCalled)
     })
   })
 
-  await t.test('when news is in blacklist', async (t) => {
-    axiosGetStub.resetHistory()
-    publisherStub.resetHistory()
+  describe('when news is in blacklist', async () => {
+    before(async () => {
+      axiosGetStub.resetHistory()
+      publisherStub.resetHistory()
 
-    const blackListSubdomain = faker.internet.domainName()
+      const blackListSubdomain = faker.internet.domainName()
 
-    const scraper = new Scraper({
-      sourceCode,
-      blackList: [blackListSubdomain],
-      getLinks: async () => [`https://${blackListSubdomain}.somethig-else.com`],
-      getContent: () => content
+      const scraper = new Scraper({
+        sourceCode,
+        blackList: [blackListSubdomain],
+        getLinks: async () => [`https://${blackListSubdomain}.somethig-else.com`],
+        getContent: () => content
+      })
+
+      await scraper.scrape()
     })
 
-    await scraper.scrape()
-
-    await t.test('should not scrape the link', async () => {
+    it('should not scrape the link', () => {
       assert.ok(axiosGetStub.notCalled)
     })
 
-    await t.test('should not send news to queue', async () => {
+    it('should not send news to queue', () => {
       assert.ok(publisherStub.notCalled)
     })
   })
