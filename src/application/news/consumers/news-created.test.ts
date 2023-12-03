@@ -21,7 +21,7 @@ const waitForQueue = async (queue: Queue): Promise<any> => {
   }
 }
 
-test.only('news-created consumer', async (t) => {
+test('news-created consumer', async (t) => {
   const testConnection = await createConnection()
   const testChannel = await createChannel(testConnection)
 
