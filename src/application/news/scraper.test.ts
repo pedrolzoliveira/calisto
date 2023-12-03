@@ -6,13 +6,13 @@ import test from 'node:test'
 import { sourceFactory } from '@/src/test-utils/factories/source-factory'
 import { Scraper } from './scraper'
 import { prismaClient } from '@/src/infra/database/prisma/client'
-import { newsCreatedQueue } from '@/src/application/news/queues/news-created'
+import { publisher } from '../publisher'
 
 const makeHTML = (title: string) => `<html><meta property="og:title" content="${title}"></html>`
 
-test.only('scraper', async (t) => {
+test('scraper', async (t) => {
   const axiosGetStub = stub(axios, 'get').callsFake(async () => ({ data: makeHTML(title) }))
-  const sendToQueueStub = stub(newsCreatedQueue, 'send').callsFake(async () => true)
+  const publisherStub = stub(publisher, 'publish')
 
   const sourceCode = faker.word.words()
   const link = faker.internet.url()
@@ -38,8 +38,9 @@ test.only('scraper', async (t) => {
   })
 
   await t.test('should send news to queue', () => {
-    assert.ok(sendToQueueStub.calledOnce)
-    assert.deepStrictEqual(sendToQueueStub.getCall(0).args[0], { link })
+    assert.ok(publisherStub.calledOnce)
+    assert.deepStrictEqual(publisherStub.getCall(0).args[0], 'news-created')
+    assert.deepStrictEqual(publisherStub.getCall(0).args[1], { link })
   })
 
   await t.test('when news is already created', async (t) => {
@@ -54,7 +55,7 @@ test.only('scraper', async (t) => {
 
   await t.test('when news is in blacklist', async (t) => {
     axiosGetStub.resetHistory()
-    sendToQueueStub.resetHistory()
+    publisherStub.resetHistory()
 
     const blackListSubdomain = faker.internet.domainName()
 
@@ -72,7 +73,7 @@ test.only('scraper', async (t) => {
     })
 
     await t.test('should not send news to queue', async () => {
-      assert.ok(sendToQueueStub.notCalled)
+      assert.ok(publisherStub.notCalled)
     })
   })
 })

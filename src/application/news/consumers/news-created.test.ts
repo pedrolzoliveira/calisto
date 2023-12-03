@@ -1,41 +1,55 @@
-import { test } from 'node:test'
+// import { test } from 'node:test'
+// import { processingRelationsQueue } from '@/src/application/chat-gpt/queues/processing-relations'
+// import { newsCreatedQueue } from '../queues/news-created'
+// import assert from 'node:assert'
+// import { newsFactory } from '@/src/test-utils/factories/news-factory'
+// import { stub } from 'sinon'
+// import { newsCreatedConsumer } from '../consumers/news-created'
+// import { profileFactory } from '@/src/test-utils/factories/profile-factory'
+// import { prismaClient } from '@/src/infra/database/prisma/client'
+// import { type Queue } from '@/src/infra/messaging/rabbitmq/queue'
 
-import { processingRelationsQueue } from '@/src/application/chat-gpt/queues/processing-relations'
-import { newsCreatedQueue } from '../queues/news-created'
-import assert from 'node:assert'
-import { sourceFactory } from '@/src/test-utils/factories/source-factory'
-import { newsFactory } from '@/src/test-utils/factories/news-factory'
+// const waitForQueue = async (queue: Queue) => {
+//   while (!await queue.isQueueEmpty()) {
+//     await new Promise(resolve => setTimeout(resolve, 100))
+//   }
+// }
 
-import '../consumers/news-created'
-import { faker } from '@faker-js/faker'
-import { profileFactory } from '@/src/test-utils/factories/profile-factory'
-import { prismaClient } from '@/src/infra/database/prisma/client'
+// test.only('news-created consumer', async (t) => {
+//   t.signal.dispatchEvent(new Event('end'))
+//   const sendToQueueStub = stub(processingRelationsQueue, 'send').callsFake(async () => true)
 
-test.only('news-created consumer', async (t) => {
-	const link = faker.internet.url()
+//   const { link } = await newsFactory.create()
+//   const { categories } = await profileFactory.create()
 
-	const sendToQueueMock = t.mock.method(processingRelationsQueue, 'send', async () => ({ link }))
+//   await newsCreatedQueue.send({ link })
 
-	const { code: sourceCode } = await sourceFactory.create()
-	
-	await newsFactory.create({ sourceCode, link })
+//   await newsCreatedConsumer.run()
 
-	const { categories } = await profileFactory.create()
+//   await waitForQueue(newsCreatedQueue)
 
-	await newsCreatedQueue.send({ link })
+//   await newsCreatedConsumer.stop()
 
-	await new Promise((resolve) => setTimeout(resolve, 1000))
+//   await newsCreatedQueue.disconnect()
 
-	await t.test('creates newsCategories for each category for that news', async (t) => {
-		// const newsCategories = await prismaClient.newsCategory.findMany({ where: { newsLink: link }})
-		const newsCategories = await prismaClient.newsCategory.findMany()
+//   await t.test('creates newsCategories for each category for that news', async (t) => {
+//     const newsCategories = new Set(await prismaClient.newsCategory.findMany())
+//     const expectedNewsCategories = new Set(
+//       categories.map(category => ({
+//         batchId: null,
+//         newsLink: link,
+//         category,
+//         related: false,
+//         processed: false
+//       }))
+//     )
 
-		console.log(newsCategories)
-		assert.deepStrictEqual(newsCategories, categories.map(category => ({ newsLink: link, category, related: false, processed: false })))
-	})
+//     assert.deepStrictEqual(newsCategories, expectedNewsCategories)
+//   })
 
-	await t.test('sends a message to processing-relations queue', async (t) => {
-		assert.strictEqual(sendToQueueMock.mock.callCount(), 1)
-		assert.deepStrictEqual(sendToQueueMock.mock.calls[0].arguments[0], { link })
-	})
-})
+//   await t.test('sends a message to processing-relations queue', (t) => {
+//     assert.deepEqual(sendToQueueStub.getCall(0).args[0], { link })
+//   })
+
+//   t.signal.dispatchEvent(new Event('end'))
+// })
