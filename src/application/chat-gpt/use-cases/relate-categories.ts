@@ -1,44 +1,19 @@
 import { isWithinTokenLimit } from 'gpt-tokenizer/cjs/model/gpt-3.5-turbo'
-import { type CreateChatCompletionRequest, type ChatCompletionRequestMessage, CreateChatCompletionResponse } from 'openai'
+import { type CreateChatCompletionRequest, type ChatCompletionRequestMessage, type CreateChatCompletionResponse } from 'openai'
 import { ZodError, z } from 'zod'
 
-import categorizePrompt from '../prompts/categorize'
+import { createMessages } from '../prompts/categorize'
 import { openai } from '../client'
 import { MODELS } from '../models'
 import { logger } from '@/src/infra/logger'
-import { AxiosError, AxiosResponse } from 'axios'
-import { sanitizeWhiteSpace } from '@/src/utils/sanitize-white-space'
-import { PrismaTransaction } from '@/src/infra/database/prisma/types/transaction'
-import { tryParseJson } from '@/src/utils/try-parse-json'
+import { AxiosError, type AxiosResponse } from 'axios'
+import { type PrismaTransaction } from '@/src/infra/database/prisma/types/transaction'
 
 interface RelateCategoriesParams {
   batchId: string
   content: string
   categories: string[]
   transaction: PrismaTransaction
-}
-
-const createMessages = (content: string, categories: string[]) => {
-  return [
-    {
-      role: 'system',
-      content: "Relate the categories with the user's given text. Use the index of the last user's message's categories to relate and return a valid JSON. If no category relates to the text, return an empty list."
-    },
-    {
-      role: 'user',
-      content: 'text:\nastronautas vão em missão interestelar para encontrar novo planeta habitável e salvar a humanidade da crise climática e da extinção.\ncategories:\n["Crise climática", "Bitcoin", "Viagem espacial"]'
-    },
-    {
-      role: 'assistant',
-      content: '[0,2]'
-    },
-    {
-      role: 'user',
-      content: categorizePrompt
-        .replace('{text}', sanitizeWhiteSpace(content))
-        .replace('{categories}', JSON.stringify(categories))
-    }
-  ] satisfies ChatCompletionRequestMessage[]
 }
 
 const createChatCompletionRequest = (messages: ChatCompletionRequestMessage[], categories: string[]) => {
@@ -60,7 +35,7 @@ const createChatCompletionRequest = (messages: ChatCompletionRequestMessage[], c
 const getCategoriesFromResponse = (response: AxiosResponse<CreateChatCompletionResponse, any>, categories: string[]): string[] => {
   return z.number().array().parse(
     JSON.parse(response.data.choices[0].message?.content ?? '')
-  ).map(index => categories[index])  
+  ).map(index => categories[index])
 }
 
 export const relateCategories = async ({ batchId, content, categories, transaction }: RelateCategoriesParams): Promise<string[] | null> => {
@@ -76,20 +51,23 @@ export const relateCategories = async ({ batchId, content, categories, transacti
     const response = await openai.createChatCompletion(chatCompletionRequest) as AxiosResponse<CreateChatCompletionResponse, any>
 
     await transaction.processBatch.update({
-      data: { request: tryParseJson(chatCompletionRequest), response: tryParseJson(response.data) },
+      data: {
+        request: chatCompletionRequest as any,
+        response: response.data as any
+      },
       where: { id: batchId }
     })
 
     return getCategoriesFromResponse(response, categories)
-  } catch(error) {
+  } catch (error) {
     logger.error(`(batch: ${batchId}): error relating categories`)
     if (error instanceof AxiosError) {
       logger.error(`(batch: ${batchId}): error when making request to OpenAI API`)
       await transaction.processBatch.update({
         data: {
-          request: tryParseJson(chatCompletionRequest),
-          response: tryParseJson(error.response?.data),
-          error: error.toJSON() 
+          request: chatCompletionRequest as any,
+          response: error.response?.data,
+          error: error.toJSON()
         },
         where: { id: batchId }
       })
@@ -108,5 +86,5 @@ export const relateCategories = async ({ batchId, content, categories, transacti
     }
 
     return null
-  }  
+  }
 }
