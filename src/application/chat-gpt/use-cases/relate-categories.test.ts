@@ -11,7 +11,7 @@ import assert from 'node:assert'
 import { MODELS } from '../models'
 import { createMessages } from '../prompts/categorize'
 
-describe.only('relate-categories', async () => {
+describe('relate-categories', async () => {
   const categories = ['any_categories', 'other_categories', 'more_categories']
   const expectedCategories = [categories[0], categories[2]]
   const content = 'news content'
@@ -58,18 +58,18 @@ describe.only('relate-categories', async () => {
     batch = await prismaClient.processBatch.findUniqueOrThrow({ where: { id: batch.id } })
   })
 
-  it.only('should call openai.createChatCompletion with the correct parameters', () => {
+  it('should call openai.createChatCompletion with the correct parameters', () => {
     assert.deepStrictEqual(
       openaiStub.getCall(0).args,
       [chatCompletionRequest]
     )
   })
 
-  it.only('should return the related categories', () => {
+  it('should return the related categories', () => {
     assert.deepStrictEqual(relatedCategories, expectedCategories)
   })
 
-  it.only('should update the batch with the request and response', () => {
+  it('should update the batch with the request and response', () => {
     const { request, response } = batch
     assert.deepStrictEqual(request, chatCompletionRequest)
     assert.deepStrictEqual(response, chatCompletionResponse.data)
@@ -77,5 +77,9 @@ describe.only('relate-categories', async () => {
 
   // #todo: implement the other cases
 
-  // describe('when the response returns an error')
+  // describe('when we got an error from openai', () => {})
+
+  // describe('when we got an error parsing the response', () => {})
+
+  // describe('when we got an unknown error', () => {})
 })
