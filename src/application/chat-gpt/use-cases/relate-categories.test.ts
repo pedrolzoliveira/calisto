@@ -34,7 +34,7 @@ describe('relate-categories', async () => {
   const chatCompletionResponse = {
     data: {
       choices: [
-        { message: { content: JSON.stringify([0, 2]) } }
+        { message: { content: '[0,2]' } }
       ]
     }
   }
