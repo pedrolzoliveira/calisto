@@ -12,7 +12,8 @@ import { MODELS } from '../models'
 import { createMessages } from '../prompts/categorize'
 
 describe.only('relate-categories', async () => {
-  const categories = ['any_categories']
+  const categories = ['any_categories', 'other_categories', 'more_categories']
+  const expectedCategories = [categories[0], categories[2]]
   const content = 'news content'
 
   let news: News
@@ -33,7 +34,7 @@ describe.only('relate-categories', async () => {
   const chatCompletionResponse = {
     data: {
       choices: [
-        { message: { content: JSON.stringify([0]) } }
+        { message: { content: JSON.stringify([0, 2]) } }
       ]
     }
   }
@@ -65,7 +66,7 @@ describe.only('relate-categories', async () => {
   })
 
   it.only('should return the related categories', () => {
-    assert.deepStrictEqual(relatedCategories, categories)
+    assert.deepStrictEqual(relatedCategories, expectedCategories)
   })
 
   it.only('should update the batch with the request and response', () => {
@@ -73,4 +74,8 @@ describe.only('relate-categories', async () => {
     assert.deepStrictEqual(request, chatCompletionRequest)
     assert.deepStrictEqual(response, chatCompletionResponse.data)
   })
+
+  // #todo: implement the other cases
+
+  // describe('when the response returns an error')
 })
