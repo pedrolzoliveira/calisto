@@ -8,6 +8,7 @@ import { MODELS } from '../models'
 import { logger } from '@/src/infra/logger'
 import { AxiosError, type AxiosResponse } from 'axios'
 import { type PrismaTransaction } from '@/src/infra/database/prisma/types/transaction'
+import { tryParseJson } from '@/src/utils/try-parse-json'
 
 interface RelateCategoriesParams {
   batchId: string
@@ -34,7 +35,7 @@ const createChatCompletionRequest = (messages: ChatCompletionRequestMessage[], c
 
 const getCategoriesFromResponse = (response: AxiosResponse<CreateChatCompletionResponse, any>, categories: string[]): string[] => {
   return z.number().array().parse(
-    JSON.parse(response.data.choices[0].message?.content ?? '')
+    tryParseJson(response.data.choices[0].message?.content)
   ).map(index => categories[index])
 }
 

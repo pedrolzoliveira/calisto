@@ -109,9 +109,15 @@ describe('relate-categories', async () => {
         ]
       }
 
+      const expectedError = {
+        _errors: [
+          'Expected array, received null'
+        ]
+      }
+
       assert.deepStrictEqual(request, chatCompletionRequest)
       assert.deepStrictEqual(response, expectedResponse)
-      assert.deepStrictEqual(error, 'Unexpected end of JSON input')
+      assert.deepStrictEqual(error, expectedError)
     })
   })
 })
