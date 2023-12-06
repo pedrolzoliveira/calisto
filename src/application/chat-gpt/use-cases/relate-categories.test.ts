@@ -19,7 +19,7 @@ describe('relate-categories', async () => {
   let news: News
   let batch: ProcessBatch
   let openaiStub: SinonStub
-  let relatedCategories: string[]
+  let relatedCategories: string[] | null
 
   const chatCompletionRequest = {
     model: MODELS.GPT_3_5_TURBO.name,
@@ -53,7 +53,7 @@ describe('relate-categories', async () => {
       content,
       categories,
       transaction: prismaClient
-    }) as string[]
+    })
 
     batch = await prismaClient.processBatch.findUniqueOrThrow({ where: { id: batch.id } })
   })
@@ -71,15 +71,47 @@ describe('relate-categories', async () => {
 
   it('should update the batch with the request and response', () => {
     const { request, response } = batch
+    const { data } = chatCompletionResponse
+
     assert.deepStrictEqual(request, chatCompletionRequest)
-    assert.deepStrictEqual(response, chatCompletionResponse.data)
+    assert.deepStrictEqual(response, data)
   })
 
-  // #todo: implement the other cases
+  describe('when we got an error parsing the response', () => {
+    before(async () => {
+      openaiStub.returns({
+        data: {
+          choices: [
+            { message: { content: '[0,' } }
+          ]
+        }
+      })
 
-  // describe('when we got an error from openai', () => {})
+      relatedCategories = await relateCategories({
+        batchId: batch.id,
+        content,
+        categories,
+        transaction: prismaClient
+      })
 
-  // describe('when we got an error parsing the response', () => {})
+      batch = await prismaClient.processBatch.findUniqueOrThrow({ where: { id: batch.id } })
+    })
 
-  // describe('when we got an unknown error', () => {})
+    it('should return null', () => {
+      assert.deepStrictEqual(relatedCategories, null)
+    })
+
+    it('should update the batch with the request, response and error', () => {
+      const { request, response, error } = batch
+      const expectedResponse = {
+        choices: [
+          { message: { content: '[0,' } }
+        ]
+      }
+
+      assert.deepStrictEqual(request, chatCompletionRequest)
+      assert.deepStrictEqual(response, expectedResponse)
+      assert.deepStrictEqual(error, 'Unexpected end of JSON input')
+    })
+  })
 })
