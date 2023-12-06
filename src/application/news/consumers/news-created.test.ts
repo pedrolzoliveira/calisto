@@ -6,21 +6,12 @@ import { type SinonStub, stub } from 'sinon'
 import { newsCreatedConsumer } from '../consumers/news-created'
 import { profileFactory } from '@/src/test-utils/factories/profile-factory'
 import { prismaClient } from '@/src/infra/database/prisma/client'
-import { type Queue } from '@/src/infra/messaging/rabbitmq/queue'
 import { publisher } from '../../publisher'
 import { createConnection } from '@/src/infra/messaging/rabbitmq/create-connection'
 import { createChannel } from '@/src/infra/messaging/rabbitmq/create-channel'
 import { type Channel, type Connection } from 'amqplib'
 import { type NewsCategory } from '@prisma/client'
-
-const sleep = async (ms: number) => await new Promise(resolve => setTimeout(resolve, ms))
-
-const waitForQueue = async (queue: Queue): Promise<any> => {
-  await sleep(100)
-  if (await queue.getMessageCount()) {
-    return await waitForQueue(queue)
-  }
-}
+import { waitForQueue } from '@/src/test-utils/wait-for-queue'
 
 describe('news-created consumer', async () => {
   let testConnection: Connection
