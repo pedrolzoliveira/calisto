@@ -33,6 +33,7 @@ export const processingRelationsConsumer = new Consumer({
         GROUP BY "News"."content", ProcessedCategories."batchId";`
 
       if (!data) {
+        console.log('its going here, it should not')
         return
       }
 

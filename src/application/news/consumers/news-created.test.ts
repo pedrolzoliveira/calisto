@@ -31,6 +31,8 @@ describe('news-created consumer', async () => {
     newsCreatedQueue.bindChannel(testChannel)
     newsCreatedConsumer.bindChannel(testChannel)
 
+    const testPublisher = newsCreatedQueue.createPublisher()
+
     publisherStub = stub(publisher, 'publish')
 
     const news = await newsFactory.create()
@@ -38,8 +40,6 @@ describe('news-created consumer', async () => {
 
     link = news.link
     categories = profile.categories
-
-    const testPublisher = newsCreatedQueue.createPublisher()
 
     testPublisher.publish('news-created', { link })
 
