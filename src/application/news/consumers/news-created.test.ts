@@ -37,11 +37,8 @@ describe('news-created consumer', async () => {
 
     publisherStub = stub(publisher, 'publish');
 
-    const news = await newsFactory.create();
-    const profile = await profileFactory.create();
-
-    link = news.link;
-    categories = profile.categories;
+    ({ link } = await newsFactory.create());
+    ({ categories } = await profileFactory.create());
 
     testPublisher.publish('news-created', { link });
 
