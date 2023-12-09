@@ -14,7 +14,7 @@ class ProfileFactory implements Factory<Profile & { categories: string[] }> {
 
     const profileSchema = z.object({
       name: z.string().default(faker.word.words()),
-      categories: z.string().array().default(new Array(5).fill(null).map(() => faker.lorem.word()))
+      categories: z.string().array().default(Array.from({ length: 5 }, () => faker.lorem.words(3)))
     }).default({})
 
     const { name, categories } = profileSchema.parse(attributes)

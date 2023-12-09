@@ -4,8 +4,9 @@ export const populateNewsCategory = async (newsLink: string) => {
   try {
     return await prismaClient.$executeRaw`
     INSERT INTO
-      "NewsCategory" ("category", "newsLink", "related", "processed")
+      "NewsCategory" ("id", "category", "newsLink", "related", "processed")
     SELECT DISTINCT
+      gen_random_uuid(),
       "category",
       ${newsLink},
       false,

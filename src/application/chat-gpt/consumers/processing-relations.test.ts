@@ -16,7 +16,7 @@ import assert from 'node:assert'
 import { populateNewsCategory } from '../../news/queries/populate-news-category'
 import { faker } from '@faker-js/faker'
 
-describe.only('processing-relations consumer', { concurrency: false }, async () => {
+describe('processing-relations consumer', async () => {
   let testConnection: Connection
   let testChannel: Channel
   let newsCategories: Set<Partial<NewsCategory>>
@@ -25,7 +25,7 @@ describe.only('processing-relations consumer', { concurrency: false }, async () 
 
   const newsLink = faker.internet.url()
   const content = faker.lorem.paragraph()
-  const categories = Array.from({ length: 2 }, () => faker.lorem.word())
+  const categories = Array.from({ length: 2 }, () => faker.lorem.words(3))
 
   const createChatCompletionResponse = {
     data: {
@@ -36,7 +36,6 @@ describe.only('processing-relations consumer', { concurrency: false }, async () 
   }
 
   before(async () => {
-    console.log('running first before')
     testConnection = await createConnection()
     testChannel = await createChannel(testConnection)
 
@@ -55,7 +54,6 @@ describe.only('processing-relations consumer', { concurrency: false }, async () 
     testPublisher.publish('processing-relations', { link: newsLink })
 
     await processingRelationsConsumer.consume()
-
     await waitForQueue(processingRelationsQueue)
 
     newsCategories = new Set(
@@ -77,7 +75,7 @@ describe.only('processing-relations consumer', { concurrency: false }, async () 
     await testConnection.close()
   })
 
-  it.only('news categories should be processed and related', () => {
+  it('news categories should be processed and related', () => {
     const expectedNewsCategories = new Set(
       categories.map(category => ({
         newsLink,
@@ -89,27 +87,20 @@ describe.only('processing-relations consumer', { concurrency: false }, async () 
     assert.deepStrictEqual(newsCategories, expectedNewsCategories)
   })
 
-  // #todo fix this test!
-  describe.only('when there are more than 20 categories', () => {
-    const moreThan20categories = [
-      ...categories,
-      ...Array.from({ length: 21 }, () => faker.lorem.word())
-    ]
-
+  await describe('when there are more than 20 categories', async () => {
     let publisherStub: SinonStub
 
     before(async () => {
       publisherStub = stub(publisher, 'publish')
 
-      await profileFactory.create({ categories: moreThan20categories })
+      await profileFactory.create({ categories: Array.from({ length: 21 }, () => faker.lorem.words(3)) })
       await populateNewsCategory(newsLink)
 
       testPublisher.publish('processing-relations', { link: newsLink })
-
       await waitForQueue(processingRelationsQueue)
     })
 
-    it.only('should send a message to processing-relations queue', () => {
+    it('should send a message to processing-relations queue', () => {
       assert.deepEqual(publisherStub.getCall(0).args, ['processing-relations', { link: newsLink }])
     })
   })
