@@ -16,6 +16,7 @@ import assert from 'node:assert'
 import { populateNewsCategory } from '../../news/queries/populate-news-category'
 import { faker } from '@faker-js/faker'
 
+// #todo: fix test, it's failing when running all tests, it's not cleaning the database
 describe('processing-relations consumer', async () => {
   let testConnection: Connection
   let testChannel: Channel
