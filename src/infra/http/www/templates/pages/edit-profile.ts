@@ -1,5 +1,5 @@
-import { html } from '@lit-labs/ssr'
-import { button } from '../components/button'
+import { html } from '@lit-labs/ssr';
+import { button } from '../components/button';
 interface EditProfilePageProps {
   profile: {
     id: string
@@ -31,5 +31,5 @@ export function editProfilePage({ profile }: EditProfilePageProps) {
           </button>
         </div>
       </form>
-    </main>`
+    </main>`;
 }

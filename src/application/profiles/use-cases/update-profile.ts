@@ -1,5 +1,5 @@
-import { prismaClient } from '@/src/infra/database/prisma/client'
-import { profileCategoryChangedQueue } from '../queues/profile-category-changed'
+import { prismaClient } from '@/src/infra/database/prisma/client';
+import { profileCategoryChangedQueue } from '../queues/profile-category-changed';
 
 export const updateProfile = async (
   data: {
@@ -9,8 +9,8 @@ export const updateProfile = async (
   }
 ) => {
   return await prismaClient.$transaction(async tx => {
-    await tx.profileCategory.deleteMany({ where: { profileId: data.id } })
-    const profile =  await tx.profile.update({
+    await tx.profileCategory.deleteMany({ where: { profileId: data.id } });
+    const profile = await tx.profile.update({
       select: {
         id: true,
         name: true,
@@ -26,10 +26,10 @@ export const updateProfile = async (
         }
       },
       where: { id: data.id }
-    })
+    });
 
-    await profileCategoryChangedQueue.send({ profileId: profile.id })
+    await profileCategoryChangedQueue.send({ profileId: profile.id });
 
-    return profile
-  })
-}
+    return profile;
+  });
+};

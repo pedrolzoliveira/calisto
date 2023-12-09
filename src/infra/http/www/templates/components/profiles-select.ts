@@ -1,5 +1,5 @@
-import { html } from '@lit-labs/ssr'
-import { map } from 'lit/directives/map.js'
+import { html } from '@lit-labs/ssr';
+import { map } from 'lit/directives/map.js';
 
 interface ProfileSelectProps {
   profileId: string
@@ -16,5 +16,5 @@ export function profilesSelect({ profileId, profiles }: ProfileSelectProps) {
       <select name="profileId" id="select-profiles" class="p-2 border rounded" hx-get="/news/feed" hx-trigger="change" hx-swap="innerHTML" hx-target="main">
         ${map(profiles, profile => html`<option value="${profile.id}" ?selected=${profile.id === profileId}>${profile.name}</option>`)}
       </select>
-    </div>`
+    </div>`;
 }

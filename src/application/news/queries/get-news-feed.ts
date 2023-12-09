@@ -1,5 +1,5 @@
-import { prismaClient } from '@/src/infra/database/prisma/client'
-import { type Source } from '@prisma/client'
+import { prismaClient } from '@/src/infra/database/prisma/client';
+import { type Source } from '@prisma/client';
 
 interface getNewsFeedParams {
   limit: number
@@ -55,5 +55,5 @@ export const getNewsFeed = async ({ limit, profileId, cursor }: getNewsFeedParam
         (row_num = 1) AS "lastRow"
       FROM RankedNews
       ORDER BY "createdAt" DESC
-      LIMIT ${limit};`
-}
+      LIMIT ${limit};`;
+};

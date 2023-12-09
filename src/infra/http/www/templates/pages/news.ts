@@ -1,9 +1,9 @@
-import { html } from '@lit-labs/ssr'
-import { P, match } from 'ts-pattern'
-import { type NewsCardProps } from '../components/news-card'
-import { newsFeed } from '../components/news-feed'
-import { noNewsFound } from '../components/no-news-found'
-import { noProfileCreated } from '../components/no-profile-created'
+import { html } from '@lit-labs/ssr';
+import { P, match } from 'ts-pattern';
+import { type NewsCardProps } from '../components/news-card';
+import { newsFeed } from '../components/news-feed';
+import { noNewsFound } from '../components/no-news-found';
+import { noProfileCreated } from '../components/no-profile-created';
 
 interface NewsPageProps {
   news: NewsCardProps[]
@@ -21,5 +21,5 @@ export function newsPage(props: NewsPageProps) {
           .exhaustive()
       }
     </main>
-  `
+  `;
 }

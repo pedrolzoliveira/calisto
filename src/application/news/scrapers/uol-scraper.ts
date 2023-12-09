@@ -1,5 +1,5 @@
-import { Scraper } from '../scraper'
-import { getHTML } from '../utils/get-html'
+import { Scraper } from '../scraper';
+import { getHTML } from '../utils/get-html';
 
 export const uolScraper = new Scraper({
   sourceCode: 'uol',
@@ -15,21 +15,21 @@ export const uolScraper = new Scraper({
     'guia.folha.uol.com.br'
   ],
   getLinks: async () => {
-    const html = await getHTML('https://noticias.uol.com.br/ultimas')
+    const html = await getHTML('https://noticias.uol.com.br/ultimas');
 
     return html.querySelectorAll('.results-items a').reduce<string[]>((arr, linkElement) => {
-      const link = linkElement.getAttribute('href')
+      const link = linkElement.getAttribute('href');
 
       if (link) {
-        arr.push(link)
+        arr.push(link);
       }
 
-      return arr
-    }, [])
+      return arr;
+    }, []);
   },
   getContent: (html) => [
     html.querySelector('.c-content-head__title')?.text.trim(),
     html.querySelector('.c-content-head__subtitle')?.text.trim(),
     html.querySelectorAll('div.c-news__body > p').map(({ text }) => text.trim()).filter(Boolean).join('\n')
   ].filter(Boolean).join('\n')
-})
+});

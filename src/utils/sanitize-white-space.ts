@@ -1,3 +1,3 @@
 export const sanitizeWhiteSpace = (text: string) => {
-  return text.replace(/\s+/g, ' ').trim()
-}
+  return text.replace(/\s+/g, ' ').trim();
+};

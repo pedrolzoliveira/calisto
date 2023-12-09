@@ -1,5 +1,5 @@
-import { html } from '@lit-labs/ssr'
-import { profilesSelect } from './components/profiles-select'
+import { html } from '@lit-labs/ssr';
+import { profilesSelect } from './components/profiles-select';
 
 export interface HeaderProps {
   profiles: Array<{
@@ -18,5 +18,5 @@ export function header(props?: HeaderProps) {
         ${props ? profilesSelect(props) : null}
       </div>
       <a href="/users/sign-out">Sair</a>
-    </header>`
+    </header>`;
 }

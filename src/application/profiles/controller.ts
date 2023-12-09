@@ -1,19 +1,19 @@
-import { Router } from 'express'
-import { z } from 'zod'
-import { createProfile } from './use-cases/create-profile'
-import { prismaClient } from '@/src/infra/database/prisma/client'
-import { deleteProfile } from './use-cases/delete-profile'
-import { updateProfile } from './use-cases/update-profile'
-import { sanitizeWhiteSpace } from '@/src/utils/sanitize-white-space'
-import { layout } from '@/src/infra/http/www/templates/layout'
-import { profilesPage } from '@/src/infra/http/www/templates/pages/profiles'
-import { header } from '@/src/infra/http/www/templates/header'
-import { profilesTable } from '@/src/infra/http/www/templates/tables/profiles'
-import { newProfilePage } from '@/src/infra/http/www/templates/pages/new-profile'
-import { editProfilePage } from '@/src/infra/http/www/templates/pages/edit-profile'
-import { userAuthenticated } from '../users/middlewares/user-authenticated'
+import { Router } from 'express';
+import { z } from 'zod';
+import { createProfile } from './use-cases/create-profile';
+import { prismaClient } from '@/src/infra/database/prisma/client';
+import { deleteProfile } from './use-cases/delete-profile';
+import { updateProfile } from './use-cases/update-profile';
+import { sanitizeWhiteSpace } from '@/src/utils/sanitize-white-space';
+import { layout } from '@/src/infra/http/www/templates/layout';
+import { profilesPage } from '@/src/infra/http/www/templates/pages/profiles';
+import { header } from '@/src/infra/http/www/templates/header';
+import { profilesTable } from '@/src/infra/http/www/templates/tables/profiles';
+import { newProfilePage } from '@/src/infra/http/www/templates/pages/new-profile';
+import { editProfilePage } from '@/src/infra/http/www/templates/pages/edit-profile';
+import { userAuthenticated } from '../users/middlewares/user-authenticated';
 
-export const profilesController = Router()
+export const profilesController = Router();
 
 profilesController.post('/',
   userAuthenticated,
@@ -21,9 +21,9 @@ profilesController.post('/',
     const { name, categories } = z.object({
       name: z.string().trim(),
       categories: z.string().array().transform(value => value.map(sanitizeWhiteSpace))
-    }).parse(req.body)
+    }).parse(req.body);
 
-    await createProfile({ name, categories, userId: req.session.user!.id })
+    await createProfile({ name, categories, userId: req.session.user!.id });
 
     const profiles = await prismaClient.profile.findMany({
       select: {
@@ -40,12 +40,12 @@ profilesController.post('/',
         ...profile,
         categories: profile.categories.map(({ category }) => category)
       }))
-    )
+    );
 
     return res.renderTemplate(
       profilesTable({ profiles })
-    )
-  })
+    );
+  });
 
 profilesController.put('/',
   userAuthenticated,
@@ -54,9 +54,9 @@ profilesController.put('/',
       id: z.string().uuid(),
       name: z.string(),
       categories: z.string().array()
-    }).parse(req.body)
+    }).parse(req.body);
 
-    await updateProfile(data)
+    await updateProfile(data);
 
     const profiles = await prismaClient.profile.findMany({
       select: {
@@ -73,21 +73,21 @@ profilesController.put('/',
         ...profile,
         categories: profile.categories.map(({ category }) => category)
       }))
-    )
+    );
 
     return res.renderTemplate(
       profilesTable({ profiles })
-    )
-  })
+    );
+  });
 
 profilesController.delete('/',
   userAuthenticated,
   async (req, res) => {
     const { id } = z.object({
       id: z.string().uuid()
-    }).parse(req.query)
+    }).parse(req.query);
 
-    await deleteProfile(id)
+    await deleteProfile(id);
 
     const profiles = await prismaClient.profile.findMany({
       select: {
@@ -104,12 +104,12 @@ profilesController.delete('/',
         ...profile,
         categories: profile.categories.map(({ category }) => category)
       }))
-    )
+    );
 
     return res.renderTemplate(
       profilesTable({ profiles })
-    )
-  })
+    );
+  });
 
 profilesController.get('/',
   userAuthenticated,
@@ -129,15 +129,15 @@ profilesController.get('/',
         ...profile,
         categories: profile.categories.map(({ category }) => category)
       }))
-    )
+    );
 
     return res.renderTemplate(
       layout({
         header: header(),
         body: profilesPage({ profiles })
       })
-    )
-  })
+    );
+  });
 
 profilesController.get('/new',
   userAuthenticated,
@@ -147,15 +147,15 @@ profilesController.get('/new',
         header: header(),
         body: newProfilePage()
       })
-    )
-  })
+    );
+  });
 
 profilesController.get('/edit',
   userAuthenticated,
   async (req, res) => {
     const { id } = z.object({
       id: z.string().uuid()
-    }).parse(req.query)
+    }).parse(req.query);
 
     const profile = await prismaClient.profile.findFirst({
       where: { id, userId: req.session.user!.id },
@@ -170,18 +170,18 @@ profilesController.get('/edit',
       }
     }).then(profile => {
       if (!profile) {
-        return null
+        return null;
       }
 
       return {
         ...profile,
         categories: profile.categories.map(({ category }) => category)
-      }
-    })
+      };
+    });
 
     if (!profile) {
     // TODO: handle this case
-      return res.send('profile not found')
+      return res.send('profile not found');
     }
 
     return res.renderTemplate(
@@ -189,5 +189,5 @@ profilesController.get('/edit',
         header: header(),
         body: editProfilePage({ profile })
       })
-    )
-  })
+    );
+  });

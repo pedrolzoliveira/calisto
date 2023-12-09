@@ -1,5 +1,5 @@
-import { sanitizeWhiteSpace } from '@/src/utils/sanitize-white-space'
-import { type ChatCompletionRequestMessage } from 'openai'
+import { sanitizeWhiteSpace } from '@/src/utils/sanitize-white-space';
+import { type ChatCompletionRequestMessage } from 'openai';
 
 const chat = [
   {
@@ -14,12 +14,12 @@ const chat = [
     role: 'assistant',
     content: '[0,2]'
   }
-] satisfies ChatCompletionRequestMessage[]
+] satisfies ChatCompletionRequestMessage[];
 
 const text = `text:
 {text}
 categories:
-{categories}`
+{categories}`;
 
 export const createMessages = (content: string, categories: string[]) => {
   return [
@@ -30,5 +30,5 @@ export const createMessages = (content: string, categories: string[]) => {
         .replace('{text}', sanitizeWhiteSpace(content))
         .replace('{categories}', JSON.stringify(categories))
     }
-  ] satisfies ChatCompletionRequestMessage[]
-}
+  ] satisfies ChatCompletionRequestMessage[];
+};

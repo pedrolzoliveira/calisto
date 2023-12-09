@@ -1,18 +1,18 @@
-import { Router } from 'express'
-import { html } from '@lit-labs/ssr'
-import { z } from 'zod'
+import { Router } from 'express';
+import { html } from '@lit-labs/ssr';
+import { z } from 'zod';
 
-import { layout } from '@/src/infra/http/www/templates/layout'
-import { signInPage } from '@/src/infra/http/www/templates/pages/sign-in'
-import { signUpPage } from '@/src/infra/http/www/templates/pages/sign-up'
-import { signIn } from './use-cases/sign-in'
-import { signUp } from './use-cases/sign-up'
-import { userUnauthenticated } from './middlewares/user-unauthenticated'
-import { emailAvailable } from './use-cases/email-available'
-import { signUpForm } from '@/src/infra/http/www/templates/forms/sign-up'
-import { signInForm } from '@/src/infra/http/www/templates/forms/sign-in'
+import { layout } from '@/src/infra/http/www/templates/layout';
+import { signInPage } from '@/src/infra/http/www/templates/pages/sign-in';
+import { signUpPage } from '@/src/infra/http/www/templates/pages/sign-up';
+import { signIn } from './use-cases/sign-in';
+import { signUp } from './use-cases/sign-up';
+import { userUnauthenticated } from './middlewares/user-unauthenticated';
+import { emailAvailable } from './use-cases/email-available';
+import { signUpForm } from '@/src/infra/http/www/templates/forms/sign-up';
+import { signInForm } from '@/src/infra/http/www/templates/forms/sign-in';
 
-export const usersController = Router()
+export const usersController = Router();
 
 usersController.get('/sign-in',
   userUnauthenticated,
@@ -21,8 +21,8 @@ usersController.get('/sign-in',
       layout({
         body: signInPage()
       })
-    )
-  })
+    );
+  });
 
 usersController.post('/sign-in',
   userUnauthenticated,
@@ -30,14 +30,14 @@ usersController.post('/sign-in',
     const data = z.object({
       email: z.string().email(),
       password: z.string()
-    }).parse(req.body)
+    }).parse(req.body);
 
     try {
-      req.session.user = await signIn(data)
+      req.session.user = await signIn(data);
       return res
         .setHeader('HX-Push-Url', '/news')
         .setHeader('HX-Redirect', '/news')
-        .end()
+        .end();
     } catch (error) {
       const signInFormData = {
         email: {
@@ -46,7 +46,7 @@ usersController.post('/sign-in',
         password: {
           value: data.password
         }
-      }
+      };
 
       if (error instanceof Error && error.message === 'Email ou senha incorretos') {
         return res.renderTemplate(
@@ -54,7 +54,7 @@ usersController.post('/sign-in',
             ...signInFormData,
             error: error.message
           })
-        )
+        );
       }
 
       return res.renderTemplate(
@@ -62,9 +62,9 @@ usersController.post('/sign-in',
           ...signInFormData,
           error: 'Erro desconhecido ao logar'
         })
-      )
+      );
     }
-  })
+  });
 
 usersController.get('/sign-up',
   userUnauthenticated,
@@ -73,8 +73,8 @@ usersController.get('/sign-up',
       layout({
         body: signUpPage()
       })
-    )
-  })
+    );
+  });
 
 usersController.post('/sign-up',
   userUnauthenticated,
@@ -82,14 +82,14 @@ usersController.post('/sign-up',
     const data = z.object({
       email: z.string().email(),
       password: z.string()
-    }).parse(req.body)
+    }).parse(req.body);
 
     try {
-      req.session.user = await signUp(data)
+      req.session.user = await signUp(data);
       return res
         .setHeader('HX-Push-Url', '/news')
         .setHeader('HX-Redirect', '/news')
-        .end()
+        .end();
     } catch (error) {
       const signUpFormData = {
         email: {
@@ -101,7 +101,7 @@ usersController.post('/sign-up',
         confirmPassword: {
           value: data.password
         }
-      }
+      };
       if (error instanceof Error && error.message === 'Email já cadastrado') {
         return res.renderTemplate(
           signUpForm({
@@ -112,7 +112,7 @@ usersController.post('/sign-up',
               error: error.message
             }
           })
-        )
+        );
       }
 
       return res.renderTemplate(
@@ -120,34 +120,34 @@ usersController.post('/sign-up',
           ...signUpFormData,
           error: 'Erro desconhecido ao cadastrar'
         })
-      )
+      );
     }
-  })
+  });
 
 usersController.post('/sign-up/email',
   async (req, res) => {
-    const validation = z.string().email('Email invalido').safeParse(req.body.email)
+    const validation = z.string().email('Email invalido').safeParse(req.body.email);
 
-    let error: string | undefined
-    let email = String(req.body.email)
+    let error: string | undefined;
+    let email = String(req.body.email);
 
     if (validation.success) {
-      email = validation.data
-      const emailIsAvailable = await emailAvailable(email)
+      email = validation.data;
+      const emailIsAvailable = await emailAvailable(email);
 
       if (!emailIsAvailable) {
-        error = 'Email já cadastrado'
+        error = 'Email já cadastrado';
       }
     } else {
-      error = validation.error.errors[0].message
+      error = validation.error.errors[0].message;
     }
 
-    return res.renderTemplate(signUpForm.email(email, error))
-  })
+    return res.renderTemplate(signUpForm.email(email, error));
+  });
 
 usersController.get('/sign-out',
   (req, res) => {
     req.session.destroy(() => {
-      return res.redirect('/users/sign-in')
-    })
-  })
+      return res.redirect('/users/sign-in');
+    });
+  });

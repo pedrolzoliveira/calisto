@@ -1,5 +1,5 @@
-import { prismaClient } from '@/src/infra/database/prisma/client'
-import { publisher } from '../../publisher'
+import { prismaClient } from '@/src/infra/database/prisma/client';
+import { publisher } from '../../publisher';
 
 interface CreateProfileData {
   userId: string
@@ -14,9 +14,9 @@ export const createProfile = async ({ name, categories, userId }: CreateProfileD
       name,
       categories: { createMany: { data: categories.map(category => ({ category })) } }
     }
-  })
+  });
 
-  publisher.publish('profile-category-changed', { profileId: profile.id })
+  publisher.publish('profile-category-changed', { profileId: profile.id });
 
-  return profile
-}
+  return profile;
+};

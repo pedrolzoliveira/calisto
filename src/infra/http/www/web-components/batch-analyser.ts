@@ -1,8 +1,8 @@
-import '@lit-labs/ssr-client/lit-element-hydrate-support.js'
+import '@lit-labs/ssr-client/lit-element-hydrate-support.js';
 
-import { LitElement, html } from 'lit'
-import { customElement, property } from 'lit/decorators.js'
-import { type GenericJson } from '../../types/generic-json'
+import { LitElement, html } from 'lit';
+import { customElement, property } from 'lit/decorators.js';
+import { type GenericJson } from '../../types/generic-json';
 
 export interface BatchAnalyserProps {
   id: string
@@ -33,26 +33,26 @@ const formatter = new Intl.DateTimeFormat('default', {
   month: 'short',
   hour: 'numeric',
   minute: 'numeric'
-})
+});
 
 @customElement('batch-analyser')
 export class BatchAnalyser extends LitElement {
   createRenderRoot() {
-    return this
+    return this;
   }
 
   @property({ type: Object })
-    batch!: BatchAnalyserProps
+    batch!: BatchAnalyserProps;
 
   renderObject({ title, data }: { title: string, data: GenericJson | null }) {
     if (!data) {
-      return null
+      return null;
     }
 
-    const stringified = JSON.stringify(data, null, 2)
+    const stringified = JSON.stringify(data, null, 2);
 
     function handleClick() {
-      navigator.clipboard.writeText(stringified)
+      navigator.clipboard.writeText(stringified);
     }
 
     return html`
@@ -67,12 +67,12 @@ export class BatchAnalyser extends LitElement {
         <pre class="whitespace-pre-wrap"><code>${stringified}</code></pre>
         </div>
       </details>
-      `
+      `;
   }
 
   render() {
-    const { news, categories, request, response, error } = this.batch
-    const { source } = news
+    const { news, categories, request, response, error } = this.batch;
+    const { source } = news;
 
     return html`
       <div class="flex p-4 space-x-4">
@@ -149,6 +149,6 @@ export class BatchAnalyser extends LitElement {
           }
         </div>
       </div>
-    `
+    `;
   }
 }

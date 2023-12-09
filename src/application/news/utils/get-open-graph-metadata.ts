@@ -1,5 +1,5 @@
-import { type HTMLElement } from 'node-html-parser'
-import { z } from 'zod'
+import { type HTMLElement } from 'node-html-parser';
+import { z } from 'zod';
 
 export const getOpenGraphMetadata = (html: HTMLElement) => {
   return z.object({
@@ -10,5 +10,5 @@ export const getOpenGraphMetadata = (html: HTMLElement) => {
     title: html.querySelector('meta[property="og:title"]')?.getAttribute('content'),
     description: html.querySelector('meta[property="og:description"]')?.getAttribute('content'),
     imageUrl: html.querySelector('meta[property="og:image"]')?.getAttribute('content')
-  })
-}
+  });
+};

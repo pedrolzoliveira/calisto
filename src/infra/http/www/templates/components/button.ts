@@ -1,7 +1,7 @@
-import { html } from '@lit-labs/ssr'
-import { type TemplateResult } from 'lit'
-import { ifDefined } from 'lit/directives/if-defined.js'
-import { type ClassNameValue, twMerge } from 'tailwind-merge'
+import { html } from '@lit-labs/ssr';
+import { type TemplateResult } from 'lit';
+import { ifDefined } from 'lit/directives/if-defined.js';
+import { type ClassNameValue, twMerge } from 'tailwind-merge';
 
 interface ButtonProps {
   type?: 'button' | 'submit' | 'reset' | 'menu'
@@ -14,5 +14,5 @@ export function button({ className, content, type }: ButtonProps) {
     <button type=${ifDefined(type)} class="${twMerge('rounded bg-blue-700 hover:bg-blue-600 text-white px-3 py-2', className)}">
       ${content}  
     </button>
-  `
+  `;
 }

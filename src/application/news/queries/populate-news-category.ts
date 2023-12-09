@@ -1,4 +1,4 @@
-import { prismaClient } from '@/src/infra/database/prisma/client'
+import { prismaClient } from '@/src/infra/database/prisma/client';
 
 export const populateNewsCategory = async (newsLink: string) => {
   try {
@@ -14,9 +14,9 @@ export const populateNewsCategory = async (newsLink: string) => {
     FROM
       "ProfileCategory"
     ON CONFLICT DO NOTHING;
-    `
+    `;
   } catch (error) {
-    console.error('error when populating news category, news link:', newsLink)
+    console.error('error when populating news category, news link:', newsLink);
     // throw error
   }
-}
+};

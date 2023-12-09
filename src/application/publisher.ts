@@ -1,7 +1,7 @@
-import { Publisher } from '../infra/messaging/rabbitmq/publisher'
-import { processingRelationsQueue } from './chat-gpt/queues/processing-relations'
-import { newsCreatedQueue } from './news/queues/news-created'
-import { profileCategoryChangedQueue } from './profiles/queues/profile-category-changed'
+import { Publisher } from '../infra/messaging/rabbitmq/publisher';
+import { processingRelationsQueue } from './chat-gpt/queues/processing-relations';
+import { newsCreatedQueue } from './news/queues/news-created';
+import { profileCategoryChangedQueue } from './profiles/queues/profile-category-changed';
 
 export const publisher = new Publisher({
   queues: [
@@ -9,4 +9,4 @@ export const publisher = new Publisher({
     processingRelationsQueue,
     profileCategoryChangedQueue
   ]
-})
+});

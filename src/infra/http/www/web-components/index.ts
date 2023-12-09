@@ -1,2 +1,2 @@
-import './batch-analyser'
-import './input-list'
+import './batch-analyser';
+import './input-list';
