@@ -19,8 +19,7 @@ describe('news-created consumer', async () => {
   let publisherStub: SinonStub
   let link: string
   let categories: string[]
-  let newsCategories: Set<NewsCategory>
-  let expectedNewsCategories: Set<NewsCategory>
+  let newsCategories: Set<Partial<NewsCategory>>
 
   before(async () => {
     testConnection = await createConnection()
@@ -47,15 +46,16 @@ describe('news-created consumer', async () => {
 
     await waitForQueue(newsCreatedQueue)
 
-    newsCategories = new Set(await prismaClient.newsCategory.findMany())
-    expectedNewsCategories = new Set(
-      categories.map(category => ({
-        batchId: null,
-        newsLink: link,
-        category,
-        related: false,
-        processed: false
-      }))
+    newsCategories = new Set(
+      await prismaClient.newsCategory.findMany({
+        select: {
+          batchId: true,
+          newsLink: true,
+          category: true,
+          related: true,
+          processed: true
+        }
+      })
     )
   })
 
@@ -66,6 +66,15 @@ describe('news-created consumer', async () => {
   })
 
   it('creates newsCategories for each category for that news', () => {
+    const expectedNewsCategories = new Set(
+      categories.map(category => ({
+        batchId: null,
+        newsLink: link,
+        category,
+        related: false,
+        processed: false
+      }))
+    )
     assert.deepStrictEqual(newsCategories, expectedNewsCategories)
   })
 
