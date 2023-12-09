@@ -1,4 +1,4 @@
-import { type TemplateResult } from 'lit-html'
+import { type TemplateResult } from 'lit-html';
 
 declare module 'express-serve-static-core' {
   export interface Response {

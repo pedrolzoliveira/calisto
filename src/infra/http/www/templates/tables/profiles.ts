@@ -1,5 +1,5 @@
-import { html } from '@lit-labs/ssr'
-import { button } from '../components/button'
+import { html } from '@lit-labs/ssr';
+import { button } from '../components/button';
 
 export interface ProfilesTableProps {
   profiles: Array<{
@@ -50,5 +50,5 @@ export function profilesTable({ profiles }: ProfilesTableProps) {
                 }
             </tbody>
         </table>
-    </div>`
+    </div>`;
 }

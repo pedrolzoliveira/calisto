@@ -1,8 +1,8 @@
-import { type Source } from '@prisma/client'
-import { type Factory } from './factory'
-import { z } from 'zod'
-import { faker } from '@faker-js/faker'
-import { prismaClient } from '@/src/infra/database/prisma/client'
+import { type Source } from '@prisma/client';
+import { type Factory } from './factory';
+import { z } from 'zod';
+import { faker } from '@faker-js/faker';
+import { prismaClient } from '@/src/infra/database/prisma/client';
 
 class SourceFactory implements Factory<Source> {
   async create(attributes?: Partial<Source>): Promise<Source> {
@@ -10,10 +10,10 @@ class SourceFactory implements Factory<Source> {
       code: z.string().default(faker.word.words()),
       name: z.string().default(faker.company.name()),
       avatarUrl: z.string().url().nullable().default(faker.internet.avatar())
-    }).default({})
+    }).default({});
 
-    return await prismaClient.source.create({ data: sourceSchema.parse(attributes) })
+    return await prismaClient.source.create({ data: sourceSchema.parse(attributes) });
   }
 }
 
-export const sourceFactory = new SourceFactory()
+export const sourceFactory = new SourceFactory();

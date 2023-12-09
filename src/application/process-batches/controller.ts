@@ -1,12 +1,12 @@
-import { prismaClient } from '@/src/infra/database/prisma/client'
-import { Router } from 'express'
-import { layout } from '@/src/infra/http/www/templates/layout'
-import { header } from '@/src/infra/http/www/templates/header'
-import { tryParseJson } from '@/src/utils/try-parse-json'
-import { batchAnalyserPage } from '@/src/infra/http/www/templates/pages/batch-analyser'
-import { userAuthenticated } from '../users/middlewares/user-authenticated'
+import { prismaClient } from '@/src/infra/database/prisma/client';
+import { Router } from 'express';
+import { layout } from '@/src/infra/http/www/templates/layout';
+import { header } from '@/src/infra/http/www/templates/header';
+import { tryParseJson } from '@/src/utils/try-parse-json';
+import { batchAnalyserPage } from '@/src/infra/http/www/templates/pages/batch-analyser';
+import { userAuthenticated } from '../users/middlewares/user-authenticated';
 
-export const processBatchesController = Router()
+export const processBatchesController = Router();
 
 processBatchesController.get('/:id',
   userAuthenticated,
@@ -50,12 +50,12 @@ processBatchesController.get('/:id',
       request: tryParseJson(batch.request),
       response: tryParseJson(batch.response),
       error: tryParseJson(batch.error)
-    }))
+    }));
 
     return res.renderTemplate(
       layout({
         header: header(),
         body: batchAnalyserPage(batch)
       })
-    )
-  })
+    );
+  });

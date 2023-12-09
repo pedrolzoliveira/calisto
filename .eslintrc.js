@@ -3,6 +3,9 @@ module.exports = {
     es2021: true,
     node: true
   },
+  plugins: [
+    '@stylistic/js'
+  ],
   extends: ['standard-with-typescript', 'plugin:tailwindcss/recommended'],
   overrides: [
   ],
@@ -21,6 +24,9 @@ module.exports = {
     '@typescript-eslint/array-type': 'off',
     curly: 'off',
     '@typescript-eslint/no-confusing-void-expression': 'off',
-    '@typescript-eslint/no-non-null-assertion': 'off'
+    '@typescript-eslint/no-non-null-assertion': 'off',
+    semi: 'off',
+    '@typescript-eslint/semi': 'off',
+    '@stylistic/js/semi': ['error', 'always']
   }
-}
+};

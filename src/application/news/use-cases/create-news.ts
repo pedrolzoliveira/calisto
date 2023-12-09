@@ -1,4 +1,4 @@
-import { prismaClient } from '@/src/infra/database/prisma/client'
+import { prismaClient } from '@/src/infra/database/prisma/client';
 
 interface CreateNewsData {
   sourceCode: string
@@ -10,5 +10,5 @@ interface CreateNewsData {
 }
 
 export const createNews = async (data: CreateNewsData) => {
-  return await prismaClient.news.create({ data })
-}
+  return await prismaClient.news.create({ data });
+};

@@ -1,6 +1,6 @@
-import { html } from '@lit-labs/ssr'
-import { when } from 'lit/directives/when.js'
-import { newsCard, type NewsCardProps } from './news-card'
+import { html } from '@lit-labs/ssr';
+import { when } from 'lit/directives/when.js';
+import { newsCard, type NewsCardProps } from './news-card';
 
 export interface NewsFeedProps {
   news: NewsCardProps[]
@@ -9,10 +9,10 @@ export interface NewsFeedProps {
 
 export function newsFeed({ news, profileId }: NewsFeedProps) {
   if (!news.length) {
-    return []
+    return [];
   }
 
-  const lastNews = news[news.length - 1]
+  const lastNews = news[news.length - 1];
   return [
     ...news.map(newsCard),
     ...when(
@@ -25,5 +25,5 @@ export function newsFeed({ news, profileId }: NewsFeedProps) {
       ],
       () => []
     )
-  ]
+  ];
 }

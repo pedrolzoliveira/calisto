@@ -1,5 +1,5 @@
-import { html } from '@lit-labs/ssr'
-import { type Source } from '@prisma/client'
+import { html } from '@lit-labs/ssr';
+import { type Source } from '@prisma/client';
 
 export interface NewsCardProps {
   link: string
@@ -19,7 +19,7 @@ const formatter = new Intl.DateTimeFormat('default', {
   month: 'short',
   hour: 'numeric',
   minute: 'numeric'
-})
+});
 
 export function newsCard({ source, categories, ...news }: NewsCardProps) {
   return html`
@@ -61,5 +61,5 @@ export function newsCard({ source, categories, ...news }: NewsCardProps) {
           )
         }
       </div>
-  </div>`
+  </div>`;
 }

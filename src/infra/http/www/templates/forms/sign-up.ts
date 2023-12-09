@@ -1,7 +1,7 @@
-import { html } from '@lit-labs/ssr'
-import { inputClass } from '../styles/input'
-import { button } from '../components/button'
-import { ifDefined } from 'lit/directives/if-defined.js'
+import { html } from '@lit-labs/ssr';
+import { inputClass } from '../styles/input';
+import { button } from '../components/button';
+import { ifDefined } from 'lit/directives/if-defined.js';
 
 const email = (value?: string, error?: string) => {
   return html`
@@ -19,8 +19,8 @@ const email = (value?: string, error?: string) => {
       />
       ${error && html`<script>email.setCustomValidity(email.getAttribute('data-error'))</script>`}
     </div>
-  `
-}
+  `;
+};
 
 const password = (value?: string) => {
   return html`
@@ -36,8 +36,8 @@ const password = (value?: string) => {
         value=${ifDefined(value)}
       />
     </div>
-  `
-}
+  `;
+};
 
 const confirmPassword = (value?: string) => {
   return html`
@@ -52,8 +52,8 @@ const confirmPassword = (value?: string) => {
         value=${ifDefined(value)}
       />
     </div>
-  `
-}
+  `;
+};
 
 interface SignUpFormProps {
   error?: string
@@ -96,9 +96,9 @@ export const signUpForm = (data?: SignUpFormProps) => {
         confirm_password.addEventListener('input', checkPasswordsMatch)
       </script>
     </form>
-  `
-}
+  `;
+};
 
-signUpForm.email = email
-signUpForm.password = password
-signUpForm.confirmPassword = confirmPassword
+signUpForm.email = email;
+signUpForm.password = password;
+signUpForm.confirmPassword = confirmPassword;

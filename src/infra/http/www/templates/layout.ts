@@ -1,5 +1,5 @@
-import { html } from '@lit-labs/ssr'
-import { type TemplateResult } from 'lit'
+import { html } from '@lit-labs/ssr';
+import { type TemplateResult } from 'lit';
 
 interface LayoutProps {
   header?: TemplateResult | TemplateResult[] | null
@@ -23,5 +23,5 @@ export function layout({ header = null, body = null }: LayoutProps) {
         ${body}
       </body>
     </html>
-  `
+  `;
 }

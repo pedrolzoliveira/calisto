@@ -1,5 +1,5 @@
 // esbuild.config.js
-const esbuild = require('esbuild')
+const esbuild = require('esbuild');
 
 esbuild.build({
   entryPoints: ['./src/infra/http/www/entrypoint.ts'], // Your application's entry point
@@ -8,4 +8,4 @@ esbuild.build({
   loader: {
     '.ts': 'ts'
   }
-}).catch(() => process.exit(1))
+}).catch(() => process.exit(1));

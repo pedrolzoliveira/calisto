@@ -1,7 +1,7 @@
-import { html } from '@lit-labs/ssr'
-import { ifDefined } from 'lit/directives/if-defined.js'
-import { inputClass } from '../styles/input'
-import { button } from '../components/button'
+import { html } from '@lit-labs/ssr';
+import { ifDefined } from 'lit/directives/if-defined.js';
+import { inputClass } from '../styles/input';
+import { button } from '../components/button';
 
 const email = (value?: string, error?: string) => {
   return html`
@@ -16,8 +16,8 @@ const email = (value?: string, error?: string) => {
         value=${ifDefined(value)}
       />
     </div>
-  `
-}
+  `;
+};
 
 const password = (value?: string) => {
   return html`
@@ -32,8 +32,8 @@ const password = (value?: string) => {
         value=${ifDefined(value)}
       />
     </div>
-  `
-}
+  `;
+};
 
 interface SignInFormProps {
   error?: string
@@ -58,8 +58,8 @@ export const signInForm = (data?: SignInFormProps) => {
         <a class="text-blue-600 italic hover:underline" href="/users/sign-up">Inscreva-se</a>
       </p>
     </form>
-  `
-}
+  `;
+};
 
-signInForm.email = email
-signInForm.password = password
+signInForm.email = email;
+signInForm.password = password;

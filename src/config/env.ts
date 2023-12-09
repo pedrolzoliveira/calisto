@@ -1,4 +1,4 @@
-import { z } from 'zod'
+import { z } from 'zod';
 
 export const env = z.object({
   CORS_ORIGIN: z.string(),
@@ -7,4 +7,4 @@ export const env = z.object({
   RABBIT_MQ_URL: z.string(),
   PORT: z.number().default(8080),
   SESSION_SECRET: z.string()
-}).parse(process.env)
+}).parse(process.env);

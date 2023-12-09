@@ -1,4 +1,4 @@
-import { prismaClient } from '../infra/database/prisma/client'
+import { prismaClient } from '../infra/database/prisma/client';
 
 export async function truncateDatabase() {
   return await prismaClient.$executeRaw`
@@ -18,5 +18,5 @@ export async function truncateDatabase() {
         -- Enable triggers again
         EXECUTE 'SET session_replication_role = DEFAULT;';
     END
-    $do$;`
+    $do$;`;
 }

@@ -1,5 +1,5 @@
-import { z } from 'zod'
-import { type HTMLElement } from 'node-html-parser'
+import { z } from 'zod';
+import { type HTMLElement } from 'node-html-parser';
 
 export const getSourceTags = (html: HTMLElement) => {
   return z
@@ -11,5 +11,5 @@ export const getSourceTags = (html: HTMLElement) => {
         .querySelectorAll('meta[property="article:tag"]')
         .map(tag => tag.getAttribute('content'))
         .filter(Boolean)
-    )
-}
+    );
+};

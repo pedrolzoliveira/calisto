@@ -7,4 +7,4 @@ export const MODELS = {
     name: 'gpt-3.5-turbo-16k',
     limit: 16383
   }
-} as const
+} as const;

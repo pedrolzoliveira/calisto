@@ -1,14 +1,14 @@
-import { prismaClient } from '@/src/infra/database/prisma/client'
-import { processingRelationsQueue } from '../queues/processing-relations'
-import { relateCategories } from '../use-cases/relate-categories'
-import { logger } from '@/src/infra/logger'
-import { Consumer } from '@/src/infra/messaging/rabbitmq/consumer'
-import { publisher } from '../../publisher'
+import { prismaClient } from '@/src/infra/database/prisma/client';
+import { processingRelationsQueue } from '../queues/processing-relations';
+import { relateCategories } from '../use-cases/relate-categories';
+import { logger } from '@/src/infra/logger';
+import { Consumer } from '@/src/infra/messaging/rabbitmq/consumer';
+import { publisher } from '../../publisher';
 
 export const processingRelationsConsumer = new Consumer({
   queue: processingRelationsQueue,
   fn: async ({ link }) => {
-    logger.info(`processing-relations consumer: ${link}`)
+    logger.info(`processing-relations consumer: ${link}`);
     await prismaClient.$transaction(async (transaction) => {
       try {
         const [data] = await transaction.$queryRaw<{ batchId: string, content: string, categories: string[] }[]>`
@@ -38,20 +38,20 @@ export const processingRelationsConsumer = new Consumer({
               array_agg(ProcessedCategories."category") AS categories
           FROM "News"
           JOIN ProcessedCategories ON ProcessedCategories."newsLink" = "News"."link"
-          GROUP BY "News"."content", ProcessedCategories."batchId";`
+          GROUP BY "News"."content", ProcessedCategories."batchId";`;
 
         if (!data) {
-          return
+          return;
         }
 
-        const { batchId, content, categories } = data
+        const { batchId, content, categories } = data;
 
         const relatedCategories = await relateCategories({
           batchId,
           content,
           categories,
           transaction
-        })
+        });
 
         const [unprocessedCategories] = await Promise.all([
           transaction.newsCategory.count({
@@ -68,18 +68,18 @@ export const processingRelationsConsumer = new Consumer({
               category: { in: relatedCategories }
             }
           })
-        ])
+        ]);
 
         if (unprocessedCategories > 0) {
-          publisher.publish('processing-relations', { link })
+          publisher.publish('processing-relations', { link });
         }
       } catch (error) {
-        logger.error(error)
-        throw error
+        logger.error(error);
+        throw error;
       }
     }, {
       maxWait: 5000,
       timeout: 10000
-    })
+    });
   }
-})
+});

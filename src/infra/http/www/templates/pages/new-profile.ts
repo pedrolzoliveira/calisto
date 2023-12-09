@@ -1,5 +1,5 @@
-import { html } from '@lit-labs/ssr'
-import { button } from '../components/button'
+import { html } from '@lit-labs/ssr';
+import { button } from '../components/button';
 
 export function newProfilePage() {
   return html`
@@ -19,5 +19,5 @@ export function newProfilePage() {
         ${button({ type: 'submit', content: 'Criar' })}
       </div>
       </form>
-    </main>`
+    </main>`;
 }
