@@ -10,6 +10,7 @@ import { prismaClient } from '@/src/infra/database/prisma/client'
 import assert from 'node:assert'
 import { MODELS } from '../models'
 import { createMessages } from '../prompts/categorize'
+import { truncateDatabase } from '@/src/test-utils/truncate-database'
 
 describe('relate-categories', async () => {
   const categories = ['any_categories', 'other_categories', 'more_categories']
@@ -40,6 +41,8 @@ describe('relate-categories', async () => {
   }
 
   before(async () => {
+    await truncateDatabase();
+
     [news] = await Promise.all([
       newsFactory.create({ content }),
       profileFactory.create({ categories })

@@ -12,6 +12,7 @@ import { createChannel } from '@/src/infra/messaging/rabbitmq/create-channel'
 import { type Channel, type Connection } from 'amqplib'
 import { type NewsCategory } from '@prisma/client'
 import { waitForQueue } from '@/src/test-utils/wait-for-queue'
+import { truncateDatabase } from '@/src/test-utils/truncate-database'
 
 describe('news-created consumer', async () => {
   let testConnection: Connection
@@ -22,6 +23,8 @@ describe('news-created consumer', async () => {
   let newsCategories: Set<Partial<NewsCategory>>
 
   before(async () => {
+    await truncateDatabase()
+
     testConnection = await createConnection()
     testChannel = await createChannel(testConnection)
 

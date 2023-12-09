@@ -8,6 +8,7 @@ import { Scraper } from './scraper'
 import { prismaClient } from '@/src/infra/database/prisma/client'
 import { publisher } from '../publisher'
 import { type News } from '@prisma/client'
+import { truncateDatabase } from '@/src/test-utils/truncate-database'
 
 const makeHTML = (title: string) => `<html><meta property="og:title" content="${title}"></html>`
 
@@ -28,6 +29,8 @@ describe('scraper', async () => {
   })
 
   before(async () => {
+    await truncateDatabase()
+
     axiosGetStub = stub(axios, 'get').callsFake(async () => ({ data: makeHTML(title) }))
     publisherStub = stub(publisher, 'publish')
 

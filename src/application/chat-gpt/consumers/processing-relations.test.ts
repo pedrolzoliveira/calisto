@@ -15,8 +15,8 @@ import { prismaClient } from '@/src/infra/database/prisma/client'
 import assert from 'node:assert'
 import { populateNewsCategory } from '../../news/queries/populate-news-category'
 import { faker } from '@faker-js/faker'
+import { truncateDatabase } from '@/src/test-utils/truncate-database'
 
-// #todo: fix test, it's failing when running all tests, it's not cleaning the database
 describe('processing-relations consumer', async () => {
   let testConnection: Connection
   let testChannel: Channel
@@ -37,9 +37,10 @@ describe('processing-relations consumer', async () => {
   }
 
   before(async () => {
+    await truncateDatabase()
+
     testConnection = await createConnection()
     testChannel = await createChannel(testConnection)
-
     await testChannel.purgeQueue('processing-relations')
 
     stub(openai, 'createChatCompletion').returns(createChatCompletionResponse as any)
@@ -53,7 +54,6 @@ describe('processing-relations consumer', async () => {
     await populateNewsCategory(newsLink)
 
     testPublisher.publish('processing-relations', { link: newsLink })
-
     await processingRelationsConsumer.consume()
     await waitForQueue(processingRelationsQueue)
 
