@@ -2,10 +2,18 @@ import { spawn } from 'child_process'
 
 async function initiateDatabase() {
   return await new Promise<void>((resolve, reject) => {
-    const childProcess = spawn('yarn', ['prisma', 'db', 'push'], { env: process.env })
+    const childProcess = spawn('yarn', ['prisma', 'db', 'push', '--accept-data-loss'], { env: process.env })
 
-    childProcess.on('exit', resolve)
-    childProcess.on('error', reject)
+    childProcess.on('exit', (code) => {
+      switch (code) {
+        case 0:
+          resolve()
+          break
+        default:
+          // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
+          reject(new Error(`Database setup failed with code ${code}`))
+      }
+    })
   })
 }
 

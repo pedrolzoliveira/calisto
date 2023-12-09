@@ -1,49 +1,72 @@
 import { type z, type AnyZodObject } from 'zod'
 import { type Channel } from 'amqplib'
-import { createChannel } from './create-channel'
-import { logger } from '@/src/infra/logger'
+import { Publisher } from './publisher'
+import { Consumer } from './consumer'
 
-export interface QueueArgs<T extends AnyZodObject = AnyZodObject> {
-  name: string
-  schema: T
+export interface QueueArgs<TSchema extends AnyZodObject = AnyZodObject, TName extends string = string> {
+  name: TName
+  schema: TSchema
+  channel?: Channel
 }
 
-export class Queue<T extends AnyZodObject = AnyZodObject> {
-  private channel!: Channel
-  private readonly name: string
-  private readonly schema: T
+export class Queue<TSchema extends AnyZodObject = AnyZodObject, TName extends string = string> {
+  private channel?: Channel
+  readonly name: TName
+  readonly schema: TSchema
 
-  constructor(args: QueueArgs<T>) {
+  constructor(args: QueueArgs<TSchema, TName>) {
     this.name = args.name
     this.schema = args.schema
+    this.channel = args.channel
   }
 
-  private async assertQueue() {
+  public bindChannel(channel: Channel) {
+    this.channel = channel
+    return this
+  }
+
+  public async assertQueue() {
     if (!this.channel) {
-      this.channel = await createChannel()
-      await this.channel.assertQueue(this.name)
+      throw new Error('Channel not bound')
     }
+
+    await this.channel.assertQueue(this.name)
   }
 
-  public async consume(consumeFunction: (data: z.infer<T>) => any) {
-    await this.assertQueue()
-    logger.info(`consume: ${this.name}`)
-
-    this.channel.consume(this.name, async (message) => {
-      if (message) {
-        const data = this.schema.parse(JSON.parse(message.content.toString()))
-        await consumeFunction(data)
-        this.channel.ack(message)
-      }
+  public createConsumer(fn: (data: z.infer<TSchema>) => any) {
+    return new Consumer({
+      channel: this.channel,
+      queue: this as Queue,
+      fn
     })
   }
 
-  public async send(data: z.infer<T>) {
-    await this.assertQueue()
+  public createPublisher() {
+    return new Publisher({
+      channel: this.channel,
+      queues: [this as Queue<TSchema, TName>]
+    })
+  }
 
-    const parsedData = this.schema.parse(data)
-    return this.channel.sendToQueue(
-      this.name, Buffer.from(JSON.stringify(parsedData))
-    )
+  /**
+   * @throws {Error}
+   */
+  public createBuffer(data: z.infer<TSchema>) {
+    const validation = this.schema.safeParse(data)
+    if (!validation.success) {
+      throw new Error(`Invalid data for queue ${this.name}: ${validation.error.message}`)
+    }
+
+    const validatedData = validation.data
+    return Buffer.from(JSON.stringify(validatedData))
+  }
+
+  public async getMessageCount() {
+    if (!this.channel) {
+      throw new Error('Channel not bound')
+    }
+
+    const { messageCount } = await this.channel.checkQueue(this.name)
+    return messageCount
   }
 }

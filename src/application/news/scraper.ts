@@ -2,10 +2,10 @@ import { type HTMLElement } from 'node-html-parser'
 import { getHTML } from './utils/get-html'
 import { getOpenGraphMetadata } from './utils/get-open-graph-metadata'
 import { createNews } from './use-cases/create-news'
-import { newsCreatedQueue } from './queues/news-created'
 import { isNewsCreated } from './utils/is-news-created'
 import { logger } from '@/src/infra/logger'
 import { AxiosError } from 'axios'
+import { publisher } from '../publisher'
 
 export interface ScraperArgs {
   sourceCode: string
@@ -52,7 +52,7 @@ export class Scraper {
           sourceCode: this.sourceCode, link, content, ...ogMetadata
         })
 
-        await newsCreatedQueue.send({ link: news.link })
+        publisher.publish('news-created', { link: news.link })
       } catch (error) {
         logger.error(`error creating news for ${link}`)
       }

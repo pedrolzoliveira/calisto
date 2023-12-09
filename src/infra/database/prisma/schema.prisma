@@ -45,6 +45,7 @@ model ProfileCategory {
 }
 
 model NewsCategory {
+  id String @id @default(uuid())
   news News @relation(fields: [newsLink], references: [link])
   newsLink String
   category String

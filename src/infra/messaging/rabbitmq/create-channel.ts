@@ -1,7 +1,5 @@
-import { env } from '@/src/config/env'
-import { connect } from 'amqplib'
+import { type Connection } from 'amqplib'
 
-export const createChannel = async () => {
-  const connection = await connect(env.RABBIT_MQ_URL)
+export const createChannel = async (connection: Connection) => {
   return await connection.createChannel()
 }
