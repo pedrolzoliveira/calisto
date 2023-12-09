@@ -26,6 +26,7 @@ module.exports = {
     '@typescript-eslint/no-confusing-void-expression': 'off',
     '@typescript-eslint/no-non-null-assertion': 'off',
     semi: 'off',
+    '@typescript-eslint/semi': 'off',
     '@stylistic/js/semi': ['error', 'always']
   }
 };
