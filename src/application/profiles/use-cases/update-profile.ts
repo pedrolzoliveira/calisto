@@ -1,5 +1,6 @@
 import { prismaClient } from '@/src/infra/database/prisma/client';
 import { profileCategoryChangedQueue } from '../queues/profile-category-changed';
+import { publisher } from '../../publisher';
 
 export const updateProfile = async (
   data: {
@@ -28,7 +29,7 @@ export const updateProfile = async (
       where: { id: data.id }
     });
 
-    await profileCategoryChangedQueue.send({ profileId: profile.id });
+    publisher.publish('profile-category-changed', { profileId: profile.id });
 
     return profile;
   });

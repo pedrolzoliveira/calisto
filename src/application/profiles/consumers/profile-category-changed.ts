@@ -1,6 +1,6 @@
 import { prismaClient } from '@/src/infra/database/prisma/client';
 import { profileCategoryChangedQueue } from '../queues/profile-category-changed';
-import { processingRelationsQueue } from '../../chat-gpt/queues/processing-relations';
+import { publisher } from '../../publisher';
 
 export const profileCategoryChangedConsumer = profileCategoryChangedQueue.createConsumer(async ({ profileId }) => {
   await prismaClient.$transaction(async tx => {
@@ -18,8 +18,9 @@ export const profileCategoryChangedConsumer = profileCategoryChangedQueue.create
         ),
         InsertedData AS (
           INSERT INTO
-            "NewsCategory" ("category", "newsLink", "related", "processed")
+            "NewsCategory" ("id", "category", "newsLink", "related", "processed")
           SELECT DISTINCT
+            gen_random_uuid(),
             "ProfileCategory"."category",
             LastNews."link",
             false,
@@ -41,8 +42,8 @@ export const profileCategoryChangedConsumer = profileCategoryChangedQueue.create
         InsertedData;
     `.then(data => data.map(({ newsLink }) => newsLink));
 
-    await Promise.all(
-      newsLinks.map(async link => await processingRelationsQueue.send({ link }))
-    );
+    for (const link of newsLinks) {
+      publisher.publish('processing-relations', { link });
+    }
   });
 });
