@@ -4,11 +4,14 @@ import { newsCreatedConsumer } from '@/src/application/news/consumers/news-creat
 import { profileCategoryChangedConsumer } from '@/src/application/profiles/consumers/profile-category-changed';
 import { createConnection } from '../infra/messaging/rabbitmq/create-connection';
 import { createChannel } from '../infra/messaging/rabbitmq/create-channel';
+import { publisher } from '../application/publisher';
 
 createConnection().then((connection) => {
   createChannel(connection).then(async channel => {
     const queueName = process.argv[2];
     const queues = ['processing-relations', 'news-created', 'profile-category-changed'];
+
+    publisher.bindChannel(channel);
 
     if (!queueName) {
       throw new Error('Queue name not provided. available queues: ' + queues.join(', '));
