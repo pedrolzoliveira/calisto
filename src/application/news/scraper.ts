@@ -54,7 +54,7 @@ export class Scraper {
 
         publisher.publish('news-created', { link: news.link });
       } catch (error) {
-        logger.error(`error creating news for ${link}`);
+        logger.error(`error creating news for ${link}: ${(error as Error).message}`);
       }
     } catch (error) {
       if (error instanceof AxiosError) {
