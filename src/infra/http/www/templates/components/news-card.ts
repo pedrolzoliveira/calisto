@@ -1,3 +1,4 @@
+import { nothing } from 'lit';
 import { html } from '@lit-labs/ssr';
 import { type Source } from '@prisma/client';
 
@@ -57,10 +58,11 @@ export function newsCard({ isAdmin, source, categories, ...news }: NewsCardProps
         <h1 class="text-lg font-semibold">${news.title}</h1>
         <p class="text-xs text-gray-700">${news.description}</p>
         ${
-          isAdmin &&
-          news.batchesIds?.map(
+          isAdmin
+          ? news.batchesIds?.map(
             (batchId, index) => html`<br><a target="_blank" class="text-xs text-gray-700" href="/process-batches/${batchId}">Analisar batch #${index + 1}</a>`
           )
+          : nothing
         }
       </div>
   </div>`;
