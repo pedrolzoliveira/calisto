@@ -28,6 +28,8 @@ server.use((req, res, next) => {
 });
 
 server.use('/dist', express.static(join(__dirname, 'www', 'dist')));
+server.use('/assets', express.static(join(__dirname, 'www', 'assets')));
+
 server.use(urlencoded({ extended: true }));
 
 server.use('/', landingPageController);

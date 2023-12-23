@@ -18,7 +18,7 @@ export function landingPage() {
             <h1 class="text-4xl">Fique por dentro do que te interessa.</h1>
             <p class="text-sm">Utilizamos IA para filtrar notícias importantes para você!</p>
           </div>
-          <img class="w-96 h-96 border border-red-500" alt="imagem mostrando a aplicação?"/>
+          <img class="w-2/3" src="/assets/news-example-1.jpeg" alt="imagem mostrando a aplicação?"/>
         </div>
         <div>
           <h1 class="text-4xl">Como funciona?</h1>
