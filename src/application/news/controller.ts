@@ -29,7 +29,11 @@ newsController.get('/',
       return res.renderTemplate(
         layout({
           header: header(),
-          body: newsPage({ news: [], profileId: null })
+          body: newsPage({
+            news: [],
+            profileId: null,
+            isAdmin: req.session.user?.role === 'admin'
+          })
         })
       );
     }
@@ -46,7 +50,11 @@ newsController.get('/',
     return res.renderTemplate(
       layout({
         header: header({ profiles, profileId: data.profileId }),
-        body: newsPage({ news, profileId: data.profileId })
+        body: newsPage({
+          news,
+          profileId: data.profileId,
+          isAdmin: req.session.user?.role === 'admin'
+        })
       })
     );
   }
