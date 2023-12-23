@@ -72,6 +72,10 @@ newsController.get('/feed',
     }
 
     return res.renderTemplate(
-      newsFeed({ news, profileId: data.profileId })
+      newsFeed({
+        news,
+        profileId: data.profileId,
+        isAdmin: req.session.user?.role === 'admin'
+      })
     );
   });

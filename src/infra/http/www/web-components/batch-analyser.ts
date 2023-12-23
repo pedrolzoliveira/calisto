@@ -45,10 +45,6 @@ export class BatchAnalyser extends LitElement {
     batch!: BatchAnalyserProps;
 
   renderObject({ title, data }: { title: string, data: GenericJson | null }) {
-    if (!data) {
-      return null;
-    }
-
     const stringified = JSON.stringify(data, null, 2);
 
     function handleClick() {
@@ -110,6 +106,7 @@ export class BatchAnalyser extends LitElement {
           </div>
         </div>
         <div class="flex flex-col w-1/2 border rounded bg-white h-[90vh] overflow-y-scroll p-4">
+          <p class="px-4 text-gray-600 text-sm">BatchId: ${this.batch.id}</p>
           <details open>
             <summary class="flex justify-between border-b p-4">
               <p class="cursor-pointer">Categorias</p>

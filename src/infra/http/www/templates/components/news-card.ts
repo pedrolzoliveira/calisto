@@ -2,6 +2,7 @@ import { html } from '@lit-labs/ssr';
 import { type Source } from '@prisma/client';
 
 export interface NewsCardProps {
+  isAdmin?: boolean
   link: string
   title: string
   description: string | null
@@ -21,7 +22,7 @@ const formatter = new Intl.DateTimeFormat('default', {
   minute: 'numeric'
 });
 
-export function newsCard({ source, categories, ...news }: NewsCardProps) {
+export function newsCard({ isAdmin, source, categories, ...news }: NewsCardProps) {
   return html`
     <div class="flex flex-col w-1/3 border rounded bg-white">
       <div class="p-4 flex border-b justify-between">
@@ -56,6 +57,7 @@ export function newsCard({ source, categories, ...news }: NewsCardProps) {
         <h1 class="text-lg font-semibold">${news.title}</h1>
         <p class="text-xs text-gray-700">${news.description}</p>
         ${
+          isAdmin &&
           news.batchesIds?.map(
             (batchId, index) => html`<br><a target="_blank" class="text-xs text-gray-700" href="/process-batches/${batchId}">Analisar batch #${index + 1}</a>`
           )

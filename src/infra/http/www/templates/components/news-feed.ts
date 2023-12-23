@@ -3,18 +3,19 @@ import { when } from 'lit/directives/when.js';
 import { newsCard, type NewsCardProps } from './news-card';
 
 export interface NewsFeedProps {
+  isAdmin?: boolean
   news: NewsCardProps[]
   profileId: string
 }
 
-export function newsFeed({ news, profileId }: NewsFeedProps) {
+export function newsFeed({ isAdmin, news, profileId }: NewsFeedProps) {
   if (!news.length) {
     return [];
   }
 
   const lastNews = news[news.length - 1];
   return [
-    ...news.map(newsCard),
+    ...news.map(news => newsCard({ ...news, isAdmin })),
     ...when(
       !lastNews.lastRow,
       () => [
