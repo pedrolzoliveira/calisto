@@ -20,8 +20,18 @@ export function landingPage(news: NewsCardProps[]) {
         <div class="flex justify-around w-full h-screen">
           <div class="flex flex-col justify-center space-y-2 w-[50vw] pl-[20vw]">
             <h1 class="text-5xl">Fique por dentro do que te interessa.</h1>
-            <p class="text-xs">Utilizamos IA para filtrar notícias relevantes para você, criando um feed personalizado para suas necessidades, facilitando sua busca por informação!</p>
+            <p class="text-sm">Utilizamos IA para filtrar notícias relevantes para você, criando um feed personalizado para suas necessidades, facilitando sua busca por informação!</p>          
             <a class="${twJoin(buttonClass, 'flex justify-center')}" href="/users/sign-up">Inscreva-se!</a>
+            <div class="flex justify-between w-full">
+              <div class="flex flex-col w-full">
+                <a class="text-sm text-blue-600 italic hover:underline" href="/about">Entenda como funciona</a>
+                <a class="text-sm text-blue-600 italic hover:underline" href="/pricing">Ver preços</a>
+              </div>
+              <p class="text-sm w-full text-end">
+                Já tem uma conta?
+                <a class="text-blue-600 italic hover:underline" href="/users/sign-in">Entrar</a>
+              </p>
+            </div>
           </div>
           <div id="newsFeed" class="flex flex-col space-y-2 h-screen overflow-x-hidden overflow-y-hidden items-center w-[50vw]">
             ${repeat(news, newsCard)}
