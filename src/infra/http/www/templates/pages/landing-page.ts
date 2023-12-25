@@ -1,7 +1,7 @@
 import { html } from '@lit-labs/ssr';
 import { repeat } from 'lit/directives/repeat.js';
-import { type NewsCardProps, newsCard } from './components/news-card';
-import { buttonClass } from './styles/button';
+import { type NewsCardProps, newsCard } from '../components/news-card';
+import { buttonClass } from '../styles/button';
 import { twJoin } from 'tailwind-merge';
 
 export function landingPage(news: NewsCardProps[]) {

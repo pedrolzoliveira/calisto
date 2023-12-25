@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { landingPage } from './templates/landing-page';
+import { landingPage } from './templates/pages/landing-page';
 import { getNewsFeed } from '@/src/application/news/queries/get-news-feed';
 
 export const landingPageController = Router();
