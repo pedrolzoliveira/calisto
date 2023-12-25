@@ -23,10 +23,7 @@ export function landingPage(news: NewsCardProps[]) {
             <p class="text-sm">Utilizamos IA para filtrar notícias relevantes para você, criando um feed personalizado para suas necessidades, facilitando sua busca por informação!</p>          
             <a class="${twJoin(buttonClass, 'flex justify-center')}" href="/users/sign-up">Inscreva-se!</a>
             <div class="flex justify-between w-full">
-              <div class="flex flex-col w-full">
-                <a class="text-sm text-blue-600 italic hover:underline" href="/about">Entenda como funciona</a>
-                <a class="text-sm text-blue-600 italic hover:underline" href="/pricing">Ver preços</a>
-              </div>
+              <a class="text-sm text-blue-600 italic hover:underline w-full" href="/learn-more">Saiba mais</a>
               <p class="text-sm w-full text-end">
                 Já tem uma conta?
                 <a class="text-blue-600 italic hover:underline" href="/users/sign-in">Entrar</a>
