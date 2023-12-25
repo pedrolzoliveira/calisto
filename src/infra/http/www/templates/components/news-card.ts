@@ -10,9 +10,9 @@ export interface NewsCardProps {
   imageUrl: string | null
   createdAt: Date
   categories: string[]
-  batchesIds: string[]
+  batchesIds?: string[]
   source: Source
-  lastRow: boolean
+  lastRow?: boolean
 }
 
 const formatter = new Intl.DateTimeFormat('default', {
@@ -25,7 +25,7 @@ const formatter = new Intl.DateTimeFormat('default', {
 
 export function newsCard({ isAdmin, source, categories, ...news }: NewsCardProps) {
   return html`
-    <div class="flex flex-col w-1/3 border rounded bg-white">
+    <div class="flex flex-col w-1/3 min-w-[480px] border rounded bg-white">
       <div class="p-4 flex border-b justify-between">
           <img src="${source.avatarUrl ?? ''}" alt="news source image" class="rounded-full w-10 h-10">
           <div class="flex-1 flex flex-col px-4">
