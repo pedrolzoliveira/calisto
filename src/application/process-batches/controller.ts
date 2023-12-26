@@ -2,9 +2,9 @@ import { prismaClient } from '@/src/infra/database/prisma/client';
 import { Router } from 'express';
 import { layout } from '@/src/infra/http/www/templates/layout';
 import { header } from '@/src/infra/http/www/templates/header';
-import { tryParseJson } from '@/src/utils/try-parse-json';
 import { batchAnalyserPage } from '@/src/infra/http/www/templates/pages/batch-analyser';
 import { userAuthenticated } from '../users/middlewares/user-authenticated';
+import { type GenericJson } from '@/src/infra/http/types/generic-json';
 
 export const processBatchesController = Router();
 
@@ -47,9 +47,9 @@ processBatchesController.get('/:id',
         ...batch.news,
         createdAt: batch.news.createdAt.toISOString()
       },
-      request: tryParseJson(batch.request),
-      response: tryParseJson(batch.response),
-      error: tryParseJson(batch.error)
+      request: batch.request as GenericJson | null,
+      response: batch.response as GenericJson | null,
+      error: batch.error as GenericJson | null
     }));
 
     return res.renderTemplate(
