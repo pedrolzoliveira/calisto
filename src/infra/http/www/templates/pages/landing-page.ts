@@ -11,14 +11,15 @@ export function landingPage(news: NewsCardProps[]) {
       <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <script src="/dist/bundle.js"></script>
         <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" />
         <link rel="stylesheet" href="/dist/tailwind.css">
+        <link rel="icon" type="image/x-icon" href="/assets/flare.svg">
         <title>Light Beam News</title>
       </head>
       <body class="bg-gray-100 flex flex-col w-full">
         <div class="flex justify-around w-full h-screen">
           <div class="flex flex-col justify-center space-y-2 w-[50vw] pl-[20vw]">
+            <img class="pb-12" src="/assets/logo.svg" alt="logo"/>
             <h1 class="text-5xl">Fique por dentro do que te interessa.</h1>
             <p class="text-sm">Utilizamos IA para filtrar notícias relevantes para você, criando um feed personalizado para suas necessidades, facilitando sua busca por informação!</p>          
             <a class="${twJoin(buttonClass, 'flex justify-center')}" href="/users/sign-up">Inscreva-se!</a>
