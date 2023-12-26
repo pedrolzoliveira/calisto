@@ -19,7 +19,7 @@ export function layout({ header = null, body = null }: LayoutProps) {
         <link rel="icon" type="image/x-icon" href="/assets/flare.svg">
         <title>Light Beam News</title>
       </head>
-      <body class="bg-gray-100 flex flex-col">
+      <body class="bg-gray-100 flex flex-col overflow-y-scroll">
         ${header}
         ${body}
       </body>
