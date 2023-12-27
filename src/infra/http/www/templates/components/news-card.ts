@@ -10,7 +10,6 @@ export interface NewsCardProps {
   imageUrl: string | null
   createdAt: Date
   categories: string[]
-  batchesIds?: string[]
   source: Source
   lastRow?: boolean
 }
