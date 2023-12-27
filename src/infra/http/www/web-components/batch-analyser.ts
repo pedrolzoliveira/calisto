@@ -3,12 +3,21 @@ import '@lit-labs/ssr-client/lit-element-hydrate-support.js';
 import { LitElement, html } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
 import { type GenericJson } from '../../types/generic-json';
+import { repeat } from 'lit/directives/repeat.js';
 
-export interface BatchAnalyserProps {
+interface Batch {
   id: string
   request: GenericJson | null
   response: GenericJson | null
   error: GenericJson | null
+  categories: {
+    category: string
+    related: boolean
+  }[]
+}
+
+export interface BatchAnalyserProps {
+  batches: Batch[]
   news: {
     link: string
     title: string
@@ -21,10 +30,6 @@ export interface BatchAnalyserProps {
       avatarUrl: string | null
     }
   }
-  categories: {
-    category: string
-    related: boolean
-  }[]
 }
 
 const formatter = new Intl.DateTimeFormat('default', {
@@ -42,7 +47,7 @@ export class BatchAnalyser extends LitElement {
   }
 
   @property({ type: Object })
-    batch!: BatchAnalyserProps;
+    data!: BatchAnalyserProps;
 
   renderObject({ title, data }: { title: string, data: GenericJson | null }) {
     const stringified = JSON.stringify(data, null, 2);
@@ -67,7 +72,7 @@ export class BatchAnalyser extends LitElement {
   }
 
   render() {
-    const { news, categories, request, response, error } = this.batch;
+    const { news } = this.data;
     const { source } = news;
 
     return html`
@@ -105,44 +110,54 @@ export class BatchAnalyser extends LitElement {
               </details>
           </div>
         </div>
-        <div class="flex flex-col w-1/2 border rounded bg-white h-[90vh] overflow-y-scroll p-4">
-          <p class="px-4 text-gray-600 text-sm">BatchId: ${this.batch.id}</p>
-          <details open>
-            <summary class="flex justify-between border-b p-4">
-              <p class="cursor-pointer">Categorias</p>
-            </summary>
-            <div class="flex w-full justify-between p-4">
-              <div>
-                <h2 class="font-bold">Categorias analisadas</h2>
-                <ul>
-                  ${categories.map(({ category }) => html`<li>${category}</li>`)}
-                </ul>
-              </div>
-              <div>
-                <h2 class="font-bold">Categorias relacionadas</h2>
-                <ul>
-                  ${categories.filter(({ related }) => related).map(({ category }) => html`<li>${category}</li>`)}
-                </ul>
-              </div>
-            </div>
-          </details>
+        <div class="w-1/2 border rounded bg-white h-[90vh] overflow-y-scroll">
           ${
-            this.renderObject({
-              title: 'Request',
-              data: request
-            })
-          }
-          ${
-            this.renderObject({
-              title: 'Response',
-              data: response
-            })
-          }
-          ${
-            this.renderObject({
-              title: 'Error',
-              data: error
-            })
+            repeat(
+              this.data.batches,
+              ({ id }) => id,
+              batch => html`
+                <div class="flex flex-col p-4 border-b">
+                  <p class="px-4 text-gray-600 text-sm">BatchId: ${batch.id}</p>
+                  <details open>
+                    <summary class="flex justify-between border-b p-4">
+                      <p class="cursor-pointer">Categorias</p>
+                    </summary>
+                    <div class="flex w-full justify-between p-4">
+                      <div>
+                        <h2 class="font-bold">Categorias analisadas</h2>
+                        <ul>
+                          ${batch.categories.map(({ category }) => html`<li>${category}</li>`)}
+                        </ul>
+                      </div>
+                      <div>
+                        <h2 class="font-bold">Categorias relacionadas</h2>
+                        <ul>
+                          ${batch.categories.filter(({ related }) => related).map(({ category }) => html`<li>${category}</li>`)}
+                        </ul>
+                      </div>
+                    </div>
+                  </details>
+                  ${
+                    this.renderObject({
+                      title: 'Request',
+                      data: batch.request
+                    })
+                  }
+                  ${
+                    this.renderObject({
+                      title: 'Response',
+                      data: batch.response
+                    })
+                  }
+                  ${
+                    this.renderObject({
+                      title: 'Error',
+                      data: batch.error
+                    })
+                  }
+                </div>
+              `
+            )
           }
         </div>
       </div>

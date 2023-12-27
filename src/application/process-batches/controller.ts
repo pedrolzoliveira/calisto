@@ -8,54 +8,62 @@ import { type GenericJson } from '@/src/infra/http/types/generic-json';
 
 export const processBatchesController = Router();
 
-processBatchesController.get('/:id',
+processBatchesController.get('/',
   userAuthenticated,
   async (req, res) => {
-    const batch = await prismaClient.processBatch.findUniqueOrThrow({
-      where: { id: req.params.id },
+    const data = await prismaClient.news.findUniqueOrThrow({
+      where: { link: req.query.newsLink },
       select: {
-        id: true,
-        request: true,
-        response: true,
-        error: true,
-        news: {
+        link: true,
+        title: true,
+        description: true,
+        content: true,
+        imageUrl: true,
+        createdAt: true,
+        source: {
           select: {
-            link: true,
-            title: true,
-            description: true,
-            content: true,
-            imageUrl: true,
-            createdAt: true,
-            source: {
+            name: true,
+            avatarUrl: true
+          }
+        },
+        batches: {
+          select: {
+            id: true,
+            request: true,
+            response: true,
+            error: true,
+            categories: {
               select: {
-                name: true,
-                avatarUrl: true
+                category: true,
+                related: true
               }
             }
           }
-        },
-        categories: {
-          select: {
-            category: true,
-            related: true
-          }
         }
       }
-    }).then(batch => ({
-      ...batch,
+    }).then(data => ({
       news: {
-        ...batch.news,
-        createdAt: batch.news.createdAt.toISOString()
+        link: data.link,
+        title: data.title,
+        description: data.description,
+        content: data.content,
+        imageUrl: data.imageUrl,
+        createdAt: data.createdAt.toISOString(),
+        source: data.source
       },
-      request: batch.request as GenericJson | null,
-      response: batch.response as GenericJson | null,
-      error: batch.error as GenericJson | null
+      batches: data.batches.map(batch => ({
+        id: batch.id,
+        request: batch.request as GenericJson | null,
+        response: batch.response as GenericJson | null,
+        error: batch.error as GenericJson | null,
+        categories: batch.categories
+      }))
     }));
 
     return res.renderTemplate(
       layout({
         header: header(),
-        body: batchAnalyserPage(batch)
+        body: batchAnalyserPage(data)
       })
     );
   });

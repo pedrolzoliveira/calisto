@@ -59,9 +59,7 @@ export function newsCard({ isAdmin, source, categories, ...news }: NewsCardProps
         <p class="text-xs text-gray-700">${news.description}</p>
         ${
           isAdmin
-          ? news.batchesIds?.map(
-            (batchId, index) => html`<br><a target="_blank" class="text-xs text-gray-700" href="/process-batches/${batchId}">Analisar batch #${index + 1}</a>`
-          )
+          ? html`<br><a target="_blank" class="text-xs text-gray-700" href="/process-batches?newsLink=${news.link}">Analisar batches</a>`
           : nothing
         }
       </div>
