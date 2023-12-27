@@ -16,7 +16,7 @@ interface Batch {
   }[]
 }
 
-export interface BatchAnalyserProps {
+export interface NewsAnalyserProps {
   batches: Batch[]
   news: {
     link: string
@@ -40,14 +40,14 @@ const formatter = new Intl.DateTimeFormat('default', {
   minute: 'numeric'
 });
 
-@customElement('batch-analyser')
-export class BatchAnalyser extends LitElement {
+@customElement('news-analyser')
+export class NewsAnalyser extends LitElement {
   createRenderRoot() {
     return this;
   }
 
   @property({ type: Object })
-    data!: BatchAnalyserProps;
+    data!: NewsAnalyserProps;
 
   renderObject({ title, data }: { title: string, data: GenericJson | null }) {
     const stringified = JSON.stringify(data, null, 2);

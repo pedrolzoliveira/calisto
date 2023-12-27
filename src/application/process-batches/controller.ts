@@ -2,7 +2,7 @@ import { prismaClient } from '@/src/infra/database/prisma/client';
 import { Router } from 'express';
 import { layout } from '@/src/infra/http/www/templates/layout';
 import { header } from '@/src/infra/http/www/templates/header';
-import { batchAnalyserPage } from '@/src/infra/http/www/templates/pages/batch-analyser';
+import { newsAnalyserPage } from '@/src/infra/http/www/templates/pages/news-analyser';
 import { userAuthenticated } from '../users/middlewares/user-authenticated';
 import { type GenericJson } from '@/src/infra/http/types/generic-json';
 
@@ -63,7 +63,7 @@ processBatchesController.get('/',
     return res.renderTemplate(
       layout({
         header: header(),
-        body: batchAnalyserPage(data)
+        body: newsAnalyserPage(data)
       })
     );
   });
