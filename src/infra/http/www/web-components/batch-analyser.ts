@@ -2,14 +2,14 @@ import '@lit-labs/ssr-client/lit-element-hydrate-support.js';
 
 import { LitElement, html } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
-import { type GenericJson } from '../../types/generic-json';
+import { type JsonValue, type GenericJson } from '../../types/generic-json';
 import { repeat } from 'lit/directives/repeat.js';
 
 interface Batch {
   id: string
-  request: GenericJson | null
-  response: GenericJson | null
-  error: GenericJson | null
+  request: any
+  response: any
+  error: any
   categories: {
     category: string
     related: boolean
@@ -62,13 +62,43 @@ export class BatchAnalyser extends LitElement {
           <p class="cursor-pointer">${title}</p>
         </summary>
         <div class="p-4 bg-gray-50 border border-t-0 relative">
-        <button @click=${handleClick} class="absolute top-4 right-4">
-          <span class="material-symbols-outlined">content_copy</span>
-        </button>
-        <pre class="whitespace-pre-wrap"><code>${stringified}</code></pre>
+          <button @click=${handleClick} class="absolute top-4 right-4">
+            <span class="material-symbols-outlined">content_copy</span>
+          </button>
+          <pre class="whitespace-pre-wrap"><code>${stringified}</code></pre>
         </div>
       </details>
       `;
+  }
+
+  renderMessagesToCopy(batch: Batch) {
+    try {
+      const messages: Array<{ role: 'system' | 'assistant' | 'user', content: string }> = [
+        ...batch.request?.messages,
+        ...batch.response?.choices.map(({ message }: any) => message)
+      ];
+
+      return html`
+      <details>
+        <summary class="flex justify-between border-b p-4">
+          <p class="cursor-pointer">Mensagens para copiar</p>
+        </summary>
+        ${
+          messages.map(({ role, content }) => html`
+            <p class="p-4">${role}</p>
+            <div class="p-4 bg-gray-50 border relative">
+              <button @click=${() => { navigator.clipboard.writeText(content); }} class="absolute top-4 right-4">
+                <span class="material-symbols-outlined">content_copy</span>
+              </button>
+              <pre class="whitespace-pre-wrap"><code>${content}</code></pre>
+            </div>
+          `)
+        }
+      </details>
+    `;
+    } catch (error) {
+      console.error(error);
+    }
   }
 
   render() {
@@ -149,6 +179,7 @@ export class BatchAnalyser extends LitElement {
                       data: batch.response
                     })
                   }
+                  ${this.renderMessagesToCopy(batch)}
                   ${
                     this.renderObject({
                       title: 'Error',
