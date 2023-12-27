@@ -2,7 +2,6 @@ import '@lit-labs/ssr-client/lit-element-hydrate-support.js';
 
 import { LitElement, html } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
-import { type JsonValue, type GenericJson } from '../../types/generic-json';
 import { repeat } from 'lit/directives/repeat.js';
 
 interface Batch {
@@ -49,7 +48,7 @@ export class NewsAnalyser extends LitElement {
   @property({ type: Object })
     data!: NewsAnalyserProps;
 
-  renderObject({ title, data }: { title: string, data: GenericJson | null }) {
+  renderObject({ title, data }: { title: string, data: any | null }) {
     const stringified = JSON.stringify(data, null, 2);
 
     function handleClick() {
