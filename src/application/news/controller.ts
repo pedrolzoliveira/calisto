@@ -26,13 +26,15 @@ newsController.get('/',
         return res.redirect(`?profileId=${profile.id}`);
       }
 
+      const isAdmin = req.session.user?.role === 'admin';
+
       return res.renderTemplate(
         layout({
-          header: header(),
+          header: header({ isAdmin }),
           body: newsPage({
             news: [],
             profileId: null,
-            isAdmin: req.session.user?.role === 'admin'
+            isAdmin
           })
         })
       );
@@ -47,13 +49,21 @@ newsController.get('/',
       prismaClient.profile.findMany({ select: { id: true, name: true }, where: { userId: req.session.user!.id } })
     ]);
 
+    const isAdmin = req.session.user?.role === 'admin';
+
     return res.renderTemplate(
       layout({
-        header: header({ profiles, profileId: data.profileId }),
+        header: header({
+          profilesData: {
+            profiles,
+            profileId: data.profileId
+          },
+          isAdmin
+        }),
         body: newsPage({
           news,
           profileId: data.profileId,
-          isAdmin: req.session.user?.role === 'admin'
+          isAdmin
         })
       })
     );

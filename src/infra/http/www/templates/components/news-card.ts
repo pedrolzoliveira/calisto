@@ -10,7 +10,6 @@ export interface NewsCardProps {
   imageUrl: string | null
   createdAt: Date
   categories: string[]
-  batchesIds?: string[]
   source: Source
   lastRow?: boolean
 }
@@ -27,7 +26,11 @@ export function newsCard({ isAdmin, source, categories, ...news }: NewsCardProps
   return html`
     <div class="flex flex-col w-1/3 min-w-[480px] border rounded bg-white">
       <div class="p-4 flex border-b justify-between">
-          <img src="${source.avatarUrl ?? ''}" alt="news source image" class="rounded-full w-10 h-10">
+          ${
+            source.avatarUrl
+            ? html`<img src="${source.avatarUrl}" alt="news source image" class="rounded-full w-10 h-10">`
+            : nothing
+          }
           <div class="flex-1 flex flex-col px-4">
               <div class="flex space-x-2 items-center">
                   <h1 class="font-semibold">${source.name}</h1>
@@ -52,16 +55,14 @@ export function newsCard({ isAdmin, source, categories, ...news }: NewsCardProps
             <div>
               <img src="${news.imageUrl}" alt="news thumbnail">
             </div>`
-        : null
+        : nothing
       }
       <div class="p-4 space-y-2">
         <h1 class="text-lg font-semibold">${news.title}</h1>
         <p class="text-xs text-gray-700">${news.description}</p>
         ${
           isAdmin
-          ? news.batchesIds?.map(
-            (batchId, index) => html`<br><a target="_blank" class="text-xs text-gray-700" href="/process-batches/${batchId}">Analisar batch #${index + 1}</a>`
-          )
+          ? html`<br><a target="_blank" class="text-xs text-gray-700" href="/process-batches?newsLink=${news.link}">Analisar batches</a>`
           : nothing
         }
       </div>

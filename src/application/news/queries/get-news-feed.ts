@@ -27,12 +27,10 @@ export const getNewsFeed = async ({ limit, profileId, cursor }: getNewsFeedParam
           "News"."imageUrl",
           "News"."createdAt",
           array_agg("NewsCategory".category) AS categories,
-          array_agg("ProcessBatch".id) AS "batchesIds",
           row_to_json("Source") AS source,
           ROW_NUMBER() OVER (ORDER BY "News"."createdAt" ASC) AS row_num
         FROM
           "News"
-          LEFT JOIN "ProcessBatch" ON "ProcessBatch"."newsLink" = "News"."link"
           LEFT JOIN "Source" ON "Source"."code" = "News"."sourceCode"
           LEFT JOIN "NewsCategory" ON "NewsCategory"."newsLink" = "News"."link"
           LEFT JOIN "ProfileCategory" ON "ProfileCategory"."category" = "NewsCategory"."category" AND "NewsCategory".related = true
@@ -50,7 +48,6 @@ export const getNewsFeed = async ({ limit, profileId, cursor }: getNewsFeedParam
         "imageUrl",
         "createdAt",
         categories,
-        "batchesIds",
         source,
         (row_num = 1) AS "lastRow"
       FROM RankedNews

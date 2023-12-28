@@ -1,2 +1,2 @@
-import './batch-analyser';
+import './news-analyser';
 import './input-list';
