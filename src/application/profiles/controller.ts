@@ -133,7 +133,7 @@ profilesController.get('/',
 
     return res.renderTemplate(
       layout({
-        header: header(),
+        header: header({ isAdmin: req.session.user?.role === 'admin' }),
         body: profilesPage({ profiles })
       })
     );
@@ -144,7 +144,7 @@ profilesController.get('/new',
   (req, res) => {
     return res.renderTemplate(
       layout({
-        header: header(),
+        header: header({ isAdmin: req.session.user?.role === 'admin' }),
         body: newProfilePage()
       })
     );
@@ -186,7 +186,7 @@ profilesController.get('/edit',
 
     return res.renderTemplate(
       layout({
-        header: header(),
+        header: header({ isAdmin: req.session.user?.role === 'admin' }),
         body: editProfilePage({ profile })
       })
     );

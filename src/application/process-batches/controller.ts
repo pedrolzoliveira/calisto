@@ -13,7 +13,7 @@ processBatchesController.get('/',
   adminAuthenticated,
   async (req, res) => {
     const data = await prismaClient.news.findUniqueOrThrow({
-      where: { link: req.query.newsLink },
+      where: { link: req.query.newsLink as string },
       select: {
         link: true,
         title: true,
@@ -63,7 +63,7 @@ processBatchesController.get('/',
 
     return res.renderTemplate(
       layout({
-        header: header(),
+        header: header({ isAdmin: true }),
         body: newsAnalyserPage(data)
       })
     );
@@ -88,7 +88,7 @@ processBatchesController.get('/news-feed',
 
     return res.renderTemplate(
       layout({
-        header: header(),
+        header: header({ isAdmin: true }),
         body: newsAnalyserFeedPage({ news })
       })
     );
