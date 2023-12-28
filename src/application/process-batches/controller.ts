@@ -3,14 +3,14 @@ import { Router } from 'express';
 import { layout } from '@/src/infra/http/www/templates/layout';
 import { header } from '@/src/infra/http/www/templates/header';
 import { newsAnalyserPage } from '@/src/infra/http/www/templates/pages/news-analyser';
-import { userAuthenticated } from '../users/middlewares/user-authenticated';
 import { type GenericJson } from '@/src/infra/http/types/generic-json';
 import { newsAnalyserFeedPage } from '@/src/infra/http/www/templates/pages/news-analyser-feed';
+import { adminAuthenticated } from '../users/middlewares/admin-authenticated';
 
 export const processBatchesController = Router();
 
 processBatchesController.get('/',
-  userAuthenticated,
+  adminAuthenticated,
   async (req, res) => {
     const data = await prismaClient.news.findUniqueOrThrow({
       where: { link: req.query.newsLink },
@@ -69,25 +69,27 @@ processBatchesController.get('/',
     );
   });
 
-processBatchesController.get('/news-feed', async (req, res) => {
-  const news = await prismaClient.news.findMany({
-    select: {
-      link: true,
-      title: true,
-      description: true,
-      content: true,
-      imageUrl: true,
-      source: true,
-      categories: true
-    },
-    orderBy: { createdAt: 'desc' },
-    take: 200
-  });
+processBatchesController.get('/news-feed',
+  adminAuthenticated,
+  async (req, res) => {
+    const news = await prismaClient.news.findMany({
+      select: {
+        link: true,
+        title: true,
+        description: true,
+        content: true,
+        imageUrl: true,
+        source: true,
+        categories: true
+      },
+      orderBy: { createdAt: 'desc' },
+      take: 200
+    });
 
-  return res.renderTemplate(
-    layout({
-      header: header(),
-      body: newsAnalyserFeedPage({ news })
-    })
-  );
-});
+    return res.renderTemplate(
+      layout({
+        header: header(),
+        body: newsAnalyserFeedPage({ news })
+      })
+    );
+  });
