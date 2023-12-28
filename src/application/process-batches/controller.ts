@@ -5,6 +5,7 @@ import { header } from '@/src/infra/http/www/templates/header';
 import { newsAnalyserPage } from '@/src/infra/http/www/templates/pages/news-analyser';
 import { userAuthenticated } from '../users/middlewares/user-authenticated';
 import { type GenericJson } from '@/src/infra/http/types/generic-json';
+import { newsAnalyserFeedPage } from '@/src/infra/http/www/templates/pages/news-analyser-feed';
 
 export const processBatchesController = Router();
 
@@ -67,3 +68,26 @@ processBatchesController.get('/',
       })
     );
   });
+
+processBatchesController.get('/news-feed', async (req, res) => {
+  const news = await prismaClient.news.findMany({
+    select: {
+      link: true,
+      title: true,
+      description: true,
+      content: true,
+      imageUrl: true,
+      source: true,
+      categories: true
+    },
+    orderBy: { createdAt: 'desc' },
+    take: 200
+  });
+
+  return res.renderTemplate(
+    layout({
+      header: header(),
+      body: newsAnalyserFeedPage({ news })
+    })
+  );
+});
