@@ -26,7 +26,11 @@ export function newsCard({ isAdmin, source, categories, ...news }: NewsCardProps
   return html`
     <div class="flex flex-col w-1/3 min-w-[480px] border rounded bg-white">
       <div class="p-4 flex border-b justify-between">
-          <img src="${source.avatarUrl ?? ''}" alt="news source image" class="rounded-full w-10 h-10">
+          ${
+            source.avatarUrl
+            ? html`<img src="${source.avatarUrl}" alt="news source image" class="rounded-full w-10 h-10">`
+            : nothing
+          }
           <div class="flex-1 flex flex-col px-4">
               <div class="flex space-x-2 items-center">
                   <h1 class="font-semibold">${source.name}</h1>
@@ -51,7 +55,7 @@ export function newsCard({ isAdmin, source, categories, ...news }: NewsCardProps
             <div>
               <img src="${news.imageUrl}" alt="news thumbnail">
             </div>`
-        : null
+        : nothing
       }
       <div class="p-4 space-y-2">
         <h1 class="text-lg font-semibold">${news.title}</h1>
