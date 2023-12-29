@@ -17,7 +17,7 @@ export function landingPage(news: NewsCardProps[]) {
         <title>Light Beam News</title>
       </head>
       <body class="bg-gray-100 flex flex-col w-full">
-        <div class="flex justify-around w-full h-screen">
+        <main class="flex justify-around w-full h-screen">
           <div class="flex flex-col justify-center space-y-2 w-[50vw] pl-[20vw]">
             <img class="pb-12" src="/assets/logo.svg" alt="logo"/>
             <h1 class="text-5xl">Fique por dentro do que te interessa.</h1>
@@ -34,7 +34,7 @@ export function landingPage(news: NewsCardProps[]) {
           <div id="newsFeed" class="flex flex-col space-y-2 h-screen overflow-x-hidden overflow-y-hidden items-center w-[50vw]">
             ${repeat(news, newsCard)}
           </div>
-        </div>
+        </main>
       <script>
         function scrollNewsFeed() {
           newsFeed.scrollBy({ top: 2, behavior: 'smooth' })
