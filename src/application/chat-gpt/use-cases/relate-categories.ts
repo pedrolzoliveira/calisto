@@ -1,4 +1,3 @@
-import { isWithinTokenLimit } from 'gpt-tokenizer/cjs/model/gpt-3.5-turbo';
 import { type CreateChatCompletionRequest, type ChatCompletionRequestMessage, type CreateChatCompletionResponse } from 'openai';
 import { ZodError, z } from 'zod';
 
@@ -9,6 +8,9 @@ import { logger } from '@/src/infra/logger';
 import { AxiosError, type AxiosResponse } from 'axios';
 import { type PrismaTransaction } from '@/src/infra/database/prisma/types/transaction';
 import { tryParseJson } from '@/src/utils/try-parse-json';
+
+// eslint-disable-next-line @typescript-eslint/no-var-requires
+const { isWithinTokenLimit } = require('gpt-tokenizer/cjs/model/gpt-3.5-turbo');
 
 interface RelateCategoriesParams {
   batchId: string

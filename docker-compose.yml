@@ -1,0 +1,70 @@
+version: '3'
+
+services:
+  database:
+    build:
+      context: .
+      dockerfile: ./docker/database/Dockerfile
+    hostname: database
+    environment:
+      - POSTGRES_PASSWORD=1234
+      - POSTGRES_USER=postgres
+      - POSTGRES_DB=calisto
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD", "pg_isready", "--username", "postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+      start_period: 10s
+  rabbitmq:
+    image: "rabbitmq:3-management"
+    hostname: rabbitmq
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    healthcheck:
+      test: ["CMD", "rabbitmqctl", "status"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+      start_period: 10s
+  server:
+    ports:
+      - "3141:3141"
+    environment:
+      - DATABASE_URL=postgres://postgres:1234@host.docker.internal:5432/calisto
+      - SESSION_SECRET=secret
+      - RABBIT_MQ_URL=amqp://host.docker.internal
+      - PORT=3141
+    depends_on:
+      database:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+    build:
+      context: .
+      dockerfile: ./docker/server/Dockerfile
+  scraper:
+    environment:
+      - DATABASE_URL=postgres://postgres:1234@host.docker.internal:5432/calisto
+    depends_on:
+      database:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+    build:
+      context: .
+      dockerfile: ./docker/scraper/Dockerfile
+  consumer:
+    environment:
+      - DATABASE_URL=postgres://postgres:1234@host.docker.internal:5432/calisto
+    depends_on:
+      database:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+    build:
+      context: .
+      dockerfile: ./docker/consumer/Dockerfile
