@@ -34,6 +34,10 @@ exec('yarn tailwindcss -i ./src/infra/http/www/tailwind.css -o ./src/infra/http/
             {
               from: ['./src/infra/http/www/dist/*'],
               to: ['./www/dist']
+            },
+            {
+              from: ['./src/infra/database/prisma/schema.prisma'],
+              to: ['./schema.prisma']
             }
           ]
         })
