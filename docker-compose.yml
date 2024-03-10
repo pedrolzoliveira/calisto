@@ -58,10 +58,12 @@ services:
     build:
       context: .
       dockerfile: ./docker/scraper/Dockerfile
-  consumer:
+  consumer: &consumer
     environment:
       - DATABASE_URL=postgres://postgres:1234@host.docker.internal:5432/calisto
       - RABBIT_MQ_URL=amqp://host.docker.internal
+      - CHAT_GPT_KEY=${CHAT_GPT_KEY}
+      - CHAT_GPT_ORGANIZATION_ID=${CHAT_GPT_ORGANIZATION_ID}
     depends_on:
       database:
         condition: service_healthy
@@ -70,3 +72,9 @@ services:
     build:
       context: .
       dockerfile: ./docker/consumer/Dockerfile
+  consumer-processing-relations:
+    <<: *consumer
+    command: ["node", "run-consumer.js", "processing-relations"]
+  consumer-news-created:
+    <<: *consumer
+    command: ["node", "run-consumer.js", "news-created"]
