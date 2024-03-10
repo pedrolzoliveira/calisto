@@ -49,6 +49,7 @@ services:
   scraper:
     environment:
       - DATABASE_URL=postgres://postgres:1234@host.docker.internal:5432/calisto
+      - RABBIT_MQ_URL=amqp://host.docker.internal
     depends_on:
       database:
         condition: service_healthy
@@ -60,6 +61,7 @@ services:
   consumer:
     environment:
       - DATABASE_URL=postgres://postgres:1234@host.docker.internal:5432/calisto
+      - RABBIT_MQ_URL=amqp://host.docker.internal
     depends_on:
       database:
         condition: service_healthy
