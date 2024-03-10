@@ -5,6 +5,9 @@ import { profileCategoryChangedConsumer } from '@/src/application/profiles/consu
 import { createConnection } from '../infra/messaging/rabbitmq/create-connection';
 import { createChannel } from '../infra/messaging/rabbitmq/create-channel';
 import { publisher } from '../application/publisher';
+import { processingRelationsQueue } from '../application/chat-gpt/queues/processing-relations';
+import { newsCreatedQueue } from '../application/news/queues/news-created';
+import { profileCategoryChangedQueue } from '../application/profiles/queues/profile-category-changed';
 
 createConnection().then((connection) => {
   createChannel(connection).then(async channel => {
@@ -19,16 +22,28 @@ createConnection().then((connection) => {
     switch (queueName) {
       case 'processing-relations':
         logger.info('Starting processing-relations consumer');
+
+        processingRelationsQueue.bindChannel(channel);
+        await processingRelationsQueue.assertQueue();
+
         processingRelationsConsumer.bindChannel(channel);
         await processingRelationsConsumer.consume();
         break;
       case 'news-created':
         logger.info('Starting news-created consumer');
+
+        newsCreatedQueue.bindChannel(channel);
+        await newsCreatedQueue.assertQueue();
+
         newsCreatedConsumer.bindChannel(channel);
         await newsCreatedConsumer.consume();
         break;
       case 'profile-category-changed':
         logger.info('Starting profile-category-changed consumer');
+
+        profileCategoryChangedQueue.bindChannel(channel);
+        await profileCategoryChangedQueue.assertQueue();
+
         profileCategoryChangedConsumer.bindChannel(channel);
         await profileCategoryChangedConsumer.consume();
         break;
