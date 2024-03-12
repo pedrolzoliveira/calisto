@@ -1,18 +1,17 @@
 import 'express-async-errors';
 
 import express, { urlencoded } from 'express';
-import session from 'express-session';
 import { join } from 'path';
 import { type TemplateResult } from 'lit';
 import { render } from '@lit-labs/ssr';
 import { RenderResultReadable } from '@lit-labs/ssr/lib/render-result-readable';
 
-import { env } from '@/src/config/env';
 import { applicationController } from '@/src/application/controller';
+import { session } from './session';
 
 export const server = express();
 
-server.use(session({ secret: env.SESSION_SECRET, saveUninitialized: false, resave: false }));
+server.use(session);
 
 server.use((req, res, next) => {
   res.renderTemplate = (template: TemplateResult | TemplateResult[]) => {

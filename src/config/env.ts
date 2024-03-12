@@ -52,6 +52,16 @@ class Env {
 
     return parsed.data;
   }
+
+  public get REDIS_URL() {
+    const parsed = z.string().safeParse(this.env.REDIS_URL);
+
+    if (!parsed.success) {
+      throw new Error(`Error accessing env.REDIS_URL: ${parsed.error.message}`);
+    }
+
+    return parsed.data;
+  }
 }
 
 export const env = new Env(process.env);

@@ -5,6 +5,7 @@ import { prismaClient } from '../infra/database/prisma/client';
 import { createConnection } from '../infra/messaging/rabbitmq/create-connection';
 import { createChannel } from '../infra/messaging/rabbitmq/create-channel';
 import { publisher } from '../application/publisher';
+import { redisClient } from '../infra/http/session';
 
 async function runServer() {
   try {
@@ -12,7 +13,8 @@ async function runServer() {
       createConnection().then(
         async connection => await createChannel(connection)
       ),
-      prismaClient.$connect()
+      prismaClient.$connect(),
+      redisClient.connect()
     ]);
 
     publisher.bindChannel(channel);
