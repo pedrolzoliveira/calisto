@@ -30,7 +30,7 @@ profilesController.post('/',
         id: true,
         name: true,
         categories: {
-          select: { category: true }
+          select: { text: true }
         }
       },
       orderBy: { createdAt: 'asc' },
@@ -38,7 +38,7 @@ profilesController.post('/',
     }).then(profiles =>
       profiles.map(profile => ({
         ...profile,
-        categories: profile.categories.map(({ category }) => category)
+        categories: profile.categories.map(({ text }) => text)
       }))
     );
 
@@ -63,7 +63,7 @@ profilesController.put('/',
         id: true,
         name: true,
         categories: {
-          select: { category: true }
+          select: { text: true }
         }
       },
       orderBy: { createdAt: 'asc' },
@@ -71,7 +71,7 @@ profilesController.put('/',
     }).then(profiles =>
       profiles.map(profile => ({
         ...profile,
-        categories: profile.categories.map(({ category }) => category)
+        categories: profile.categories.map(({ text }) => text)
       }))
     );
 
@@ -94,7 +94,7 @@ profilesController.delete('/',
         id: true,
         name: true,
         categories: {
-          select: { category: true }
+          select: { text: true }
         }
       },
       orderBy: { createdAt: 'asc' },
@@ -102,7 +102,7 @@ profilesController.delete('/',
     }).then(
       profiles => profiles.map(profile => ({
         ...profile,
-        categories: profile.categories.map(({ category }) => category)
+        categories: profile.categories.map(({ text }) => text)
       }))
     );
 
@@ -119,7 +119,7 @@ profilesController.get('/',
         id: true,
         name: true,
         categories: {
-          select: { category: true }
+          select: { text: true }
         }
       },
       orderBy: { createdAt: 'asc' },
@@ -127,7 +127,7 @@ profilesController.get('/',
     }).then(profiles =>
       profiles.map(profile => ({
         ...profile,
-        categories: profile.categories.map(({ category }) => category)
+        categories: profile.categories.map(({ text }) => text)
       }))
     );
 
@@ -164,7 +164,7 @@ profilesController.get('/edit',
         name: true,
         categories: {
           select: {
-            category: true
+            text: true
           }
         }
       }
@@ -175,7 +175,7 @@ profilesController.get('/edit',
 
       return {
         ...profile,
-        categories: profile.categories.map(({ category }) => category)
+        categories: profile.categories.map(({ text }) => text)
       };
     });
 
