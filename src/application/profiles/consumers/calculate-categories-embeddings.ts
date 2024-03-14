@@ -11,9 +11,7 @@ export const calculateCategoriesEmbeddingsConsumer = calculateCategoriesEmbeddin
 
   const embeddings = await calculateEmbeddings(categoriesText.map(({ text }) => text));
 
-  await prismaClient.$transaction(async tx => {
-    for (const { text, embedding } of embeddings) {
-      await tx.$executeRaw`UPDATE "Category" SET "embedding" = ${embedding} WHERE "text" = ${text}`;
-    }
-  });
+  for (const { text, embedding } of embeddings) {
+    await prismaClient.$executeRaw`UPDATE "Category" SET "embedding" = ${embedding} WHERE "text" = ${text}`;
+  }
 });
