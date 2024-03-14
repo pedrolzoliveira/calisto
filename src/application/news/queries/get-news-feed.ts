@@ -52,7 +52,7 @@ export const getNewsFeed = async ({ limit, profileId, cursor }: getNewsFeedParam
       "News"."createdAt",
       ARRAY_AGG(CategoryEmbeddings.text) AS categories,
       row_to_json("Source") AS source,
-      ROW_NUMBER() OVER (ORDER BY "News"."createdAt" ASC) AS rowNum
+      ROW_NUMBER() OVER (ORDER BY "News"."createdAt" ASC) AS "rowNum"
     FROM
       "News"
       JOIN "Source" ON "Source".code = "News"."sourceCode"
@@ -66,6 +66,7 @@ export const getNewsFeed = async ({ limit, profileId, cursor }: getNewsFeedParam
 
   return result.map((news) => ({
     ...news,
-    lastRow: news.rowNum === 1
+    // eslint-disable-next-line eqeqeq
+    lastRow: news.rowNum == 1
   }));
 };
