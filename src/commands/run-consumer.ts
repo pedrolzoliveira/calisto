@@ -1,18 +1,16 @@
 import { logger } from '../infra/logger';
-import { processingRelationsConsumer } from '@/src/application/chat-gpt/consumers/processing-relations';
 import { newsCreatedConsumer } from '@/src/application/news/consumers/news-created';
-import { profileCategoryChangedConsumer } from '@/src/application/profiles/consumers/profile-category-changed';
 import { createConnection } from '../infra/messaging/rabbitmq/create-connection';
 import { createChannel } from '../infra/messaging/rabbitmq/create-channel';
 import { publisher } from '../application/publisher';
-import { processingRelationsQueue } from '../application/chat-gpt/queues/processing-relations';
 import { newsCreatedQueue } from '../application/news/queues/news-created';
-import { profileCategoryChangedQueue } from '../application/profiles/queues/profile-category-changed';
+import { calculateCategoriesEmbeddingsQueue } from '../application/profiles/queues/calculate-categories-embeddings';
+import { calculateCategoriesEmbeddingsConsumer } from '../application/profiles/consumers/calculate-categories-embeddings';
 
 createConnection().then((connection) => {
   createChannel(connection).then(async channel => {
     const queueName = process.argv[2];
-    const queues = ['processing-relations', 'news-created', 'profile-category-changed'];
+    const queues = ['news-created', 'calculate-categories-embeddings'];
 
     publisher.bindChannel(channel);
 
@@ -20,15 +18,6 @@ createConnection().then((connection) => {
       throw new Error('Queue name not provided. available queues: ' + queues.join(', '));
     }
     switch (queueName) {
-      case 'processing-relations':
-        logger.info('Starting processing-relations consumer');
-
-        processingRelationsQueue.bindChannel(channel);
-        await processingRelationsQueue.assertQueue();
-
-        processingRelationsConsumer.bindChannel(channel);
-        await processingRelationsConsumer.consume();
-        break;
       case 'news-created':
         logger.info('Starting news-created consumer');
 
@@ -38,14 +27,14 @@ createConnection().then((connection) => {
         newsCreatedConsumer.bindChannel(channel);
         await newsCreatedConsumer.consume();
         break;
-      case 'profile-category-changed':
-        logger.info('Starting profile-category-changed consumer');
+      case 'calculate-categories-embeddings':
+        logger.info('Starting calculate-categories-embeddings consumer');
 
-        profileCategoryChangedQueue.bindChannel(channel);
-        await profileCategoryChangedQueue.assertQueue();
+        calculateCategoriesEmbeddingsQueue.bindChannel(channel);
+        await calculateCategoriesEmbeddingsQueue.assertQueue();
 
-        profileCategoryChangedConsumer.bindChannel(channel);
-        await profileCategoryChangedConsumer.consume();
+        calculateCategoriesEmbeddingsConsumer.bindChannel(channel);
+        await calculateCategoriesEmbeddingsConsumer.consume();
         break;
       default:
         throw new Error(`Queue "${queueName}" not found. available queues: ${queues.join(', ')}`);

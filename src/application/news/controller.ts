@@ -30,7 +30,7 @@ newsController.get('/',
 
       return res.renderTemplate(
         layout({
-          header: header({ isAdmin }),
+          header: header(),
           body: newsPage({
             news: [],
             profileId: null,
@@ -57,8 +57,7 @@ newsController.get('/',
           profilesData: {
             profiles,
             profileId: data.profileId
-          },
-          isAdmin
+          }
         }),
         body: newsPage({
           news,
@@ -92,8 +91,7 @@ newsController.get('/feed',
     return res.renderTemplate(
       newsFeed({
         news,
-        profileId: data.profileId,
-        isAdmin: req.session.user?.role === 'admin'
+        profileId: data.profileId
       })
     );
   });

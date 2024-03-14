@@ -1,7 +1,6 @@
 import { Router } from 'express';
 import { newsController } from './news/controller';
 import { profilesController } from './profiles/controller';
-import { processBatchesController } from './process-batches/controller';
 import { usersController } from './users/controller';
 import { getNewsFeed } from './news/queries/get-news-feed';
 import { landingPage } from '../infra/http/www/templates/pages/landing-page';
@@ -11,7 +10,6 @@ export const applicationController = Router();
 
 applicationController.use('/news', newsController);
 applicationController.use('/profiles', profilesController);
-applicationController.use('/process-batches', processBatchesController);
 applicationController.use('/users', usersController);
 
 applicationController.get('/', async (req, res) => {

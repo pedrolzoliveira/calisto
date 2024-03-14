@@ -59,8 +59,7 @@
     "tailwind": "tailwindcss -i ./src/infra/http/www/tailwind.css -o ./src/infra/http/www/dist/tailwind.css --watch"
   },
   "prisma": {
-    "schema": "src/infra/database/prisma/schema.prisma",
-    "seed": "tsx src/infra/database/prisma/seed.ts"
+    "schema": "src/infra/database/prisma/schema.prisma"
   },
   "engines": {
     "node": ">=20.0.0"

@@ -8,7 +8,7 @@ COPY copy_sql_files.sh .
 # RUN chmod +x copy_sql_files.sh
 RUN sh copy_sql_files.sh
 
-FROM postgres:latest AS runner
+FROM pgvector/pgvector:pg16 AS runner
 
 WORKDIR /docker-entrypoint-initdb.d
 

@@ -1,5 +1,4 @@
 import { prismaClient } from '@/src/infra/database/prisma/client';
-import { profileCategoryChangedQueue } from '../queues/profile-category-changed';
 import { publisher } from '../../publisher';
 
 export const updateProfile = async (
@@ -9,28 +8,28 @@ export const updateProfile = async (
     categories: string[]
   }
 ) => {
-  return await prismaClient.$transaction(async tx => {
-    await tx.profileCategory.deleteMany({ where: { profileId: data.id } });
-    const profile = await tx.profile.update({
-      select: {
-        id: true,
-        name: true,
-        categories: true,
-        createdAt: true
-      },
-      data: {
-        name: data.name,
-        categories: {
-          createMany: {
-            data: data.categories.map(category => ({ category }))
-          }
-        }
-      },
-      where: { id: data.id }
-    });
-
-    publisher.publish('profile-category-changed', { profileId: profile.id });
-
-    return profile;
+  const profile = await prismaClient.profile.update({
+    select: {
+      id: true,
+      name: true,
+      categories: true,
+      createdAt: true
+    },
+    data: {
+      name: data.name,
+      categories: {
+        // set: data.categories.map(text => ({ text })),
+        set: [],
+        connectOrCreate: data.categories.map(text => ({
+          where: { text },
+          create: { text }
+        }))
+      }
+    },
+    where: { id: data.id }
   });
+
+  publisher.publish('calculate-categories-embeddings', { categories: data.categories });
+
+  return profile;
 };

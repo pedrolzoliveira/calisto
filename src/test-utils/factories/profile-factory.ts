@@ -25,16 +25,21 @@ class ProfileFactory implements Factory<Profile & { categories: string[] }> {
         name: true,
         userId: true,
         createdAt: true,
-        categories: { select: { category: true } }
+        categories: { select: { text: true } }
       },
       data: {
         userId: foreignKeys.userId,
         name,
-        categories: { createMany: { data: categories.map(category => ({ category })) } }
+        categories: {
+          connectOrCreate: categories.map(category => ({
+            where: { text: category },
+            create: { text: category }
+          }))
+        }
       }
     }).then(profile => ({
       ...profile,
-      categories: profile.categories.map(({ category }) => category)
+      categories: profile.categories.map(({ text }) => text)
     }));
   }
 }

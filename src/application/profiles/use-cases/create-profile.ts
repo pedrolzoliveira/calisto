@@ -12,11 +12,16 @@ export const createProfile = async ({ name, categories, userId }: CreateProfileD
     data: {
       userId,
       name,
-      categories: { createMany: { data: categories.map(category => ({ category })) } }
+      categories: {
+        connectOrCreate: categories.map(category => ({
+          where: { text: category },
+          create: { text: category }
+        }))
+      }
     }
   });
 
-  publisher.publish('profile-category-changed', { profileId: profile.id });
+  publisher.publish('calculate-categories-embeddings', { categories });
 
   return profile;
 };

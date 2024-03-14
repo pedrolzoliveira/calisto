@@ -22,49 +22,25 @@ model News {
   source Source @relation(fields: [sourceCode], references: [code])
   imageUrl String?
   content String @db.Text
+  embedding Unsupported("vector(1536)")?
   createdAt DateTime @default(now())
-  categories NewsCategory[]
-  batches ProcessBatch[]
 }
 
 model Profile {
   id String @id @default(uuid())
   name String
-  categories ProfileCategory[]
+  categories Category[]
   userId String
   user User @relation(fields: [userId], references: [id])
   createdAt DateTime @default(now())
   @@unique([userId, name])
 }
 
-model ProfileCategory {  
-  profile Profile @relation(fields: [profileId], references: [id])
-  profileId String
-  category String
-  @@unique([profileId,  category])
-}
-
-model NewsCategory {
-  id String @id @default(uuid())
-  news News @relation(fields: [newsLink], references: [link])
-  newsLink String
-  category String
-  related Boolean @default(false)
-  processed Boolean @default(false)
-  batchId String?
-  batch ProcessBatch? @relation(fields: [batchId], references: [id])
-  @@unique([newsLink, category])
-}
-
-model ProcessBatch {
-  id String @id @default(uuid())
-  request Json?
-  response Json?
-  error Json?
+model Category {
+  text String @db.VarChar(25) @id
+  embedding Unsupported("vector(1536)")?
   createdAt DateTime @default(now())
-  newsLink String
-  news News @relation(fields: [newsLink], references: [link])
-  categories NewsCategory[]
+  profiles Profile[]
 }
 
 enum userRole {
