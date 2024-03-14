@@ -79,17 +79,19 @@ newsController.get('/feed',
     res.setHeader('HX-Push-Url', `/news?profileId=${data.profileId}`);
 
     if (!news.length) {
-      return res.renderTemplate(
+      return res.renderTemplate([
+        newNewsLoader({ cursor: data.cursor, profileId: data.profileId }),
         noNewsFound()
-      );
+      ]);
     }
 
-    return res.renderTemplate(
-      newsFeed({
+    return res.renderTemplate([
+      newNewsLoader({ cursor: news.at(0)!.createdAt, profileId: data.profileId }),
+      ...newsFeed({
         news,
         profileId: data.profileId
       })
-    );
+    ]);
   });
 
 newsController.get('/load-new',
