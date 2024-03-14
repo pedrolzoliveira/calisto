@@ -54,6 +54,12 @@ CREATE UNIQUE INDEX "_CategoryToProfile_AB_unique" ON "_CategoryToProfile"("A", 
 -- CreateIndex
 CREATE INDEX "_CategoryToProfile_B_index" ON "_CategoryToProfile"("B");
 
+-- CreateIndex
+CREATE INDEX ON "News" USING hnsw (embedding vector_cosine_ops);
+
+-- CreateIndex
+CREATE INDEX ON "Category" USING hnsw (embedding vector_cosine_ops);
+
 -- AddForeignKey
 ALTER TABLE "_CategoryToProfile" ADD CONSTRAINT "_CategoryToProfile_A_fkey" FOREIGN KEY ("A") REFERENCES "Category"("text") ON DELETE CASCADE ON UPDATE CASCADE;
 
