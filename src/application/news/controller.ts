@@ -8,6 +8,8 @@ import { header } from '@/src/infra/http/www/templates/header';
 import { newsFeed } from '@/src/infra/http/www/templates/components/news-feed';
 import { noNewsFound } from '@/src/infra/http/www/templates/components/no-news-found';
 import { userAuthenticated } from '../users/middlewares/user-authenticated';
+import { loadNew } from './queries/load-new';
+import { newNewsLoader } from '@/src/infra/http/www/templates/components/new-news-loader';
 
 export const newsController = Router();
 
@@ -89,3 +91,23 @@ newsController.get('/feed',
       })
     );
   });
+
+newsController.get('/load-new',
+  userAuthenticated,
+  async (req, res) => {
+    const data = z.object({
+      profileId: z.string().uuid(),
+      cursor: z.date({ coerce: true }).default(new Date())
+    }).parse(req.query);
+
+    const news = await loadNew(data);
+
+    return res.renderTemplate(
+      newNewsLoader({
+        profileId: data.profileId,
+        cursor: news.at(0)?.createdAt ?? data.cursor,
+        news
+      })
+    );
+  }
+);
