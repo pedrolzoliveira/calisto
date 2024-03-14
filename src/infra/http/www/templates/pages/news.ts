@@ -6,7 +6,6 @@ import { noNewsFound } from '../components/no-news-found';
 import { noProfileCreated } from '../components/no-profile-created';
 
 interface NewsPageProps {
-  isAdmin?: boolean
   news: NewsCardProps[]
   profileId?: string | null
 }
