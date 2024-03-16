@@ -35,10 +35,9 @@ export const loadNew = async ({ profileId, cursor }: getNewsFeedParams): Promise
         "CategoryEmbedding"
       WHERE
         "text" IN(
-          SELECT
-            UNNEST("categories") FROM "Profile"
-          WHERE
-            "id" = ${profileId})
+          SELECT UNNEST("categories")
+          FROM "Profile"
+          WHERE "id" = ${profileId})
     )
     SELECT
       "News".link,
