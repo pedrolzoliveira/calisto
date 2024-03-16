@@ -12,12 +12,7 @@ export const createProfile = async ({ name, categories, userId }: CreateProfileD
     data: {
       userId,
       name,
-      categories: {
-        connectOrCreate: categories.map(category => ({
-          where: { text: category },
-          create: { text: category }
-        }))
-      }
+      categories
     }
   });
 

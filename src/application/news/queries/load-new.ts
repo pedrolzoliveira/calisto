@@ -32,13 +32,13 @@ export const loadNew = async ({ profileId, cursor }: getNewsFeedParams): Promise
         text,
         embedding
       FROM
-        "Category"
+        "CategoryEmbedding"
       WHERE
         "text" IN(
           SELECT
-            "A" FROM "_CategoryToProfile"
+            UNNEST("categories") FROM "Profile"
           WHERE
-            "B" = ${profileId})
+            "id" = ${profileId})
     )
     SELECT
       "News".link,
@@ -50,8 +50,9 @@ export const loadNew = async ({ profileId, cursor }: getNewsFeedParams): Promise
       row_to_json("Source") AS source
     FROM
       "News"
+      JOIN "NewsEmbedding" ON "News"."link" = "NewsEmbedding"."link"
       JOIN "Source" ON "Source".code = "News"."sourceCode"
-      JOIN CategoryEmbeddings ON (CategoryEmbeddings.embedding <=> "News".embedding) <= .6
+      JOIN CategoryEmbeddings ON (CategoryEmbeddings.embedding <=> "NewsEmbedding".embedding) <= .67
     WHERE "News"."createdAt" > ${cursor}
     GROUP BY
       "News".link,

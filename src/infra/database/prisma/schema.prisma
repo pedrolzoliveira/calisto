@@ -8,8 +8,8 @@ datasource db {
 }
 
 model Source {
-  code String @id
-  name String
+  code String @id @db.VarChar(32)
+  name String @db.VarChar(32)
   avatarUrl String?
   news News[]
 }
@@ -18,29 +18,36 @@ model News {
   link String @id
   title String
   description String?
-  sourceCode String
+  sourceCode String @db.VarChar(32)
   source Source @relation(fields: [sourceCode], references: [code])
   imageUrl String?
   content String @db.Text
-  embedding Unsupported("vector(1536)")?
   createdAt DateTime @default(now())
+  embeddings NewsEmbedding[]
+  @@index([createdAt])
+}
+
+model NewsEmbedding {
+  link String
+  newsSectionIndex Int
+  embedding Unsupported("vector(1536)")
+  news News @relation(fields: [link], references: [link])
+  @@id([link, newsSectionIndex])
 }
 
 model Profile {
-  id String @id @default(uuid())
-  name String
-  categories Category[]
-  userId String
+  id String @id @default(uuid()) @db.VarChar(36)
+  name String @db.VarChar(32)
+  categories String[] @db.VarChar(32) 
+  userId String @db.VarChar(36)
   user User @relation(fields: [userId], references: [id])
   createdAt DateTime @default(now())
   @@unique([userId, name])
 }
 
-model Category {
-  text String @db.VarChar(25) @id
-  embedding Unsupported("vector(1536)")?
-  createdAt DateTime @default(now())
-  profiles Profile[]
+model CategoryEmbedding {
+  text String @db.VarChar(32) @id
+  embedding Unsupported("vector(1536)")
 }
 
 enum userRole {
@@ -49,15 +56,16 @@ enum userRole {
 }
 
 model User {
-  id String @id @default(uuid())
+  id String @id @default(uuid()) @db.VarChar(36)
   email String @unique
   password UserPassword?
   profiles Profile[]
   role userRole @default(user)
+  @@index([email])
 }
 
 model UserPassword {
-  userId String @id
+  userId String @id @db.VarChar(36)
   user User @relation(fields: [userId], references: [id])
-  hash String
+  hash String @db.VarChar(64)
 }

@@ -6,6 +6,7 @@ import { calculateEmbeddings } from '../../chat-gpt/use-cases/calculate-embeddin
 import { sanitizeWhiteSpace } from '@/src/utils/sanitize-white-space';
 import { isWithinTokenLimit } from 'gpt-tokenizer';
 import { MODELS } from '../../chat-gpt/models';
+import { Prisma } from '@prisma/client';
 
 export const newsCreatedConsumer = new Consumer({
   queue: newsCreatedQueue,
@@ -28,6 +29,9 @@ export const newsCreatedConsumer = new Consumer({
 
     const [{ embedding }] = await calculateEmbeddings([contentSanitized]);
 
-    await prismaClient.$executeRaw`UPDATE "News" SET "embedding" = ${embedding} WHERE "link" = ${link}`;
+    await prismaClient.$executeRaw`
+      INSERT INTO "NewsEmbedding" ("newsSectionIndex", "link", "embedding")
+      VALUES ${Prisma.sql`(${Prisma.join([0, link, embedding])})`};
+    `;
   }
 });
