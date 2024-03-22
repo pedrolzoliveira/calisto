@@ -17,14 +17,7 @@ export const updateProfile = async (
     },
     data: {
       name: data.name,
-      categories: {
-        // set: data.categories.map(text => ({ text })),
-        set: [],
-        connectOrCreate: data.categories.map(text => ({
-          where: { text },
-          create: { text }
-        }))
-      }
+      categories: data.categories
     },
     where: { id: data.id }
   });

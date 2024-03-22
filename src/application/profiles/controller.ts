@@ -29,18 +29,11 @@ profilesController.post('/',
       select: {
         id: true,
         name: true,
-        categories: {
-          select: { text: true }
-        }
+        categories: true
       },
       orderBy: { createdAt: 'asc' },
       where: { userId: req.session.user!.id }
-    }).then(profiles =>
-      profiles.map(profile => ({
-        ...profile,
-        categories: profile.categories.map(({ text }) => text)
-      }))
-    );
+    });
 
     return res.renderTemplate(
       profilesTable({ profiles })
@@ -62,18 +55,11 @@ profilesController.put('/',
       select: {
         id: true,
         name: true,
-        categories: {
-          select: { text: true }
-        }
+        categories: true
       },
       orderBy: { createdAt: 'asc' },
       where: { userId: req.session.user!.id }
-    }).then(profiles =>
-      profiles.map(profile => ({
-        ...profile,
-        categories: profile.categories.map(({ text }) => text)
-      }))
-    );
+    });
 
     return res.renderTemplate(
       profilesTable({ profiles })
@@ -93,18 +79,11 @@ profilesController.delete('/',
       select: {
         id: true,
         name: true,
-        categories: {
-          select: { text: true }
-        }
+        categories: true
       },
       orderBy: { createdAt: 'asc' },
       where: { userId: req.session.user!.id }
-    }).then(
-      profiles => profiles.map(profile => ({
-        ...profile,
-        categories: profile.categories.map(({ text }) => text)
-      }))
-    );
+    });
 
     return res.renderTemplate(
       profilesTable({ profiles })
@@ -118,18 +97,11 @@ profilesController.get('/',
       select: {
         id: true,
         name: true,
-        categories: {
-          select: { text: true }
-        }
+        categories: true
       },
       orderBy: { createdAt: 'asc' },
       where: { userId: req.session.user!.id }
-    }).then(profiles =>
-      profiles.map(profile => ({
-        ...profile,
-        categories: profile.categories.map(({ text }) => text)
-      }))
-    );
+    });
 
     return res.renderTemplate(
       layout({
@@ -162,21 +134,8 @@ profilesController.get('/edit',
       select: {
         id: true,
         name: true,
-        categories: {
-          select: {
-            text: true
-          }
-        }
+        categories: true
       }
-    }).then(profile => {
-      if (!profile) {
-        return null;
-      }
-
-      return {
-        ...profile,
-        categories: profile.categories.map(({ text }) => text)
-      };
     });
 
     if (!profile) {

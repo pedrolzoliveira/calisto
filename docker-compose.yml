@@ -2,9 +2,7 @@ version: '3'
 
 services:
   database:
-    build:
-      context: .
-      dockerfile: ./docker/database/Dockerfile
+    image: pgvector/pgvector:pg16
     hostname: database
     environment:
       - POSTGRES_PASSWORD=1234
@@ -41,57 +39,57 @@ services:
       timeout: 5s
       retries: 20
       start_period: 10s
-  server:
-    ports:
-      - "3141:3141"
-    environment:
-      - DATABASE_URL=postgres://postgres:1234@host.docker.internal:5432/calisto
-      - RABBIT_MQ_URL=amqp://host.docker.internal
-      - REDIS_URL=redis://host.docker.internal:6379
-      - SESSION_SECRET=secret
-      - PORT=3141
-    depends_on:
-      database:
-        condition: service_healthy
-      rabbitmq:
-        condition: service_healthy
-      redis:
-        condition: service_healthy
-    build:
-      context: .
-      dockerfile: ./docker/server/Dockerfile
-  scraper:
-    environment:
-      - DATABASE_URL=postgres://postgres:1234@host.docker.internal:5432/calisto
-      - RABBIT_MQ_URL=amqp://host.docker.internal
-    depends_on:
-      database:
-        condition: service_healthy
-      rabbitmq:
-        condition: service_healthy
-    build:
-      context: .
-      dockerfile: ./docker/scraper/Dockerfile
-  consumer: &consumer
-    environment:
-      - DATABASE_URL=postgres://postgres:1234@host.docker.internal:5432/calisto
-      - RABBIT_MQ_URL=amqp://host.docker.internal
-      - CHAT_GPT_KEY=${CHAT_GPT_KEY}
-      - CHAT_GPT_ORGANIZATION_ID=${CHAT_GPT_ORGANIZATION_ID}
-    depends_on:
-      database:
-        condition: service_healthy
-      rabbitmq:
-        condition: service_healthy
-    build:
-      context: .
-      dockerfile: ./docker/consumer/Dockerfile
-  consumer-processing-relations:
-    <<: *consumer
-    command: ["node", "run-consumer.js", "processing-relations"]
-  consumer-news-created:
-    <<: *consumer
-    command: ["node", "run-consumer.js", "news-created"]
-  consumer-profile-category-changed:
-    <<: *consumer
-    command: ["node", "run-consumer.js", "profile-category-changed"]
+  # server:
+  #   ports:
+  #     - "3141:3141"
+  #   environment:
+  #     - DATABASE_URL=postgres://postgres:1234@host.docker.internal:5432/calisto
+  #     - RABBIT_MQ_URL=amqp://host.docker.internal
+  #     - REDIS_URL=redis://host.docker.internal:6379
+  #     - SESSION_SECRET=secret
+  #     - PORT=3141
+  #   depends_on:
+  #     database:
+  #       condition: service_healthy
+  #     rabbitmq:
+  #       condition: service_healthy
+  #     redis:
+  #       condition: service_healthy
+  #   build:
+  #     context: .
+  #     dockerfile: ./docker/server/Dockerfile
+  # scraper:
+  #   environment:
+  #     - DATABASE_URL=postgres://postgres:1234@host.docker.internal:5432/calisto
+  #     - RABBIT_MQ_URL=amqp://host.docker.internal
+  #   depends_on:
+  #     database:
+  #       condition: service_healthy
+  #     rabbitmq:
+  #       condition: service_healthy
+  #   build:
+  #     context: .
+  #     dockerfile: ./docker/scraper/Dockerfile
+  # consumer: &consumer
+  #   environment:
+  #     - DATABASE_URL=postgres://postgres:1234@host.docker.internal:5432/calisto
+  #     - RABBIT_MQ_URL=amqp://host.docker.internal
+  #     - CHAT_GPT_KEY=${CHAT_GPT_KEY}
+  #     - CHAT_GPT_ORGANIZATION_ID=${CHAT_GPT_ORGANIZATION_ID}
+  #   depends_on:
+  #     database:
+  #       condition: service_healthy
+  #     rabbitmq:
+  #       condition: service_healthy
+  #   build:
+  #     context: .
+  #     dockerfile: ./docker/consumer/Dockerfile
+  # consumer-processing-relations:
+  #   <<: *consumer
+  #   command: ["node", "run-consumer.js", "processing-relations"]
+  # consumer-news-created:
+  #   <<: *consumer
+  #   command: ["node", "run-consumer.js", "news-created"]
+  # consumer-profile-category-changed:
+  #   <<: *consumer
+  #   command: ["node", "run-consumer.js", "profile-category-changed"]
