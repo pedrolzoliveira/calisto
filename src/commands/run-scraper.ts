@@ -8,6 +8,7 @@ import { valorScraper } from '../application/news/scrapers/valor-scraper';
 import { publisher } from '../application/publisher';
 import { createChannel } from '../infra/messaging/rabbitmq/create-channel';
 import { createConnection } from '../infra/messaging/rabbitmq/create-connection';
+import { cnnBrasilScraper } from '../application/news/scrapers/cnn-brasil-scraper';
 
 createConnection()
   .then(connection => {
@@ -33,6 +34,10 @@ createConnection()
 
         schedule('* * * * *', () => {
           valorScraper.scrape();
+        }).start();
+
+        schedule('* * * * *', () => {
+          cnnBrasilScraper.scrape();
         }).start();
       });
   });
