@@ -3,13 +3,13 @@ import { Scraper } from '../scraper';
 import { getHTML } from '../utils/get-html';
 
 export const infoMoneyScraper = new Scraper({
-  sourceCode: 'info-money',
+  sourceCode: 'infomoney',
   getLinks: async () => {
     const html = await getHTML('https://www.infomoney.com.br/news-sitemap.xml');
 
     return Array.from(
-      html.querySelectorAll('td > a') as unknown as HTMLAnchorElement[]
-    ).slice(0, 50).map(({ href }) => href);
+      html.querySelectorAll('url > loc')
+    ).slice(0, 50).map(({ text }) => text);
   },
   getContent: html => {
     return sanitizeWhiteSpace(
