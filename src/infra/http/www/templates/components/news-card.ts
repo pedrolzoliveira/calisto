@@ -8,7 +8,7 @@ export interface NewsCardProps {
   description: string | null
   imageUrl: string | null
   createdAt: Date
-  categories: string[]
+  categories: Array<{ text: string, distance: number }>
   source: Source
   lastRow?: boolean
 }
@@ -39,7 +39,14 @@ export function newsCard({ source, categories, ...news }: NewsCardProps) {
               <div class="flex space-x-1 pt-1">
                 ${
                   categories.map(
-                    category => html`<p class="text-xs px-2 rounded-full bg-gray-200 text-gray-700 flex justify-center items-center">${category}</p>`
+                    ({ text, distance }) => html`
+                      <p
+                        class="text-xs px-2 rounded-full bg-gray-200 text-gray-700 flex justify-center items-center select-none"
+                        title="Distance: ${distance}"
+                      >
+                        ${text}
+                      </p>
+                    `
                   )
                 }
               </div>
