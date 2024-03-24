@@ -9,6 +9,7 @@ import { publisher } from '../application/publisher';
 import { createChannel } from '../infra/messaging/rabbitmq/create-channel';
 import { createConnection } from '../infra/messaging/rabbitmq/create-connection';
 import { cnnBrasilScraper } from '../application/news/scrapers/cnn-brasil-scraper';
+import { metropolesScraper } from '../application/news/scrapers/metropoles-scraper';
 
 createConnection()
   .then(connection => {
@@ -38,6 +39,10 @@ createConnection()
 
         schedule('* * * * *', () => {
           cnnBrasilScraper.scrape();
+        }).start();
+
+        schedule('* * * * *', () => {
+          metropolesScraper.scrape();
         }).start();
       });
   });
