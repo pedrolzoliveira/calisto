@@ -13,8 +13,7 @@ type queryResult = Array<{
   description: string | null
   imageUrl: string | null
   createdAt: Date
-  categories: string[]
-  batchesIds: string[]
+  categories: Array<{ text: string, distance: number }>
   source: Source
   rowNum: number
 }>
@@ -25,8 +24,7 @@ export const getNewsFeed = async ({ limit, profileId, cursor }: getNewsFeedParam
   description: string | null
   imageUrl: string | null
   createdAt: Date
-  categories: string[]
-  batchesIds: string[]
+  categories: Array<{ text: string, distance: number }>
   source: Source
   lastRow: boolean
 }>> => {
@@ -49,14 +47,19 @@ export const getNewsFeed = async ({ limit, profileId, cursor }: getNewsFeedParam
       "News".description,
       "News"."imageUrl",
       "News"."createdAt",
-      ARRAY_AGG(CategoryEmbeddings.text) AS categories,
+      json_agg(
+        json_build_object(
+          'text', CategoryEmbeddings.text,
+          'distance', CategoryEmbeddings.embedding <=> "NewsEmbedding".embedding
+        )
+      ) AS categories,
       row_to_json("Source") AS source,
       ROW_NUMBER() OVER (ORDER BY "News"."createdAt" ASC) AS row_num
     FROM
       "News"
       JOIN "NewsEmbedding" ON "News"."link" = "NewsEmbedding"."link"
       JOIN "Source" ON "Source".code = "News"."sourceCode"
-      JOIN CategoryEmbeddings ON (CategoryEmbeddings.embedding <=> "NewsEmbedding".embedding) <= .67
+      JOIN CategoryEmbeddings ON (CategoryEmbeddings.embedding <=> "NewsEmbedding".embedding) <= .60
     WHERE "News"."createdAt" < ${cursor}
     GROUP BY
       "News".link,
