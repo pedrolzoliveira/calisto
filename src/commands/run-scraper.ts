@@ -11,6 +11,7 @@ import { createConnection } from '../infra/messaging/rabbitmq/create-connection'
 import { cnnBrasilScraper } from '../application/news/scrapers/cnn-brasil-scraper';
 import { metropolesScraper } from '../application/news/scrapers/metropoles-scraper';
 import { senadoNoticiasScraper } from '../application/news/scrapers/senado-noticias-scraper';
+import { interceptBrasilScraper } from '../application/news/scrapers/intercept-brasil-scraper';
 
 createConnection()
   .then(connection => {
@@ -48,6 +49,10 @@ createConnection()
 
         schedule('* * * * *', () => {
           senadoNoticiasScraper.scrape();
+        }).start();
+
+        schedule('* * * * *', () => {
+          interceptBrasilScraper.scrape();
         }).start();
       });
   });
