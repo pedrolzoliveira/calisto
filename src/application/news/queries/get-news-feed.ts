@@ -54,7 +54,7 @@ export const getNewsFeed = async ({ limit, profileId, cursor }: getNewsFeedParam
         )
       ) AS categories,
       row_to_json("Source") AS source,
-      ROW_NUMBER() OVER (ORDER BY "News"."createdAt" ASC) AS row_num
+      ROW_NUMBER() OVER (ORDER BY "News"."createdAt" ASC) AS "rowNum"
     FROM
       "News"
       JOIN "NewsEmbedding" ON "News"."link" = "NewsEmbedding"."link"
