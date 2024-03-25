@@ -57,7 +57,7 @@ export function newsCard({ source, categories, ...news }: NewsCardProps) {
       </div>
       ${
         news.imageUrl
-        ? html`<object data="${news.imageUrl}" type="image/jpeg"></object>`
+        ? html`<object data="${news.imageUrl}"></object>`
         : nothing
       }
       <div class="p-4 space-y-2">
