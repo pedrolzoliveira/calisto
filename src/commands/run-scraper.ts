@@ -12,47 +12,53 @@ import { cnnBrasilScraper } from '../application/news/scrapers/cnn-brasil-scrape
 import { metropolesScraper } from '../application/news/scrapers/metropoles-scraper';
 import { senadoNoticiasScraper } from '../application/news/scrapers/senado-noticias-scraper';
 import { interceptBrasilScraper } from '../application/news/scrapers/intercept-brasil-scraper';
+import { infoMoneyScraper } from '../application/news/scrapers/info-money-scraper';
 
-createConnection()
-  .then(connection => {
-    createChannel(connection)
-      .then(channel => {
-        publisher.bindChannel(channel);
+const SCRAPERS = {
+  'cnn-brasil': cnnBrasilScraper,
+  estadao: estadaoScraper,
+  folha: folhaScraper,
+  g1: g1Scraper,
+  infomoney: infoMoneyScraper,
+  'intercept-brasil': interceptBrasilScraper,
+  metropoles: metropolesScraper,
+  'senado-noticias': senadoNoticiasScraper,
+  uol: uolScraper,
+  valor: valorScraper
+} as const;
 
-        schedule('* * * * *', () => {
-          estadaoScraper.scrape();
-        }).start();
+function runAll() {
+  for (const scraper of Object.values(SCRAPERS)) {
+    schedule('* * * * *', () => {
+      scraper.scrape();
+    }).start();
+  }
+}
 
-        schedule('* * * * *', () => {
-          folhaScraper.scrape();
-        }).start();
+async function runScraper(args: string[]) {
+  const connection = await createConnection();
+  const channel = await createChannel(connection);
+  publisher.bindChannel(channel);
 
-        schedule('* * * * *', () => {
-          g1Scraper.scrape();
-        }).start();
+  if (args.includes('--all')) {
+    return runAll();
+  }
 
-        schedule('* * * * *', () => {
-          uolScraper.scrape();
-        }).start();
+  const scraperName = args[2];
 
-        schedule('* * * * *', () => {
-          valorScraper.scrape();
-        }).start();
+  if (!scraperName) {
+    throw new Error('Scraper name not provided. available scrapers: ' + Object.keys(SCRAPERS).join(', '));
+  }
 
-        schedule('* * * * *', () => {
-          cnnBrasilScraper.scrape();
-        }).start();
+  const scraper = SCRAPERS[scraperName as keyof typeof SCRAPERS];
 
-        schedule('* * * * *', () => {
-          metropolesScraper.scrape();
-        }).start();
+  if (!scraper) {
+    throw new Error(`Scraper "${scraperName}" not found. available scrapers: ${Object.keys(SCRAPERS).join(', ')}`);
+  }
 
-        schedule('* * * * *', () => {
-          senadoNoticiasScraper.scrape();
-        }).start();
+  schedule('* * * * *', () => {
+    scraper.scrape();
+  }).start();
+}
 
-        schedule('* * * * *', () => {
-          interceptBrasilScraper.scrape();
-        }).start();
-      });
-  });
+runScraper(process.argv);
