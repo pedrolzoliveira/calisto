@@ -6,38 +6,57 @@ import { publisher } from '../application/publisher';
 import { newsCreatedQueue } from '../application/news/queues/news-created';
 import { calculateCategoriesEmbeddingsQueue } from '../application/profiles/queues/calculate-categories-embeddings';
 import { calculateCategoriesEmbeddingsConsumer } from '../application/profiles/consumers/calculate-categories-embeddings';
+import { type Channel } from 'amqplib';
 
-createConnection().then((connection) => {
-  createChannel(connection).then(async channel => {
-    const queueName = process.argv[2];
-    const queues = ['news-created', 'calculate-categories-embeddings'];
+const QUEUES = {
+  'news-created': {
+    queue: newsCreatedQueue,
+    consumer: newsCreatedConsumer
+  },
+  'calculate-categories-embeddings': {
+    queue: calculateCategoriesEmbeddingsQueue,
+    consumer: calculateCategoriesEmbeddingsConsumer
+  }
+} as const;
 
-    publisher.bindChannel(channel);
+async function runAll(channel: Channel) {
+  logger.info('Starting all consumers');
 
-    if (!queueName) {
-      throw new Error('Queue name not provided. available queues: ' + queues.join(', '));
-    }
-    switch (queueName) {
-      case 'news-created':
-        logger.info('Starting news-created consumer');
+  for (const { consumer, queue } of Object.values(QUEUES)) {
+    queue.bindChannel(channel);
+    await queue.assertQueue();
 
-        newsCreatedQueue.bindChannel(channel);
-        await newsCreatedQueue.assertQueue();
+    consumer.bindChannel(channel);
+  }
 
-        newsCreatedConsumer.bindChannel(channel);
-        await newsCreatedConsumer.consume();
-        break;
-      case 'calculate-categories-embeddings':
-        logger.info('Starting calculate-categories-embeddings consumer');
+  Object.values(QUEUES).map(async ({ consumer }) => await consumer.consume());
+}
 
-        calculateCategoriesEmbeddingsQueue.bindChannel(channel);
-        await calculateCategoriesEmbeddingsQueue.assertQueue();
+async function runConsumer(args: string[]) {
+  const connection = await createConnection();
+  const channel = await createChannel(connection);
+  publisher.bindChannel(channel);
 
-        calculateCategoriesEmbeddingsConsumer.bindChannel(channel);
-        await calculateCategoriesEmbeddingsConsumer.consume();
-        break;
-      default:
-        throw new Error(`Queue "${queueName}" not found. available queues: ${queues.join(', ')}`);
-    }
-  });
-});
+  if (args.includes('--all')) {
+    return await runAll(channel);
+  }
+
+  const queueName = args[2];
+  if (!queueName) {
+    throw new Error('Queue name not provided. available queues: ' + Object.keys(QUEUES).join(', '));
+  }
+  const { consumer, queue } = QUEUES[queueName as keyof typeof QUEUES];
+  if (!consumer || !queue) {
+    throw new Error(`Consumer "${queueName}" not found. available consumers: ${Object.keys(QUEUES).join(', ')}`);
+  }
+
+  logger.info(`Starting ${queueName} consumer`);
+
+  queue.bindChannel(channel);
+  await queue.assertQueue();
+
+  consumer.bindChannel(channel);
+  await consumer.consume();
+}
+
+runConsumer(process.argv);
