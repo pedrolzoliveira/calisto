@@ -1,5 +1,6 @@
 INSERT INTO "Source" ("code", "name", "avatarUrl")
 VALUES
+  ('senado-noticias', 'Senado Notícias', '/assets/source-icons/senado-noticias.jpeg'),
   ('metropoles', 'Metrópoles'        , '/assets/source-icons/metropoles.jpeg'),
   ('cnn-brasil', 'CNN Brasil'        , '/assets/source-icons/cnn-brasil.jpeg'),
   ('infomoney' , 'InfoMoney'         , '/assets/source-icons/infomoney.jpeg'),
