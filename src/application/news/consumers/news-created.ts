@@ -55,6 +55,10 @@ export const newsCreatedConsumer = new Consumer({
 
     const embeddings = await splitEmbedding(contentSanitized);
 
+    if (!embeddings.length) {
+      return;
+    }
+
     await prismaClient.$executeRaw`
       INSERT INTO "NewsEmbedding" ("newsSectionIndex", "link", "embedding")
       VALUES ${Prisma.join(
