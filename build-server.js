@@ -28,7 +28,7 @@ exec('yarn tailwindcss -i ./src/infra/http/www/tailwind.css -o ./src/infra/http/
         copy({
           assets: [
             {
-              from: ['./src/infra/http/www/assets/*'],
+              from: ['./src/infra/http/www/assets/**'],
               to: ['./www/assets']
             },
             {
