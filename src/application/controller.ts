@@ -16,7 +16,7 @@ applicationController.get('/', async (req, res) => {
   const news = await getNewsFeed({
     cursor: new Date(),
     limit: 20,
-    profileId: '626eeb86-47bd-4dbe-8e58-825a2aa6d7b8'
+    profileId: 'f942ca7d-9e41-405a-8e37-a8ac4f7ccc22'
   });
 
   return res.renderTemplate(landingPage(news));
