@@ -4,7 +4,7 @@ import { calculateEmbeddings } from '../../chat-gpt/use-cases/calculate-embeddin
 import { logger } from '@/src/infra/logger';
 import { Prisma } from '@prisma/client';
 
-const getCategoriesToCalculate = async (categories: string[]) => {
+const getCategoriesToCalculate = async (categories: string[]): Promise<string[]> => {
   const categoriesText = (await prismaClient.$queryRaw<{ text: string }[]>`SELECT "text" FROM "CategoryEmbedding" WHERE "text" IN (${Prisma.join(categories)});`).map(({ text }) => text);
 
   return categories.filter(category => !categoriesText.includes(category));
