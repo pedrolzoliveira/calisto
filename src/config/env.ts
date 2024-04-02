@@ -62,6 +62,56 @@ class Env {
 
     return parsed.data;
   }
+
+  public get SMTP_HOST() {
+    const parsed = z.string().safeParse(this.env.SMTP_HOST);
+
+    if (!parsed.success) {
+      throw new Error(`Error accessing env.SMTP_HOST: ${parsed.error.message}`);
+    }
+
+    return parsed.data;
+  }
+
+  public get SMTP_PORT() {
+    const parsed = z.number({ coerce: true }).safeParse(this.env.SMTP_PORT);
+
+    if (!parsed.success) {
+      throw new Error(`Error accessing env.SMTP_PORT: ${parsed.error.message}`);
+    }
+
+    return parsed.data;
+  }
+
+  public get SMTP_AUTH_USER() {
+    const parsed = z.string().safeParse(this.env.SMTP_AUTH_USER);
+
+    if (!parsed.success) {
+      throw new Error(`Error accessing env.SMTP_AUTH_USER: ${parsed.error.message}`);
+    }
+
+    return parsed.data;
+  }
+
+  public get SMTP_AUTH_PASS() {
+    const parsed = z.string().safeParse(this.env.SMTP_AUTH_PASS);
+
+    if (!parsed.success) {
+      throw new Error(`Error accessing env.SMTP_AUTH_PASS: ${parsed.error.message}`);
+    }
+
+    return parsed.data;
+  }
+
+  public get SERVER_URL() {
+    const parsed = z.string().safeParse(this.env.SERVER_URL);
+
+    if (!parsed.success) {
+      throw new Error(`Error accessing env.SERVER_URL: ${parsed.error.message}`);
+    }
+
+    return parsed.data;
+  }
 }
 
 export const env = new Env(process.env);
