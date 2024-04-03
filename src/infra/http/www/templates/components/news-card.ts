@@ -23,7 +23,7 @@ const formatter = new Intl.DateTimeFormat('default', {
 
 export function newsCard({ source, categories, ...news }: NewsCardProps) {
   return html`
-    <div class="flex flex-col w-1/3 min-w-[480px] border rounded bg-white">
+    <div class="flex flex-col w-[90vw] sm:w-1/3 sm:min-w-[480px] border rounded bg-white">
       <div class="p-4 flex border-b justify-between">
           ${
             source.avatarUrl
