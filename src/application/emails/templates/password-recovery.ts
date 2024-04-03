@@ -8,7 +8,7 @@ export function passwordRecovery({ email, token }: Params) {
 <br>
 Recebemos uma solicitação para redefinir sua senha. Se você não fez essa solicitação, por favor, ignore este e-mail. Caso contrário, você pode redefinir sua senha usando o link abaixo:<br>
 <br>
-<a href="${env.SERVER_URL}/password-recovery?token=${token}">Clique aqui para redefinir sua senha</a><br>
+<a href="${env.SERVER_URL}/users/password-recovery/${token}">Clique aqui para redefinir sua senha</a><br>
 <br>
 Este link de redefinição de senha expirará em 24 horas.<br>
 <br>
