@@ -72,6 +72,7 @@ interface SignUpFormProps {
 export const signUpForm = (data?: SignUpFormProps) => {
   return html`
     <form hx-post="/users/sign-up" hx-swap="outerHTML" class="flex flex-col space-y-4 w-96">
+      <img class="pb-12" src="/assets/logo.svg" alt="logo"/>
       <h1 class="font-bold text-lg">Criar conta</h1>
       ${email(data?.email.value, data?.email.error)}
       ${password(data?.password.value)}

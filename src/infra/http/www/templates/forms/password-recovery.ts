@@ -36,6 +36,7 @@ function confirmPassword() {
 export function passwordRecoveryForm(token: string) {
   return html`
   <form hx-post="/users/password-recovery" hx-swap="outerHTML" class="flex flex-col space-y-4 w-96">
+    <img class="pb-12" src="/assets/logo.svg" alt="logo"/>
     <h1 class="font-bold text-lg">Redefinir Senha</h1>
     ${password()}
     ${confirmPassword()}
