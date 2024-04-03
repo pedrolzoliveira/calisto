@@ -57,6 +57,10 @@ export const signInForm = (data?: SignInFormProps) => {
         Não tem conta ainda?
         <a class="text-blue-600 italic hover:underline" href="/users/sign-up">Inscreva-se</a>
       </p>
+      <p class="text-sm w-full">
+        Esqueceu a senha?
+        <a class="text-blue-600 italic hover:underline" href="/users/forgot-password">Redefinir senha</a>
+      </p>
     </form>
   `;
 };

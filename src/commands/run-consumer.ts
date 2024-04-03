@@ -7,6 +7,8 @@ import { newsCreatedQueue } from '../application/news/queues/news-created';
 import { calculateCategoriesEmbeddingsQueue } from '../application/profiles/queues/calculate-categories-embeddings';
 import { calculateCategoriesEmbeddingsConsumer } from '../application/profiles/consumers/calculate-categories-embeddings';
 import { type Channel } from 'amqplib';
+import { emailsQueue } from '../application/emails/queues/emails';
+import { emailsConsumer } from '../application/emails/consumers/emails';
 
 const QUEUES = {
   'news-created': {
@@ -16,6 +18,10 @@ const QUEUES = {
   'calculate-categories-embeddings': {
     queue: calculateCategoriesEmbeddingsQueue,
     consumer: calculateCategoriesEmbeddingsConsumer
+  },
+  emails: {
+    queue: emailsQueue,
+    consumer: emailsConsumer
   }
 } as const;
 

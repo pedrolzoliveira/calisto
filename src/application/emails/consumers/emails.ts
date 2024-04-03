@@ -1,7 +1,7 @@
-import { emailQueue } from '../queues/emails';
+import { emailsQueue } from '../queues/emails';
 import { createTransporter } from '../utils/create-transporter';
 
-export const emailsConsumer = emailQueue.createConsumer(
+export const emailsConsumer = emailsQueue.createConsumer(
   async (data) => {
     const transporter = await createTransporter();
 
