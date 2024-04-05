@@ -18,7 +18,7 @@ export function forgotPassword() {
             required
           />
         </div>
-        ${button({ type: 'submit', content: 'Enviar Email Para Redefinir Senha' })}
+        ${button({ type: 'submit', content: 'Enviar email para redefinir senha' })}
       </form>
     </main>
   `;
