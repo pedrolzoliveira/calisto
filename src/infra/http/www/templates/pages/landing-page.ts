@@ -17,8 +17,8 @@ export function landingPage(news: NewsCardProps[]) {
         <title>Light Beam News</title>
       </head>
       <body class="bg-gray-100 flex flex-col w-full">
-        <main class="flex justify-around w-full h-screen">
-          <div class="flex flex-col justify-center space-y-2 w-[50vw] pl-[20vw]">
+        <main class="flex flex-col p-4 lg:flex-row items-center justify-around w-screen h-screen">
+          <div class="flex flex-col justify-center space-y-2 w-96 lg:w-[50vw] lg:pl-[20vw]">
             <img class="pb-12" src="/assets/logo.svg" alt="logo"/>
             <h1 class="text-5xl">Fique por dentro do que te interessa.</h1>
             <p class="text-sm">Utilizamos IA para filtrar notícias relevantes para você, criando um feed personalizado para suas necessidades, facilitando sua busca por informação!</p>          
@@ -31,17 +31,43 @@ export function landingPage(news: NewsCardProps[]) {
               </p>
             </div>
           </div>
-          <div id="newsFeed" class="flex flex-col space-y-2 h-screen overflow-x-hidden overflow-y-hidden items-center w-[50vw]">
+          <div id="newsFeed" class="hidden lg:flex flex-col space-y-2 h-screen overflow-x-hidden overflow-y-hidden items-center w-[50vw]">
             ${repeat(news, newsCard)}
           </div>
         </main>
       <script>
-        function scrollNewsFeed() {
-          newsFeed.scrollBy({ top: 2, behavior: 'smooth' })
-        }
+        
+        // GPT-4 generated 
+        function animateScroll(element, duration) {
+          let start = element.scrollTop;
+          let end = element.scrollHeight - element.clientHeight;
+          let change = end - start;
+          let startTime = performance.now();
 
-        scrollNewsFeed()
-        newsFeed.addEventListener("scrollend", scrollNewsFeed)
+          function scroll() {
+            let now = performance.now();
+            let elapsed = now - startTime;
+            let fraction = elapsed / duration;
+
+            if (fraction < 1) {
+              // Calculate the current scroll position
+              let currentPosition = start + change * fraction;
+              element.scrollTop = currentPosition;
+              requestAnimationFrame(scroll);
+            } else {
+              // Once we hit the bottom, reset to the top and start over
+              element.scrollTop = 0;
+              animateScroll(element, duration); // Repeat the animation
+            }
+          }
+          scroll();
+        }
+        document.addEventListener('DOMContentLoaded', () => {
+          let newsFeed = document.getElementById('newsFeed');
+          if (newsFeed) {
+            animateScroll(newsFeed, 30000); // Adjust the duration as needed
+          }
+        });
       </script>
       </body>
     </html>
