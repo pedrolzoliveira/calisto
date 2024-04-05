@@ -73,9 +73,13 @@ export class InputList extends LitElement {
     this.value = this.value.filter(v => v !== value);
   }
 
+  handleDivClick() {
+    this.input.focus();
+  }
+
   render() {
     return html`
-        <div class="bg-white px-1 py-1 rounded border flex items-center space-x-1 flex-wrap w-96">
+        <div class="bg-white px-1 py-1 rounded border flex items-center space-x-1 flex-wrap w-96 cursor-text" @click=${this.handleDivClick}>
             ${
               repeat(
                 this.value,
