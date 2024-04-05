@@ -6,6 +6,7 @@ import { getNewsFeed } from './news/queries/get-news-feed';
 import { landingPage } from '../infra/http/www/templates/pages/landing-page';
 import { learnMorePage } from '../infra/http/www/templates/pages/learn-more';
 import { prismaClient } from '../infra/database/prisma/client';
+import { logger } from '../infra/logger';
 
 export const applicationController = Router();
 
@@ -32,7 +33,8 @@ applicationController.get('/learn-more', async (req, res) => {
         select: { name: true }
       })
     ).map(({ name }) => name);
-  } catch (_) {
+  } catch (error) {
+    logger.error(error);
     sources = [];
   }
 
