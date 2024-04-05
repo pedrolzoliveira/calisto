@@ -89,7 +89,7 @@ export class InputList extends LitElement {
                   </div>`
               )
             }
-          <input type="text" class="outline-none flex-1 [&:not(:first-child)]:border-b border-gray-100 px-1" .value=${this.inputValue} @input=${this.handleInput} @keypress=${this.handleKeypress} @keydown=${this.handleKeyDown}></input>
+          <input type="text" class="outline-none flex-1 border-gray-100 px-1" .value=${this.inputValue} @input=${this.handleInput} @keypress=${this.handleKeypress} @keydown=${this.handleKeyDown}></input>
         </div>
       `;
   }
