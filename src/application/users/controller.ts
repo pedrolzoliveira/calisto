@@ -1,6 +1,4 @@
 import { Router } from 'express';
-import { z } from 'zod';
-
 import { layout } from '@/src/infra/http/www/templates/layout';
 import { signInPage } from '@/src/infra/http/www/templates/pages/sign-in';
 import { signUpPage } from '@/src/infra/http/www/templates/pages/sign-up';
@@ -16,6 +14,7 @@ import { recoveryEmailSent } from '@/src/infra/http/www/templates/pages/recovery
 import { passwordRecoveryPage } from '@/src/infra/http/www/templates/pages/password-recovery';
 import { isTokenValid } from './use-cases/is-token-valid';
 import { recoverPassword } from './use-cases/recover-password';
+import { authRequestSchema, emailSchema, passwordRecoveryRequestSchema } from './zod-schemas';
 
 export const usersController = Router();
 
@@ -32,10 +31,7 @@ usersController.get('/sign-in',
 usersController.post('/sign-in',
   userUnauthenticated,
   async (req, res) => {
-    const data = z.object({
-      email: z.string().email(),
-      password: z.string()
-    }).parse(req.body);
+    const data = authRequestSchema.parse(req.body);
 
     try {
       req.session.user = await signIn(data);
@@ -84,10 +80,7 @@ usersController.get('/sign-up',
 usersController.post('/sign-up',
   userUnauthenticated,
   async (req, res) => {
-    const data = z.object({
-      email: z.string().email(),
-      password: z.string()
-    }).parse(req.body);
+    const data = authRequestSchema.parse(req.body);
 
     try {
       req.session.user = await signUp(data);
@@ -131,7 +124,7 @@ usersController.post('/sign-up',
 
 usersController.post('/sign-up/email',
   async (req, res) => {
-    const validation = z.string().email('Email invalido').safeParse(req.body.email);
+    const validation = emailSchema.safeParse(req.body.email);
 
     let error: string | undefined;
     let email = String(req.body.email);
@@ -170,8 +163,8 @@ usersController.get('/forgot-password',
 usersController.post('/forgot-password',
   async (req, res) => {
     try {
-      const data = z.object({
-        email: z.string().email()
+      const data = authRequestSchema.pick({
+        email: true
       }).parse(req.body);
       await sendPasswordRecoveryEmail(data.email);
     } finally {
@@ -205,10 +198,7 @@ usersController.get('/password-recovery/:token',
 
 usersController.post('/password-recovery',
   async (req, res) => {
-    const data = z.object({
-      token: z.string(),
-      password: z.string()
-    }).parse(req.body);
+    const data = passwordRecoveryRequestSchema.parse(req.body);
 
     try {
       await recoverPassword({ token: data.token, password: data.password });
