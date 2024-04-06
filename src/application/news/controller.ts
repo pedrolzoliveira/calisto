@@ -1,5 +1,4 @@
 import { Router } from 'express';
-import { z } from 'zod';
 import { getNewsFeed } from './queries/get-news-feed';
 import { prismaClient } from '@/src/infra/database/prisma/client';
 import { layout } from '@/src/infra/http/www/templates/layout';
@@ -10,16 +9,15 @@ import { noNewsFound } from '@/src/infra/http/www/templates/components/no-news-f
 import { userAuthenticated } from '../users/middlewares/user-authenticated';
 import { loadNew } from './queries/load-new';
 import { newNewsLoader } from '@/src/infra/http/www/templates/components/new-news-loader';
+import { getNewsRequestSchema } from './zod-schemas';
 
 export const newsController = Router();
 
 newsController.get('/',
   userAuthenticated,
   async (req, res) => {
-    const data = z.object({
-      limit: z.number({ coerce: true }).default(20),
-      cursor: z.date({ coerce: true }).default(new Date()),
-      profileId: z.string().uuid().nullable().default(null)
+    const data = getNewsRequestSchema.partial({
+      profileId: true
     }).parse(req.query);
 
     if (!data.profileId) {
@@ -68,11 +66,7 @@ newsController.get('/',
 newsController.get('/feed',
   userAuthenticated,
   async (req, res) => {
-    const data = z.object({
-      limit: z.number({ coerce: true }).default(20),
-      cursor: z.date({ coerce: true }).default(new Date()),
-      profileId: z.string().uuid()
-    }).parse(req.query);
+    const data = getNewsRequestSchema.parse(req.query);
 
     const news = await getNewsFeed(data);
 
@@ -97,9 +91,9 @@ newsController.get('/feed',
 newsController.get('/load-new',
   userAuthenticated,
   async (req, res) => {
-    const data = z.object({
-      profileId: z.string().uuid(),
-      cursor: z.date({ coerce: true }).default(new Date())
+    const data = getNewsRequestSchema.pick({
+      profileId: true,
+      cursor: true
     }).parse(req.query);
 
     const news = await loadNew(data);
