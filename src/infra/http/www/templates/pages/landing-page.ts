@@ -65,7 +65,7 @@ export function landingPage(news: NewsCardProps[]) {
         document.addEventListener('DOMContentLoaded', () => {
           let newsFeed = document.getElementById('newsFeed');
           if (newsFeed) {
-            animateScroll(newsFeed, 30000); // Adjust the duration as needed
+            animateScroll(newsFeed, 60_000); // Adjust the duration as needed
           }
         });
       </script>
