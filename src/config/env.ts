@@ -112,6 +112,16 @@ class Env {
 
     return parsed.data;
   }
+
+  public get DATABASE_URL() {
+    const parsed = z.string().safeParse(this.env.DATABASE_URL);
+
+    if (!parsed.success) {
+      throw new Error(`Error accessing env.DATABASE_URL: ${parsed.error.message}`);
+    }
+
+    return parsed.data;
+  }
 }
 
 export const env = new Env(process.env);

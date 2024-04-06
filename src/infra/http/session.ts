@@ -1,19 +1,16 @@
 import { env } from '@/src/config/env';
 import expressSession from 'express-session';
-import RedisStore from 'connect-redis';
-import { createClient } from 'redis';
+import PgStoreImport from 'connect-pg-simple';
 
-export const redisClient = createClient({
-  url: env.REDIS_URL
-});
+const PgStore = PgStoreImport(expressSession);
 
-const redisStore = new RedisStore({
-  client: redisClient,
-  prefix: 'light-beam-news:'
+const pgStore = new PgStore({
+  conString: env.DATABASE_URL,
+  createTableIfMissing: true
 });
 
 export const session = expressSession({
-  store: redisStore,
+  store: pgStore,
   secret: env.SESSION_SECRET,
   saveUninitialized: false,
   resave: false
