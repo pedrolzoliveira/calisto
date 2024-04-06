@@ -15,6 +15,7 @@ import { passwordRecoveryPage } from '@/src/infra/http/www/templates/pages/passw
 import { isTokenValid } from './use-cases/is-token-valid';
 import { recoverPassword } from './use-cases/recover-password';
 import { authRequestSchema, emailSchema, passwordRecoveryRequestSchema } from './zod-schemas';
+import { logger } from '@/src/infra/logger';
 
 export const usersController = Router();
 
@@ -31,9 +32,8 @@ usersController.get('/sign-in',
 usersController.post('/sign-in',
   userUnauthenticated,
   async (req, res) => {
-    const data = authRequestSchema.parse(req.body);
-
     try {
+      const data = authRequestSchema.parse(req.body);
       req.session.user = await signIn(data);
       return res
         .setHeader('HX-Push-Url', '/news')
@@ -42,10 +42,10 @@ usersController.post('/sign-in',
     } catch (error) {
       const signInFormData = {
         email: {
-          value: data.email
+          value: req.body.email
         },
         password: {
-          value: data.password
+          value: req.body.password
         }
       };
 
@@ -80,9 +80,8 @@ usersController.get('/sign-up',
 usersController.post('/sign-up',
   userUnauthenticated,
   async (req, res) => {
-    const data = authRequestSchema.parse(req.body);
-
     try {
+      const data = authRequestSchema.parse(req.body);
       req.session.user = await signUp(data);
       return res
         .setHeader('HX-Push-Url', '/news')
@@ -91,13 +90,13 @@ usersController.post('/sign-up',
     } catch (error) {
       const signUpFormData = {
         email: {
-          value: data.email
+          value: req.body.email
         },
         password: {
-          value: data.password
+          value: req.body.password
         },
         confirmPassword: {
-          value: data.password
+          value: req.body.password
         }
       };
       if (error instanceof Error && error.message === 'Email já cadastrado') {
@@ -180,27 +179,31 @@ usersController.post('/forgot-password',
 
 usersController.get('/password-recovery/:token',
   async (req, res) => {
-    const token = req.params.token;
+    try {
+      const token = req.params.token;
 
-    const tokenIsValid = await isTokenValid(token);
+      const tokenIsValid = await isTokenValid(token);
 
-    if (!tokenIsValid) {
+      if (!tokenIsValid) {
+        return res.redirect('/users/forgot-password');
+      }
+
+      return res.renderTemplate(
+        layout({
+          body: passwordRecoveryPage(req.params.token)
+        })
+      );
+    } catch (error) {
+      logger.error(error);
       return res.redirect('/users/forgot-password');
     }
-
-    return res.renderTemplate(
-      layout({
-        body: passwordRecoveryPage(req.params.token)
-      })
-    );
   }
 );
 
 usersController.post('/password-recovery',
   async (req, res) => {
-    const data = passwordRecoveryRequestSchema.parse(req.body);
-
     try {
+      const data = passwordRecoveryRequestSchema.parse(req.body);
       await recoverPassword({ token: data.token, password: data.password });
     } finally {
       // eslint-disable-next-line no-unsafe-finally
