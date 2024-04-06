@@ -15,11 +15,26 @@ applicationController.use('/profiles', profilesController);
 applicationController.use('/users', usersController);
 
 applicationController.get('/', async (req, res) => {
-  const news = await getNewsFeed({
-    cursor: new Date(),
-    limit: 20,
-    profileId: '98d0f2c9-da27-4ff3-bb8a-950ceeca1023'
-  });
+  let news: Awaited<ReturnType<typeof getNewsFeed>>;
+
+  try {
+    const { id: profileId } = await prismaClient.profile.findFirstOrThrow({
+      select: { id: true },
+      where: {
+        user: { role: 'admin' }
+      },
+      orderBy: { name: 'asc' }
+    });
+
+    news = await getNewsFeed({
+      cursor: new Date(),
+      limit: 20,
+      profileId
+    });
+  } catch (error) {
+    logger.error(error);
+    news = [];
+  }
 
   return res.renderTemplate(landingPage(news));
 });
