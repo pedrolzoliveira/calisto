@@ -12,7 +12,7 @@ export function newProfilePage() {
       </div>
       <div class="flex flex-col">
         <label for="categories">Categorias:</label>
-        <input-list name="categories[]" required></input-list>
+        <input-list maxLength=${20} inputMaxLength=${32} name="categories[]" required></input-list>
       </div>
       <div class="flex justify-end space-x-2">
         <a href="/profiles">${button({ type: 'button', content: 'Voltar', className: 'bg-gray-600 hover:bg-gray-500' })}</a>

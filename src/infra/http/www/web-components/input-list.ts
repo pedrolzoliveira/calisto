@@ -21,8 +21,14 @@ export class InputList extends LitElement {
   @property({ type: Array })
     value: string[] = [];
 
+  @property({ type: Number })
+    maxLength: number = Infinity;
+
   @property({ type: String })
     inputValue: string = '';
+
+  @property({ type: Number })
+    inputMaxLength: number = Infinity;
 
   @property({ type: Boolean })
     required: boolean = false;
@@ -49,6 +55,7 @@ export class InputList extends LitElement {
 
       if (
         this.value.includes(this.inputValue) ||
+        this.value.length >= this.maxLength ||
         this.inputValue === ''
       ) {
         return;
@@ -93,7 +100,7 @@ export class InputList extends LitElement {
                   </div>`
               )
             }
-          <input type="text" class="outline-none flex-1 border-gray-100 px-1" .value=${this.inputValue} @input=${this.handleInput} @keypress=${this.handleKeypress} @keydown=${this.handleKeyDown}></input>
+          <input maxlength=${this.inputMaxLength} type="text" class="outline-none flex-1 border-gray-100 px-1" .value=${this.inputValue} @input=${this.handleInput} @keypress=${this.handleKeypress} @keydown=${this.handleKeyDown}></input>
         </div>
       `;
   }

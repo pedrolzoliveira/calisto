@@ -4,7 +4,6 @@ import { createProfile } from './use-cases/create-profile';
 import { prismaClient } from '@/src/infra/database/prisma/client';
 import { deleteProfile } from './use-cases/delete-profile';
 import { updateProfile } from './use-cases/update-profile';
-import { sanitizeWhiteSpace } from '@/src/utils/sanitize-white-space';
 import { layout } from '@/src/infra/http/www/templates/layout';
 import { profilesPage } from '@/src/infra/http/www/templates/pages/profiles';
 import { header } from '@/src/infra/http/www/templates/header';
@@ -12,15 +11,16 @@ import { profilesTable } from '@/src/infra/http/www/templates/tables/profiles';
 import { newProfilePage } from '@/src/infra/http/www/templates/pages/new-profile';
 import { editProfilePage } from '@/src/infra/http/www/templates/pages/edit-profile';
 import { userAuthenticated } from '../users/middlewares/user-authenticated';
+import { profileSchema } from './zod-schemas';
 
 export const profilesController = Router();
 
 profilesController.post('/',
   userAuthenticated,
   async (req, res) => {
-    const { name, categories } = z.object({
-      name: z.string().trim(),
-      categories: z.string().array().transform(value => value.map(sanitizeWhiteSpace))
+    const { name, categories } = profileSchema.pick({
+      name: true,
+      categories: true
     }).parse(req.body);
 
     await createProfile({ name, categories, userId: req.session.user!.id });
@@ -43,11 +43,7 @@ profilesController.post('/',
 profilesController.put('/',
   userAuthenticated,
   async (req, res) => {
-    const data = z.object({
-      id: z.string().uuid(),
-      name: z.string(),
-      categories: z.string().array()
-    }).parse(req.body);
+    const data = profileSchema.parse(req.body);
 
     await updateProfile(data);
 
@@ -69,9 +65,7 @@ profilesController.put('/',
 profilesController.delete('/',
   userAuthenticated,
   async (req, res) => {
-    const { id } = z.object({
-      id: z.string().uuid()
-    }).parse(req.query);
+    const { id } = profileSchema.pick({ id: true }).parse(req.query);
 
     await deleteProfile(id);
 
@@ -125,9 +119,7 @@ profilesController.get('/new',
 profilesController.get('/edit',
   userAuthenticated,
   async (req, res) => {
-    const { id } = z.object({
-      id: z.string().uuid()
-    }).parse(req.query);
+    const { id } = profileSchema.pick({ id: true }).parse(req.query);
 
     const profile = await prismaClient.profile.findFirst({
       where: { id, userId: req.session.user!.id },
