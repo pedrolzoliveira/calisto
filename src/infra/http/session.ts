@@ -5,8 +5,7 @@ import PgStoreImport from 'connect-pg-simple';
 const PgStore = PgStoreImport(expressSession);
 
 const pgStore = new PgStore({
-  conString: env.DATABASE_URL,
-  createTableIfMissing: true
+  conString: env.DATABASE_URL
 });
 
 export const session = expressSession({

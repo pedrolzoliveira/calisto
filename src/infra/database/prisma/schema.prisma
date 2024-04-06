@@ -78,3 +78,10 @@ model ResetPasswordToken {
   createdAt DateTime @default(now())
   expiresAt DateTime @default(dbgenerated("NOW() + INTERVAL '1 day'"))
 }
+
+model session {
+  sid String @id @db.VarChar
+  sess Json 
+  expire DateTime
+  @@index([expire])
+}
