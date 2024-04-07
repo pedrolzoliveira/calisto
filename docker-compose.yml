@@ -17,29 +17,27 @@ services:
       retries: 20
       start_period: 10s
   server:
+    image: calisto-app
     ports:
       - "8080:8080"
     environment:
-      - DATABASE_URL=postgres://postgres:1234@host.docker.internal:5432/calisto
-      - SESSION_SECRET=secret
-      - PORT=8080
+       - DATABASE_URL=postgres://postgres:1234@host.docker.internal:5432/calisto
+       - SESSION_SECRET=secret
+       - PORT=8080
     depends_on:
       database:
         condition: service_healthy
-    build:
-      context: .
-      dockerfile: ./docker/server/Dockerfile
-  scraper: &scraper
+    command: ["node", "run-server.js"]
+  scraper:
+    image: calisto-app
     environment:
       - DATABASE_URL=postgres://postgres:1234@host.docker.internal:5432/calisto
     depends_on:
       database:
         condition: service_healthy
-    build:
-      context: .
-      dockerfile: ./docker/scraper/Dockerfile
     command: ["node", "run-scraper.js", "--all"]
-  consumer: &consumer
+  consumer:
+    image: calisto-app
     environment:
       - DATABASE_URL=postgres://postgres:1234@host.docker.internal:5432/calisto
       - CHAT_GPT_KEY=${CHAT_GPT_KEY}
@@ -47,7 +45,4 @@ services:
     depends_on:
       database:
         condition: service_healthy
-    build:
-      context: .
-      dockerfile: ./docker/consumer/Dockerfile
     command: ["node", "run-consumer.js", "--all"]

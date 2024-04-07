@@ -1,4 +1,4 @@
-// server-esbuild.config.js
+// build-app.js
 
 const esbuild = require('esbuild');
 const { copy } = require('esbuild-plugin-copy');
@@ -19,10 +19,12 @@ exec('yarn tailwindcss -i ./src/infra/http/www/tailwind.css -o ./src/infra/http/
   }).then(() => {
     return esbuild.build({
       entryPoints: [
-        { in: './src/commands/run-server.ts', out: './run-server' }
+        { in: './src/commands/run-server.ts', out: './run-server' },
+        { in: './src/commands/run-scraper.ts', out: './run-scraper' },
+        { in: './src/commands/run-consumer.ts', out: './run-consumer' }
       ],
       platform: 'node',
-      outdir: './dist/server',
+      outdir: './dist',
       bundle: true,
       plugins: [
         copy({
@@ -35,6 +37,15 @@ exec('yarn tailwindcss -i ./src/infra/http/www/tailwind.css -o ./src/infra/http/
               from: ['./src/infra/http/www/dist/*'],
               to: ['./www/dist']
             },
+            // pg-listen users pg-format as a dependency, but it doesn't work with esbuild - it uses dynamic imports
+            {
+              from: ['./node_modules/pg-format/lib/reserved.js'],
+              to: ['./reserved.js']
+            },
+            {
+              from: ['./node_modules/.prisma/client/libquery_engine*'],
+              to: ['./']
+            },
             {
               from: ['./src/infra/database/prisma/schema.prisma'],
               to: ['./schema.prisma']
@@ -46,5 +57,5 @@ exec('yarn tailwindcss -i ./src/infra/http/www/tailwind.css -o ./src/infra/http/
         '.ts': 'ts'
       }
     });
-  });
+  }).catch((err) => { throw err; });
 });
