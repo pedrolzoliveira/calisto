@@ -45,7 +45,7 @@ export function createQueue<TSchema extends AnyZodObject = AnyZodObject>(params:
     }
 
     try {
-      await consumeFn(queue.data as T);
+      await consumeFn(queue.data as z.infer<TSchema>);
       await prismaClient.queue.delete({
         where: {
           id: queue.id
