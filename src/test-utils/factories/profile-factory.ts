@@ -7,7 +7,7 @@ import { userFactory } from './user-factory';
 import { prismaClient } from '@/src/infra/database/prisma/client';
 
 class ProfileFactory implements Factory<Profile & { categories: string[] }> {
-  async create(attributes?: Partial<Omit<Profile, 'id' | 'createdAt'>> & { categories?: string[] }): Promise<Profile & { categories: string[] }> {
+  async create(attributes?: Partial<Omit<Profile, 'id' | 'createdAt'>> & { categories?: string[] }) {
     const foreignKeys = {
       userId: attributes?.userId ?? (await userFactory.create()).id
     };
@@ -25,22 +25,14 @@ class ProfileFactory implements Factory<Profile & { categories: string[] }> {
         name: true,
         userId: true,
         createdAt: true,
-        categories: { select: { text: true } }
+        categories: true
       },
       data: {
         userId: foreignKeys.userId,
         name,
-        categories: {
-          connectOrCreate: categories.map(category => ({
-            where: { text: category },
-            create: { text: category }
-          }))
-        }
+        categories
       }
-    }).then(profile => ({
-      ...profile,
-      categories: profile.categories.map(({ text }) => text)
-    }));
+    });
   }
 }
 
