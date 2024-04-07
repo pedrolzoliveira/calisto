@@ -21,13 +21,10 @@ services:
       - "8080:8080"
     environment:
       - DATABASE_URL=postgres://postgres:1234@host.docker.internal:5432/calisto
-      - RABBIT_MQ_URL=amqp://host.docker.internal
       - SESSION_SECRET=secret
       - PORT=8080
     depends_on:
       database:
-        condition: service_healthy
-      rabbitmq:
         condition: service_healthy
     build:
       context: .
