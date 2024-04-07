@@ -24,15 +24,6 @@ class Env {
     return parsed.data;
   }
 
-  public get RABBIT_MQ_URL() {
-    const parsed = z.string().safeParse(this.env.RABBIT_MQ_URL);
-    if (!parsed.success) {
-      throw new Error(`Error accessing env.RABBIT_MQ_URL: ${parsed.error.message}`);
-    }
-
-    return parsed.data;
-  }
-
   public get PORT() {
     const parsed = z.number({ coerce: true }).default(8080).safeParse(this.env.PORT);
 
