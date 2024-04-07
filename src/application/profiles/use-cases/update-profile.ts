@@ -1,5 +1,5 @@
 import { prismaClient } from '@/src/infra/database/prisma/client';
-import { publisher } from '../../publisher';
+import { calculateCategoriesEmbeddingsQueue } from '../queues/calculate-categories-embeddings';
 
 export const updateProfile = async (
   data: {
@@ -22,7 +22,7 @@ export const updateProfile = async (
     where: { id: data.id }
   });
 
-  publisher.publish('calculate-categories-embeddings', { categories: data.categories });
+  await calculateCategoriesEmbeddingsQueue.publish({ categories: data.categories });
 
   return profile;
 };

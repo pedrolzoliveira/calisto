@@ -5,7 +5,7 @@ import { createNews } from './use-cases/create-news';
 import { isNewsCreated } from './utils/is-news-created';
 import { logger } from '@/src/infra/logger';
 import { AxiosError } from 'axios';
-import { publisher } from '../publisher';
+import { newsCreatedQueue } from './queues/news-created';
 
 export interface ScraperArgs {
   sourceCode: string
@@ -52,7 +52,7 @@ export class Scraper {
           sourceCode: this.sourceCode, link, content, ...ogMetadata
         });
 
-        publisher.publish('news-created', { link: news.link });
+        await newsCreatedQueue.publish({ link: news.link });
       } catch (error) {
         logger.error(`error creating news for ${link}: ${(error as Error).message}`);
       }

@@ -46,6 +46,7 @@
     "node-html-parser": "^6.1.5",
     "nodemailer": "^6.9.13",
     "openai": "^3.2.1",
+    "pg-listen": "^1.7.0",
     "prisma": "^4.14.0",
     "tailwind-merge": "^2.0.0",
     "ts-pattern": "^5.0.5",

@@ -1,5 +1,5 @@
 import { prismaClient } from '@/src/infra/database/prisma/client';
-import { publisher } from '../../publisher';
+import { calculateCategoriesEmbeddingsQueue } from '../queues/calculate-categories-embeddings';
 
 interface CreateProfileData {
   userId: string
@@ -16,7 +16,7 @@ export const createProfile = async ({ name, categories, userId }: CreateProfileD
     }
   });
 
-  publisher.publish('calculate-categories-embeddings', { categories });
+  await calculateCategoriesEmbeddingsQueue.publish({ categories });
 
   return profile;
 };

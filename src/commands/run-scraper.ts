@@ -13,6 +13,7 @@ import { metropolesScraper } from '../application/news/scrapers/metropoles-scrap
 import { senadoNoticiasScraper } from '../application/news/scrapers/senado-noticias-scraper';
 import { interceptBrasilScraper } from '../application/news/scrapers/intercept-brasil-scraper';
 import { infoMoneyScraper } from '../application/news/scrapers/info-money-scraper';
+import { subscriber } from '../infra/database/subscriber';
 
 const SCRAPERS = {
   'cnn-brasil': cnnBrasilScraper,
@@ -36,9 +37,7 @@ function runAll() {
 }
 
 async function runScraper(args: string[]) {
-  const connection = await createConnection();
-  const channel = await createChannel(connection);
-  publisher.bindChannel(channel);
+  await subscriber.connect();
 
   if (args.includes('--all')) {
     return runAll();

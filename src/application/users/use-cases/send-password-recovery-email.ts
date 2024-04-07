@@ -1,6 +1,6 @@
 import { prismaClient } from '@/src/infra/database/prisma/client';
-import { publisher } from '../../publisher';
 import { passwordRecovery } from '../../emails/templates/password-recovery';
+import { emailsQueue } from '../../emails/queues/emails';
 
 export async function sendPasswordRecoveryEmail(email: string) {
   const token = await prismaClient.resetPasswordToken.create({
@@ -10,9 +10,5 @@ export async function sendPasswordRecoveryEmail(email: string) {
 
   const content = passwordRecovery({ email, token: token.token });
 
-  publisher.publish('emails', {
-    content,
-    email,
-    subject: 'Solicitação de redefinição de senha'
-  });
+  emailsQueue.publish({ email, content, subject: 'Solicitação de redefinição de senha' });
 }

@@ -16,42 +16,11 @@ services:
       timeout: 5s
       retries: 20
       start_period: 10s
-  rabbitmq:
-    image: "rabbitmq:3-management"
-    hostname: rabbitmq
-    ports:
-      - "5672:5672"
-      - "15672:15672"
-    healthcheck:
-      test: ["CMD", "rabbitmqctl", "status"]
-      interval: 5s
-      timeout: 5s
-      retries: 20
-      start_period: 10s
-  server:
-    ports:
-      - "8080:8080"
-    environment:
-      - DATABASE_URL=postgres://postgres:1234@host.docker.internal:5432/calisto
-      - RABBIT_MQ_URL=amqp://host.docker.internal
-      - SESSION_SECRET=secret
-      - PORT=8080
-    depends_on:
-      database:
-        condition: service_healthy
-      rabbitmq:
-        condition: service_healthy
-    build:
-      context: .
-      dockerfile: ./docker/server/Dockerfile
   scraper: &scraper
     environment:
       - DATABASE_URL=postgres://postgres:1234@host.docker.internal:5432/calisto
-      - RABBIT_MQ_URL=amqp://host.docker.internal
     depends_on:
       database:
-        condition: service_healthy
-      rabbitmq:
         condition: service_healthy
     build:
       context: .
@@ -60,13 +29,10 @@ services:
   consumer: &consumer
     environment:
       - DATABASE_URL=postgres://postgres:1234@host.docker.internal:5432/calisto
-      - RABBIT_MQ_URL=amqp://host.docker.internal
       - CHAT_GPT_KEY=${CHAT_GPT_KEY}
       - CHAT_GPT_ORGANIZATION_ID=${CHAT_GPT_ORGANIZATION_ID}
     depends_on:
       database:
-        condition: service_healthy
-      rabbitmq:
         condition: service_healthy
     build:
       context: .
