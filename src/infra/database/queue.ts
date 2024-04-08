@@ -103,6 +103,8 @@ export function createQueue<TSchema extends AnyZodObject = AnyZodObject>(params:
     subscriber.notifications.on(key, async () => {
       await run();
     });
+    // Should not be here but while testing I found out is possible some notification get lost somehow
+    setInterval(run, 10_000);
   }
 
   return {
