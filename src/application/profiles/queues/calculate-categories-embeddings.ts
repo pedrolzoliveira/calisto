@@ -10,7 +10,13 @@ export const calculateCategoriesEmbeddingsSchema = z.object({
 });
 
 async function getCategoriesToCalculate(categories: string[]): Promise<string[]> {
-  const categoriesText = (await prismaClient.$queryRaw<{ text: string }[]>`SELECT "text" FROM "CategoryEmbedding" WHERE "text" IN (${Prisma.join(categories)});`).map(({ text }) => text);
+  const categoriesText = (
+    await prismaClient.$queryRaw<{ text: string }[]>`
+      SELECT "text"
+      FROM "CategoryEmbedding"
+      WHERE "text" IN (${Prisma.join(categories)});
+    `
+  ).map(({ text }) => text);
 
   return categories.filter(category => !categoriesText.includes(category));
 };
