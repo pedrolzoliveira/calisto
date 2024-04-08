@@ -6,15 +6,6 @@ class Env {
     private readonly env: NodeJS.ProcessEnv
   ) {}
 
-  public get CHAT_GPT_ORGANIZATION_ID() {
-    const parsed = z.string().safeParse(this.env.CHAT_GPT_ORGANIZATION_ID);
-    if (!parsed.success) {
-      throw new Error(`Error accessing env.CHAT_GPT_ORGANIZATION_ID: ${parsed.error.message}`);
-    }
-
-    return parsed.data;
-  }
-
   public get CHAT_GPT_KEY() {
     const parsed = z.string().safeParse(this.env.CHAT_GPT_KEY);
     if (!parsed.success) {

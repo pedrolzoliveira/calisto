@@ -55,7 +55,6 @@ services:
     environment:
       - DATABASE_URL=postgres://postgres:1234@host.docker.internal:5432/calisto
       - CHAT_GPT_KEY=${CHAT_GPT_KEY}
-      - CHAT_GPT_ORGANIZATION_ID=${CHAT_GPT_ORGANIZATION_ID}
     depends_on:
       database:
         condition: service_healthy
