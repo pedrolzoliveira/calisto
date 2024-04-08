@@ -61,7 +61,7 @@ export function createQueue<TSchema extends AnyZodObject = AnyZodObject>(params:
           errors: [...queue.errors, (error as Error).message],
           tries: queue.tries + 1
         }
-      });
+      }).catch(logger.error);
       await subscriber.notify(key);
     }
   }
