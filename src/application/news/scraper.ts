@@ -56,7 +56,7 @@ export class Scraper {
         await newsCreatedQueue.publish({ link: news.link });
       } catch (error) {
         if (error instanceof PrismaClientKnownRequestError) {
-          // news already exists, probably some race condition
+          // news already exists, probably is shared between sources
           if (error.code === 'P2002') {
             logger.warn(`news for ${link} already exists`);
             continue;
