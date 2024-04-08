@@ -6,6 +6,7 @@ import { isNewsCreated } from './utils/is-news-created';
 import { logger } from '@/src/infra/logger';
 import { AxiosError } from 'axios';
 import { newsCreatedQueue } from './queues/news-created';
+import { PrismaClientKnownRequestError } from '@prisma/client/runtime';
 
 export interface ScraperArgs {
   sourceCode: string
@@ -54,6 +55,13 @@ export class Scraper {
 
         await newsCreatedQueue.publish({ link: news.link });
       } catch (error) {
+        if (error instanceof PrismaClientKnownRequestError) {
+          // news already exists, probably some race condition
+          if (error.code === 'P2002') {
+            logger.warn(`news for ${link} already exists`);
+            continue;
+          }
+        }
         logger.error(`error creating news for ${link}: ${(error as Error).message}`);
       }
     } catch (error) {
