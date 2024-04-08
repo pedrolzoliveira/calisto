@@ -34,6 +34,7 @@ services:
        - DATABASE_URL=postgres://postgres:1234@host.docker.internal:5432/calisto
        - SESSION_SECRET=secret
        - PORT=8080
+       - CHAT_GPT_KEY=unused
     depends_on:
       database:
         condition: service_healthy
@@ -44,6 +45,7 @@ services:
     image: calisto-app
     environment:
       - DATABASE_URL=postgres://postgres:1234@host.docker.internal:5432/calisto
+      - CHAT_GPT_KEY=unused
     depends_on:
       database:
         condition: service_healthy
