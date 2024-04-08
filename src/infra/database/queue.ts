@@ -30,14 +30,29 @@ export function createQueue<TSchema extends AnyZodObject = AnyZodObject>(params:
   }
 
   async function run() {
-    const queue = await prismaClient.queue.findFirst({
-      where: {
-        key,
-        tries: { lt: 3 }
-      },
-      orderBy: {
-        createdAt: 'desc'
-      }
+    const result = await prismaClient.$queryRaw<Array<{ id: string }>>`
+      UPDATE "Queue"
+      SET "running" = true
+      WHERE "id" = (
+          SELECT "id"
+          FROM "Queue"
+          WHERE "key" = ${key}
+          AND "tries" < 3
+          AND "running" = false
+          ORDER BY "createdAt"
+          LIMIT 1
+      )
+      RETURNING "id";
+    `;
+
+    if (!result.length) {
+      return;
+    }
+
+    const { id } = result[0];
+
+    const queue = await prismaClient.queue.findUnique({
+      where: { id }
     });
 
     if (!queue) {
@@ -47,9 +62,7 @@ export function createQueue<TSchema extends AnyZodObject = AnyZodObject>(params:
     try {
       await consumeFn(queue.data as z.infer<TSchema>);
       await prismaClient.queue.delete({
-        where: {
-          id: queue.id
-        }
+        where: { id: queue.id }
       });
     } catch (error) {
       logger.error(error);
@@ -62,6 +75,13 @@ export function createQueue<TSchema extends AnyZodObject = AnyZodObject>(params:
           tries: queue.tries + 1
         }
       }).catch(logger.error);
+
+      await prismaClient.$executeRaw`
+        UPDATE "Queue"
+        SET "running" = false
+        WHERE "id" = ${queue.id};
+      `;
+
       await subscriber.notify(key);
     }
   }
