@@ -15,6 +15,7 @@ async function runServer() {
       logger.info(`listening on port ${env.PORT}`);
     });
   } catch (error) {
+    console.error(error);
     logger.error('error initializing server:', error);
     process.exit(1);
   }

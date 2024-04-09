@@ -94,6 +94,29 @@ class Env {
 
     return parsed.data;
   }
+
+  public get NODE_ENV() {
+    const parsed = z.string().default('development').safeParse(this.env.NODE_ENV);
+
+    if (!parsed.success) {
+      throw new Error(`Error accessing env.NODE_ENV: ${parsed.error.message}`);
+    }
+
+    return parsed.data;
+  }
+
+  public get CA_CERT() {
+    const parsed = z.string().safeParse(this.env.CA_CERT);
+
+    if (!parsed.success) {
+      if (this.NODE_ENV !== 'production') {
+        return;
+      }
+      throw new Error(`Error accessing env.CA_CERT: ${parsed.error.message}`);
+    }
+
+    return parsed.data;
+  }
 }
 
 export const env = new Env(process.env);
