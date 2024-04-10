@@ -16,11 +16,12 @@ export const emailsQueue = createQueue({
     const transporter = await createTransporter();
 
     logger.info(`Sending email - ${data.subject} - to ${data.email}`);
-    await transporter.sendMail({
+    const sentMessageInfo = await transporter.sendMail({
       from: 'Light Beam News <contact@lightbeam.news>',
       to: data.email,
       subject: data.subject,
       html: data.content
     });
+    logger.info({ sentMessageInfo });
   }
 });
