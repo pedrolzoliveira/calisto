@@ -12,9 +12,9 @@ export const calculateCategoriesEmbeddingsSchema = z.object({
 async function getCategoriesToCalculate(categories: string[]): Promise<string[]> {
   const categoriesText = (
     await prismaClient.$queryRaw<{ text: string }[]>`
-      SELECT "text"
-      FROM "CategoryEmbedding"
-      WHERE "text" IN (${Prisma.join(categories)});
+      SELECT text
+      FROM category_embeddings
+      WHERE text IN (${Prisma.join(categories)});
     `
   ).map(({ text }) => text);
 
@@ -36,7 +36,7 @@ export const calculateCategoriesEmbeddingsQueue = createQueue({
     const embeddings = await calculateEmbeddings(categoriesToCalculate);
 
     await prismaClient.$executeRaw`
-    INSERT INTO "CategoryEmbedding" ("text", "embedding")
+    INSERT INTO category_embeddings (text, embedding)
     VALUES ${Prisma.join(
       embeddings.map(({ text, embedding }) => Prisma.sql`(${Prisma.join([text, embedding])})`)
     )}
