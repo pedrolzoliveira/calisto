@@ -53,7 +53,7 @@ export const newsCreatedQueue = createQueue({
       const [{ embedding }] = await calculateEmbeddings([contentSanitized]);
 
       return await prismaClient.$executeRaw`
-        INSERT INTO "NewsEmbedding" ("newsSectionIndex", "link", "embedding")
+        INSERT INTO news_embeddings (news_section_index, link, embedding)
         VALUES ${Prisma.sql`(${Prisma.join([0, link, embedding])})`};
       `;
     }
@@ -65,7 +65,7 @@ export const newsCreatedQueue = createQueue({
     }
 
     await prismaClient.$executeRaw`
-      INSERT INTO "NewsEmbedding" ("newsSectionIndex", "link", "embedding")
+      INSERT INTO news_embeddings (news_section_index, link, embedding)
       VALUES ${Prisma.join(
         embeddings.map((embedding, sectionIndex) => Prisma.sql`(${Prisma.join([sectionIndex, link, embedding])})`)
       )};

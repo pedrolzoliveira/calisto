@@ -11,11 +11,11 @@ type queryResult = Array<{
   link: string
   title: string
   description: string | null
-  imageUrl: string | null
-  createdAt: Date
+  image_url: string | null
+  created_at: Date
   categories: Array<{ text: string, distance: number }>
-  source: Source
-  rowNum: number
+  source: Omit<Source, 'avatarUrl'> & { avatar_url: string }
+  row_num: number
 }>
 
 export const getNewsFeed = async ({ limit, profileId, cursor }: getNewsFeedParams): Promise<Array<{
@@ -29,47 +29,54 @@ export const getNewsFeed = async ({ limit, profileId, cursor }: getNewsFeedParam
   lastRow: boolean
 }>> => {
   const result = await prismaClient.$queryRaw<queryResult>`
-    WITH CategoryEmbeddings AS (
+    WITH categories_embeddings AS (
       SELECT
         text,
         embedding
       FROM
-        "CategoryEmbedding"
+        category_embeddings
       WHERE
-        "text" IN(
-          SELECT UNNEST("categories")
-          FROM "Profile"
-          WHERE "id" = ${profileId})
+        text IN(
+          SELECT UNNEST(categories)
+          FROM profiles
+          WHERE id = ${profileId})
     )
     SELECT
-      "News".link,
-      "News".title,
-      "News".description,
-      "News"."imageUrl",
-      "News"."createdAt",
+      news.link,
+      news.title,
+      news.description,
+      news.image_url,
+      news.created_at,
       json_agg(
         json_build_object(
-          'text', CategoryEmbeddings.text,
-          'distance', CategoryEmbeddings.embedding <=> "NewsEmbedding".embedding
+          'text', categories_embeddings.text,
+          'distance', categories_embeddings.embedding <=> news_embeddings.embedding
         )
       ) AS categories,
-      row_to_json("Source") AS source,
-      ROW_NUMBER() OVER (ORDER BY "News"."createdAt" ASC) AS "rowNum"
+      row_to_json(sources) AS source,
+      ROW_NUMBER() OVER (ORDER BY news.created_at ASC) AS row_num
     FROM
-      "News"
-      JOIN "NewsEmbedding" ON "News"."link" = "NewsEmbedding"."link"
-      JOIN "Source" ON "Source".code = "News"."sourceCode"
-      JOIN CategoryEmbeddings ON (CategoryEmbeddings.embedding <=> "NewsEmbedding".embedding) <= .60
-    WHERE "News"."createdAt" < ${cursor}
+      news
+      JOIN news_embeddings ON news.link = news_embeddings.link
+      JOIN sources ON sources.code = news.source_code
+      JOIN categories_embeddings ON (categories_embeddings.embedding <=> news_embeddings.embedding) <= .60
+    WHERE news.created_at < ${cursor}
     GROUP BY
-      "News".link,
-      "Source".code
-    ORDER BY "News"."createdAt" DESC
+      news.link,
+      sources.code
+    ORDER BY news.created_at DESC
     LIMIT ${limit};`;
 
-  return result.map((news) => ({
+  return result.map(({ source, ...news }) => ({
     ...news,
     // eslint-disable-next-line eqeqeq
-    lastRow: news.rowNum == 1
+    lastRow: news.row_num == 1,
+    imageUrl: news.image_url,
+    createdAt: news.created_at,
+    source: {
+      name: source.name,
+      code: source.code,
+      avatarUrl: source.avatar_url
+    }
   }));
 };

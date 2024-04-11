@@ -10,47 +10,52 @@ datasource db {
 model Source {
   code String @id @db.VarChar(32)
   name String @db.VarChar(32)
-  avatarUrl String?
+  avatarUrl String? @map("avatar_url")
   news News[]
+  @@map("sources")
 }
 
 model News {
   link String @id
   title String
   description String?
-  sourceCode String @db.VarChar(32)
+  sourceCode String @db.VarChar(32) @map("source_code")
   source Source @relation(fields: [sourceCode], references: [code])
-  imageUrl String?
+  imageUrl String? @map("image_url")
   content String @db.Text
-  createdAt DateTime @default(now())
+  createdAt DateTime @default(now()) @map("created_at")
   embeddings NewsEmbedding[]
   @@index([createdAt])
+  @@map("news")
 }
 
 model NewsEmbedding {
   link String
-  newsSectionIndex Int
+  newsSectionIndex Int @map("news_section_index")
   embedding Unsupported("vector(1536)")
   news News @relation(fields: [link], references: [link])
   @@id([link, newsSectionIndex])
+  @@map("news_embeddings")
 }
 
 model Profile {
   id String @id @default(uuid()) @db.VarChar(36)
   name String @db.VarChar(32)
   categories String[] @db.VarChar(32) 
-  userId String @db.VarChar(36)
+  userId String @db.VarChar(36) @map("user_id")
   user User @relation(fields: [userId], references: [id])
-  createdAt DateTime @default(now())
+  createdAt DateTime @default(now()) @map("created_at")
   @@unique([userId, name])
+  @@map("profiles")
 }
 
 model CategoryEmbedding {
   text String @db.VarChar(32) @id
   embedding Unsupported("vector(1536)")
+  @@map("category_embeddings")
 }
 
-enum userRole {
+enum user_role {
   admin
   user
 }
@@ -61,22 +66,25 @@ model User {
   password UserPassword?
   profiles Profile[]
   resetPasswordTokens ResetPasswordToken[]
-  role userRole @default(user)
+  role user_role @default(user)
   @@index([email])
+  @@map("users")
 }
 
 model UserPassword {
-  userId String @id @db.VarChar(36)
+  userId String @id @db.VarChar(36) @map("user_id")
   user User @relation(fields: [userId], references: [id])
   hash String @db.VarChar(64)
+  @@map("user_passwords")
 }
 
 model ResetPasswordToken {
   token String @id @default(uuid()) @db.VarChar(36)
   email String @db.VarChar(36)
   user User @relation(fields: [email], references: [email])
-  createdAt DateTime @default(now())
-  expiresAt DateTime @default(dbgenerated("NOW() + INTERVAL '1 day'"))
+  createdAt DateTime @default(now()) @map("created_at")
+  expiresAt DateTime @default(dbgenerated("NOW() + INTERVAL '1 day'")) @map("expires_at")
+  @@map("reset_password_tokens")
 }
 
 model session {
@@ -91,9 +99,10 @@ model Queue {
   key String @db.VarChar(32)
   data Json
   running Boolean @default(false)
-  createdAt DateTime @default(now())
+  createdAt DateTime @default(now()) @map("created_at")
   tries Int @default(0)
   errors Json[]
   @@index([key])
   @@index([createdAt])
+  @@map("queues")
 }
