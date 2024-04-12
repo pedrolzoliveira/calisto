@@ -100,7 +100,15 @@ export class InputList extends LitElement {
                   </div>`
               )
             }
-          <input maxlength=${this.inputMaxLength} type="text" class="outline-none flex-1 border-gray-100 px-1" .value=${this.inputValue} @input=${this.handleInput} @keypress=${this.handleKeypress} @keydown=${this.handleKeyDown}></input>
+          <input
+            maxlength=${this.inputMaxLength}
+            type="text"
+            class="outline-none flex-1 border-gray-100 px-1"
+            .value=${this.inputValue}
+            @input=${this.handleInput}
+            @keypress=${this.handleKeypress}
+            @keydown=${this.handleKeyDown}
+            ></input>
         </div>
       `;
   }
