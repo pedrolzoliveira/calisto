@@ -1,5 +1,4 @@
 import { Router } from 'express';
-import { z } from 'zod';
 import { createProfile } from './use-cases/create-profile';
 import { prismaClient } from '@/src/infra/database/prisma/client';
 import { deleteProfile } from './use-cases/delete-profile';
