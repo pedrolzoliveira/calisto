@@ -8,7 +8,13 @@ export function newProfilePage() {
       <h1 class="font-semibold text-lg">Crie um perfil</h1>
       <div class="flex flex-col">
         <label for="name">Nome: </label>
-        <input name="name" id="name" type="text" class="px-2 py-1 rounded border" required maxlength="20">
+        <input
+          name="name"
+          id="name"
+          type="text"
+          class="px-2 py-1 rounded border"
+          required
+          maxlength="32">
       </div>
       <div class="flex flex-col">
         <label for="categories">Categorias:</label>

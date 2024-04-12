@@ -16,7 +16,14 @@ export function editProfilePage({ profile }: EditProfilePageProps) {
         <input type="text" name="id" value="${profile.id}" hidden>
         <div class="flex flex-col">
           <label for="name">Nome: </label>
-          <input name="name" id="name" type="text" class="px-2 py-1 rounded border" value="${profile.name}" required maxlength="20">
+          <input
+            name="name"
+            id="name"
+            type="text"
+            class="px-2 py-1 rounded border"
+            value="${profile.name}"
+            required
+            maxlength="32">
         </div>
         <div class="flex flex-col">
           <label for="categories">Categorias:</label>
