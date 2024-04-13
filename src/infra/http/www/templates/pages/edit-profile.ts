@@ -11,7 +11,7 @@ interface EditProfilePageProps {
 export function editProfilePage({ profile }: EditProfilePageProps) {
   return html`
     <main class="flex justify-center p-4">
-      <form class="space-y-2" hx-put="/profiles" hx-push-url="true" hx-swap="outerHTML">
+      <form class="space-y-2 w-full sm:w-96" hx-put="/profiles" hx-push-url="true" hx-swap="outerHTML">
         <h1 class="font-semibold text-lg">Editar perfil</h1>
         <input type="text" name="id" value="${profile.id}" hidden>
         <div class="flex flex-col">

@@ -87,7 +87,7 @@ export class InputList extends LitElement {
 
   render() {
     return html`
-        <div class="bg-white px-1 py-1 rounded border flex items-center space-x-1 flex-wrap w-96 cursor-text" @click=${this.handleDivClick}>
+        <div class="bg-white px-1 py-1 rounded border flex items-center space-x-1 flex-wrap cursor-text" @click=${this.handleDivClick}>
             ${
               repeat(
                 this.value,
