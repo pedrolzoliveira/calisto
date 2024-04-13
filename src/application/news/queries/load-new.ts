@@ -56,7 +56,7 @@ export const loadNew = async ({ profileId, cursor }: getNewsFeedParams): Promise
       news
       JOIN news_embeddings ON news.link = news_embeddings.link
       JOIN sources ON sources.code = news.source_code
-      JOIN categories_embeddings ON (categories_embeddings.embedding <=> news_embeddings.embedding) <= .55
+      JOIN categories_embeddings ON (categories_embeddings.embedding <=> news_embeddings.embedding) <= .60
     WHERE news.created_at > ${cursor}
     GROUP BY
       news.link,
