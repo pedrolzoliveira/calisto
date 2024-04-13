@@ -35,7 +35,8 @@ export class InputList extends LitElement {
 
   validate() {
     if (this.required && this.value.length === 0) {
-      this.internals.setValidity({ valueMissing: true }, 'Crie ao menos uma categoria.', this.input);
+      const errorMessage = this.inputValue.length ? 'Pressione Enter para adicionar a categoria.' : 'Crie ao menos uma categoria.';
+      this.internals.setValidity({ valueMissing: true }, errorMessage, this.input);
       return;
     }
 
@@ -44,7 +45,7 @@ export class InputList extends LitElement {
 
   protected update(changedProperties: PropertyValueMap<any> | Map<PropertyKey, unknown>): void {
     super.update(changedProperties);
-    if (changedProperties.has('value')) {
+    if (changedProperties.has('value') || changedProperties.has('inputValue')) {
       this.validate();
     }
   }
@@ -108,8 +109,8 @@ export class InputList extends LitElement {
             @input=${this.handleInput}
             @keypress=${this.handleKeypress}
             @keydown=${this.handleKeyDown}
-            ></input>
-        </div>
+            />
+          </div>
       `;
   }
 }
