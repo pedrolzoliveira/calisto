@@ -1,10 +1,10 @@
 import { html } from '@lit-labs/ssr';
 import { button } from '../components/button';
 
-export function newProfilePage() {
+export function newProfilePage(firstProfile = false) {
   return html`
     <main class="flex justify-center p-4">
-      <form class="space-y-2 w-full sm:w-96" hx-post="/profiles" hx-push-url="true" hx-swap="outerHTML">
+      <form class="space-y-2 w-full sm:w-96" hx-post="/profiles${firstProfile ? '?firstProfile=true' : ''}" hx-push-url="true" hx-swap="outerHTML">
         <h1 class="font-semibold text-lg">Crie um perfil</h1>
         <div class="flex flex-col">
           <label for="name">Nome: </label>

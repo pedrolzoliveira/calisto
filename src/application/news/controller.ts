@@ -26,7 +26,7 @@ newsController.get('/',
         return res.redirect(`?profileId=${profile.id}`);
       }
 
-      return res.redirect('/profiles/new');
+      return res.redirect('/profiles/new?firstProfile=true');
     }
 
     const [news, profiles] = await Promise.all([

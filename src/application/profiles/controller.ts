@@ -24,6 +24,10 @@ profilesController.post('/',
 
     await createProfile({ name, categories, userId: req.session.user!.id });
 
+    if (req.query.firstProfile) {
+      return res.setHeader('HX-Redirect', '/news').end();
+    }
+
     const profiles = await prismaClient.profile.findMany({
       select: {
         id: true,
@@ -110,7 +114,9 @@ profilesController.get('/new',
     return res.renderTemplate(
       layout({
         header: header(),
-        body: newProfilePage()
+        body: newProfilePage(
+          Boolean(req.query.firstProfile)
+        )
       })
     );
   });
