@@ -3,13 +3,12 @@ import { P, match } from 'ts-pattern';
 import { type NewsCardProps } from '../components/news-card';
 import { newsFeed } from '../components/news-feed';
 import { noNewsFound } from '../components/no-news-found';
-import { noProfileCreated } from '../components/no-profile-created';
 import { newNewsLoader } from '../components/new-news-loader';
 import { nothing } from 'lit';
 
 interface NewsPageProps {
   news: NewsCardProps[]
-  profileId?: string | null
+  profileId: string
 }
 
 export function newsPage(props: NewsPageProps) {
@@ -25,7 +24,6 @@ export function newsPage(props: NewsPageProps) {
       }
       ${
         match(props)
-          .with({ profileId: P.nullish }, noProfileCreated)
           .with({ news: [] }, noNewsFound)
           .with({ news: P.array(), profileId: P.string }, newsFeed)
           .exhaustive()

@@ -47,7 +47,7 @@ interface SignInFormProps {
 
 export const signInForm = (data?: SignInFormProps) => {
   return html`
-    <form hx-post="/users/sign-in" hx-swap="outerHTML" class="flex flex-col space-y-4 w-96">
+    <form hx-post="/users/sign-in" hx-swap="outerHTML" class="flex flex-col space-y-4 w-full sm:w-96">
       <img class="pb-12" src="/assets/logo.svg" alt="logo"/>
       <h1 class="font-bold text-lg">Logar</h1>
       ${email(data?.email.value)}

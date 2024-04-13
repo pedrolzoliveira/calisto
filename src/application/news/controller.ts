@@ -26,15 +26,7 @@ newsController.get('/',
         return res.redirect(`?profileId=${profile.id}`);
       }
 
-      return res.renderTemplate(
-        layout({
-          header: header(),
-          body: newsPage({
-            news: [],
-            profileId: null
-          })
-        })
-      );
+      return res.redirect('/profiles/new?firstProfile=true');
     }
 
     const [news, profiles] = await Promise.all([

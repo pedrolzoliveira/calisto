@@ -35,7 +35,8 @@ export class InputList extends LitElement {
 
   validate() {
     if (this.required && this.value.length === 0) {
-      this.internals.setValidity({ valueMissing: true }, 'Crie ao menos uma categoria.', this.input);
+      const errorMessage = this.inputValue.length ? 'Pressione Enter para adicionar a categoria.' : 'Crie ao menos uma categoria.';
+      this.internals.setValidity({ valueMissing: true }, errorMessage, this.input);
       return;
     }
 
@@ -44,7 +45,7 @@ export class InputList extends LitElement {
 
   protected update(changedProperties: PropertyValueMap<any> | Map<PropertyKey, unknown>): void {
     super.update(changedProperties);
-    if (changedProperties.has('value')) {
+    if (changedProperties.has('value') || changedProperties.has('inputValue')) {
       this.validate();
     }
   }
@@ -86,7 +87,7 @@ export class InputList extends LitElement {
 
   render() {
     return html`
-        <div class="bg-white px-1 py-1 rounded border flex items-center space-x-1 flex-wrap w-96 cursor-text" @click=${this.handleDivClick}>
+        <div class="bg-white px-1 py-1 rounded border flex items-center space-x-1 flex-wrap cursor-text" @click=${this.handleDivClick}>
             ${
               repeat(
                 this.value,
@@ -100,8 +101,16 @@ export class InputList extends LitElement {
                   </div>`
               )
             }
-          <input maxlength=${this.inputMaxLength} type="text" class="outline-none flex-1 border-gray-100 px-1" .value=${this.inputValue} @input=${this.handleInput} @keypress=${this.handleKeypress} @keydown=${this.handleKeyDown}></input>
-        </div>
+          <input
+            maxlength=${this.inputMaxLength}
+            type="text"
+            class="outline-none flex-1 border-gray-100 px-1"
+            .value=${this.inputValue}
+            @input=${this.handleInput}
+            @keypress=${this.handleKeypress}
+            @keydown=${this.handleKeyDown}
+            />
+          </div>
       `;
   }
 }

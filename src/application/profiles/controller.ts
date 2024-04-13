@@ -1,5 +1,4 @@
 import { Router } from 'express';
-import { z } from 'zod';
 import { createProfile } from './use-cases/create-profile';
 import { prismaClient } from '@/src/infra/database/prisma/client';
 import { deleteProfile } from './use-cases/delete-profile';
@@ -24,6 +23,10 @@ profilesController.post('/',
     }).parse(req.body);
 
     await createProfile({ name, categories, userId: req.session.user!.id });
+
+    if (req.query.firstProfile) {
+      return res.setHeader('HX-Redirect', '/news').end();
+    }
 
     const profiles = await prismaClient.profile.findMany({
       select: {
@@ -111,7 +114,9 @@ profilesController.get('/new',
     return res.renderTemplate(
       layout({
         header: header(),
-        body: newProfilePage()
+        body: newProfilePage(
+          Boolean(req.query.firstProfile)
+        )
       })
     );
   });
