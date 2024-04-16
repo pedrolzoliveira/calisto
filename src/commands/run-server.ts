@@ -3,6 +3,7 @@ import { logger } from '@/src/infra/logger';
 import { env } from '@/src/config/env';
 import { prismaClient } from '../infra/database/prisma/client';
 import { subscriber } from '../infra/database/subscriber';
+import { asyncLocalStorage } from '../infra/http/async-storage';
 
 async function runServer() {
   try {
@@ -21,4 +22,7 @@ async function runServer() {
   }
 }
 
-runServer();
+asyncLocalStorage.run(
+  new Map(),
+  async () => await runServer()
+);

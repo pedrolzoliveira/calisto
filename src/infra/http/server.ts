@@ -1,6 +1,7 @@
 import 'express-async-errors';
 
 import express, { urlencoded } from 'express';
+import cookieParser from 'cookie-parser';
 import { join } from 'path';
 import { type TemplateResult } from 'lit';
 import { render } from '@lit-labs/ssr';
@@ -8,8 +9,11 @@ import { RenderResultReadable } from '@lit-labs/ssr/lib/render-result-readable';
 
 import { applicationController } from '@/src/application/controller';
 import { session } from './session';
+import { asyncLocalStorage } from './async-storage';
 
 export const server = express();
+
+server.use(cookieParser());
 
 server.use(session);
 
@@ -20,6 +24,16 @@ server.use((req, res, next) => {
     readableResult.pipe(res);
   };
   next();
+});
+
+server.use((req, res, next) => {
+  try {
+    const { locale, timezone } = req.cookies;
+    locale && asyncLocalStorage.getStore()?.set('locale', locale);
+    timezone && asyncLocalStorage.getStore()?.set('timezone', timezone);
+  } finally {
+    next();
+  }
 });
 
 server.use('/dist', express.static(join(__dirname, 'www', 'dist')));

@@ -1,6 +1,7 @@
 import { nothing } from 'lit';
 import { html } from '@lit-labs/ssr';
 import { type Source } from '@prisma/client';
+import { asyncLocalStorage } from '../../../async-storage';
 
 export interface NewsCardProps {
   link: string
@@ -13,15 +14,31 @@ export interface NewsCardProps {
   lastRow?: boolean
 }
 
-const formatter = new Intl.DateTimeFormat('default', {
-  weekday: 'short',
-  day: 'numeric',
-  month: 'short',
-  hour: 'numeric',
-  minute: 'numeric'
-});
-
 export function newsCard({ source, categories, ...news }: NewsCardProps) {
+  let formatter: Intl.DateTimeFormat;
+
+  try {
+    const locale = asyncLocalStorage.getStore()?.get('locale') ?? 'default';
+    const timezone = asyncLocalStorage.getStore()?.get('timezone') ?? 'default';
+
+    formatter = new Intl.DateTimeFormat(locale, {
+      weekday: 'short',
+      day: 'numeric',
+      month: 'short',
+      hour: 'numeric',
+      minute: 'numeric',
+      timeZone: timezone
+    });
+  } catch {
+    formatter = new Intl.DateTimeFormat('default', {
+      weekday: 'short',
+      day: 'numeric',
+      month: 'short',
+      hour: 'numeric',
+      minute: 'numeric'
+    });
+  }
+
   return html`
     <div class="flex flex-col w-[90vw] sm:w-1/3 sm:min-w-[480px] border rounded bg-white">
       <div class="p-4 flex border-b justify-between">
