@@ -36,7 +36,6 @@ export function landingPage(news: NewsCardProps[]) {
           </div>
         </main>
       <script>
-        
         // GPT-4 generated 
         function animateScroll(element, duration) {
           let start = element.scrollTop;
@@ -68,6 +67,11 @@ export function landingPage(news: NewsCardProps[]) {
             animateScroll(newsFeed, 60_000); // Adjust the duration as needed
           }
         });
+        try {
+          const { locale, timeZone } = Intl.DateTimeFormat().resolvedOptions();
+          document.cookie = 'timezone=' + timeZone + '; path=/;';
+          document.cookie = 'locale=' + locale + '; path=/;';
+        } catch {}
       </script>
       </body>
     </html>
