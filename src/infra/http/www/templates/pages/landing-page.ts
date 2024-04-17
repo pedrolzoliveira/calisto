@@ -1,16 +1,15 @@
 import { html } from '@lit-labs/ssr';
-import { repeat } from 'lit/directives/repeat.js';
-import { type NewsCardProps, newsCard } from '../components/news-card';
 import { buttonClass } from '../styles/button';
 import { twJoin } from 'tailwind-merge';
 
-export function landingPage(news: NewsCardProps[]) {
+export function landingPage() {
   return html`
     <!DOCTYPE html>
     <html lang="pt">
       <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <script src="/dist/bundle.js"></script>
         <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" />
         <link rel="stylesheet" href="/dist/tailwind.css">
         <link rel="icon" type="image/x-icon" href="/assets/flare.svg">
@@ -18,7 +17,7 @@ export function landingPage(news: NewsCardProps[]) {
       </head>
       <body class="bg-gray-100 flex flex-col w-full">
         <main class="flex flex-col p-4 lg:flex-row items-center justify-around w-screen h-screen">
-          <div class="flex flex-col justify-center space-y-2 w-96 lg:w-[50vw] lg:pl-[20vw]">
+          <div class="flex flex-col justify-center space-y-2 w-full sm:w-96 lg:w-[50vw] lg:pl-[20vw]">
             <img class="pb-12" src="/assets/logo.svg" alt="logo"/>
             <h1 class="text-5xl">Fique por dentro do que te interessa.</h1>
             <p class="text-sm">Utilizamos IA para filtrar notícias relevantes para você, criando um feed personalizado para suas necessidades, facilitando sua busca por informação!</p>          
@@ -32,12 +31,13 @@ export function landingPage(news: NewsCardProps[]) {
             </div>
           </div>
           <div id="newsFeed" class="hidden lg:flex flex-col space-y-2 h-screen overflow-x-hidden overflow-y-hidden items-center w-[50vw]">
-            ${repeat(news, newsCard)}
+            <div id="news-loader" hx-get="/fetch-landing-page-news" hx-swap="outerHTML" hx-trigger="revealed" hx></div>
           </div>
         </main>
       <script>
         // GPT-4 generated 
         function animateScroll(element, duration) {
+          console.log('calling animateScroll')
           let start = element.scrollTop;
           let end = element.scrollHeight - element.clientHeight;
           let change = end - start;
@@ -61,17 +61,15 @@ export function landingPage(news: NewsCardProps[]) {
           }
           scroll();
         }
-        document.addEventListener('DOMContentLoaded', () => {
+        // maybe we can use htmx:afterRequest - I did not did it right now cause I was afraid it would not work in the case where the request is done but the element is not swapped yet
+        // I need to investigate to see if this is really possible
+        // the only problem with afterSwap is that it's running multiples times
+        document.body.addEventListener('htmx:afterSwap', () => {
           let newsFeed = document.getElementById('newsFeed');
           if (newsFeed) {
             animateScroll(newsFeed, 60_000); // Adjust the duration as needed
           }
         });
-        try {
-          const { locale, timeZone } = Intl.DateTimeFormat().resolvedOptions();
-          document.cookie = 'timezone=' + timeZone + '; path=/;';
-          document.cookie = 'locale=' + locale + '; path=/;';
-        } catch {}
       </script>
       </body>
     </html>

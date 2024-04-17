@@ -2,11 +2,12 @@ import { Router } from 'express';
 import { newsController } from './news/controller';
 import { profilesController } from './profiles/controller';
 import { usersController } from './users/controller';
-import { getNewsFeed } from './news/queries/get-news-feed';
 import { landingPage } from '../infra/http/www/templates/pages/landing-page';
 import { learnMorePage } from '../infra/http/www/templates/pages/learn-more';
 import { prismaClient } from '../infra/database/prisma/client';
 import { logger } from '../infra/logger';
+import { getNews } from './news/queries/get-news';
+import { newsCard } from '../infra/http/www/templates/components/news-card';
 
 export const applicationController = Router();
 
@@ -14,8 +15,13 @@ applicationController.use('/news', newsController);
 applicationController.use('/profiles', profilesController);
 applicationController.use('/users', usersController);
 
-applicationController.get('/', async (req, res) => {
-  let news: Awaited<ReturnType<typeof getNewsFeed>>;
+applicationController.get('/', (req, res) => {
+  return res.renderTemplate(landingPage());
+});
+
+applicationController.get('/fetch-landing-page-news', async (req, res) => {
+  console.log('STARTING LOADING!');
+  let news: Awaited<ReturnType<typeof getNews>>;
 
   try {
     const { id: profileId } = await prismaClient.profile.findFirstOrThrow({
@@ -26,8 +32,7 @@ applicationController.get('/', async (req, res) => {
       orderBy: { name: 'asc' }
     });
 
-    news = await getNewsFeed({
-      cursor: new Date(),
+    news = await getNews({
       limit: 20,
       profileId
     });
@@ -36,7 +41,7 @@ applicationController.get('/', async (req, res) => {
     news = [];
   }
 
-  return res.renderTemplate(landingPage(news));
+  return res.renderTemplate(news.map(newsCard));
 });
 
 applicationController.get('/learn-more', async (req, res) => {
