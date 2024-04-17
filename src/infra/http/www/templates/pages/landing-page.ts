@@ -37,7 +37,6 @@ export function landingPage() {
       <script>
         // GPT-4 generated 
         function animateScroll(element, duration) {
-          console.log('calling animateScroll')
           let start = element.scrollTop;
           let end = element.scrollHeight - element.clientHeight;
           let change = end - start;
