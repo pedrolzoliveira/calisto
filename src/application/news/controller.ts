@@ -1,15 +1,14 @@
 import { Router } from 'express';
-import { getNewsFeed } from './queries/get-news-feed';
 import { prismaClient } from '@/src/infra/database/prisma/client';
 import { layout } from '@/src/infra/http/www/templates/layout';
 import { newsPage } from '@/src/infra/http/www/templates/pages/news';
 import { header } from '@/src/infra/http/www/templates/header';
-import { newsFeed } from '@/src/infra/http/www/templates/components/news-feed';
-import { noNewsFound } from '@/src/infra/http/www/templates/components/no-news-found';
 import { userAuthenticated } from '../users/middlewares/user-authenticated';
-import { loadNew } from './queries/load-new';
-import { newNewsLoader } from '@/src/infra/http/www/templates/components/new-news-loader';
-import { getNewsRequestSchema } from './zod-schemas';
+import { fetchNewsRequestSchema, getNewsRequestSchema } from './zod-schemas';
+import { getNews } from './queries/get-news';
+import { newsCard } from '@/src/infra/http/www/templates/components/news-card';
+import { newsPuller } from '@/src/infra/http/www/templates/components/news-puller';
+import { newsLazyLoader } from '@/src/infra/http/www/templates/components/news-lazy-loader';
 
 export const newsController = Router();
 
@@ -29,14 +28,7 @@ newsController.get('/',
       return res.redirect('/profiles/new?firstProfile=true');
     }
 
-    const [news, profiles] = await Promise.all([
-      getNewsFeed({
-        limit: data.limit,
-        cursor: data.cursor,
-        profileId: data.profileId
-      }),
-      prismaClient.profile.findMany({ select: { id: true, name: true }, where: { userId: req.session.user!.id } })
-    ]);
+    const profiles = await prismaClient.profile.findMany({ select: { id: true, name: true }, where: { userId: req.session.user!.id } });
 
     return res.renderTemplate(
       layout({
@@ -47,7 +39,6 @@ newsController.get('/',
           }
         }),
         body: newsPage({
-          news,
           profileId: data.profileId
         })
       })
@@ -55,47 +46,40 @@ newsController.get('/',
   }
 );
 
-newsController.get('/feed',
+newsController.get('/fetch',
   userAuthenticated,
   async (req, res) => {
-    const data = getNewsRequestSchema.parse(req.query);
+    const data = fetchNewsRequestSchema.parse(req.query);
 
-    const news = await getNewsFeed(data);
+    const news = await getNews({
+      limit: data.limit,
+      cursor: { upper: data.cursorUpper, lower: data.cursorLower },
+      profileId: data.profileId
+    });
+
+    const newsCards = news.map(newsCard);
 
     res.setHeader('HX-Push-Url', `/news?profileId=${data.profileId}`);
 
-    if (!news.length) {
-      return res.renderTemplate([
-        newNewsLoader({ cursor: data.cursor, profileId: data.profileId }),
-        noNewsFound()
-      ]);
+    if (data.addPulling) {
+      newsCards.unshift(
+        newsPuller({
+          profileId: data.profileId,
+          cursorLower: news.at(0)?.createdAt ?? data.cursorLower
+        })
+      );
     }
 
-    return res.renderTemplate([
-      newNewsLoader({ cursor: news.at(0)!.createdAt, profileId: data.profileId }),
-      ...newsFeed({
-        news,
-        profileId: data.profileId
-      })
-    ]);
-  });
+    if (data.addLazyLoading && news.length === data.limit) {
+      newsCards.push(
+        newsLazyLoader({
+          profileId: data.profileId,
+          limit: data.limit,
+          cursorUpper: news.at(-1)?.createdAt ?? data.cursorUpper
+        })
+      );
+    }
 
-newsController.get('/load-new',
-  userAuthenticated,
-  async (req, res) => {
-    const data = getNewsRequestSchema.pick({
-      profileId: true,
-      cursor: true
-    }).parse(req.query);
-
-    const news = await loadNew(data);
-
-    return res.renderTemplate(
-      newNewsLoader({
-        profileId: data.profileId,
-        cursor: news.at(0)?.createdAt ?? data.cursor,
-        news
-      })
-    );
+    return res.renderTemplate(newsCards);
   }
 );
