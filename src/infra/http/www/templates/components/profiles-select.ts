@@ -1,5 +1,6 @@
 import { html } from '@lit-labs/ssr';
 import { map } from 'lit/directives/map.js';
+import { DateTime } from 'luxon';
 
 interface ProfileSelectProps {
   profileId: string
@@ -13,7 +14,7 @@ export function profilesSelect({ profileId, profiles }: ProfileSelectProps) {
   const searchParams = new URLSearchParams({
     limit: '20',
     cursorUpper: new Date().toISOString(),
-    cursorLower: new Date(0).toISOString(),
+    cursorLower: DateTime.now().minus({ days: 3 }).toJSDate().toISOString(),
     addPulling: 'true',
     addLazyLoading: 'true'
   });
