@@ -8,6 +8,7 @@ import { prismaClient } from '../infra/database/prisma/client';
 import { logger } from '../infra/logger';
 import { getNews } from './news/queries/get-news';
 import { newsCard } from '../infra/http/www/templates/components/news-card';
+import { DateTime } from 'luxon';
 
 export const applicationController = Router();
 
@@ -20,7 +21,6 @@ applicationController.get('/', (req, res) => {
 });
 
 applicationController.get('/fetch-landing-page-news', async (req, res) => {
-  console.log('STARTING LOADING!');
   let news: Awaited<ReturnType<typeof getNews>>;
 
   try {
@@ -34,7 +34,8 @@ applicationController.get('/fetch-landing-page-news', async (req, res) => {
 
     news = await getNews({
       limit: 20,
-      profileId
+      profileId,
+      cursor: { lower: DateTime.now().minus({ days: 3 }).toJSDate() }
     });
   } catch (error) {
     logger.error(error);

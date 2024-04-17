@@ -1,5 +1,6 @@
 import { prismaClient } from '@/src/infra/database/prisma/client';
 import { type Source } from '@prisma/client';
+import { UNIX_EPOCH_START_DATE } from '../constants';
 
 interface getNewsParams {
   limit?: number
@@ -18,7 +19,6 @@ type queryResult = Array<{
   created_at: Date
   categories: Array<{ text: string, distance: number }>
   source: Omit<Source, 'avatarUrl'> & { avatar_url: string }
-  row_num: number
 }>
 
 export async function getNews({
@@ -33,9 +33,7 @@ export async function getNews({
     createdAt: Date
     categories: Array<{ text: string, distance: number }>
     source: Source
-    lastRow: boolean
   }>> {
-  const UNIX_EPOCH_START_DATE = new Date(0);
   const NOW = new Date();
 
   const result = await prismaClient.$queryRaw<queryResult>`
@@ -63,8 +61,7 @@ export async function getNews({
           'distance', categories_embeddings.embedding <=> news_embeddings.embedding
         )
       ) AS categories,
-      row_to_json(sources) AS source,
-      ROW_NUMBER() OVER (ORDER BY news.created_at ASC) AS row_num
+      row_to_json(sources) AS source
     FROM
       news
       JOIN news_embeddings ON news.link = news_embeddings.link
@@ -80,8 +77,6 @@ export async function getNews({
 
   return result.map(({ source, ...news }) => ({
     ...news,
-    // eslint-disable-next-line eqeqeq
-    lastRow: news.row_num == 1,
     imageUrl: news.image_url,
     createdAt: news.created_at,
     source: {

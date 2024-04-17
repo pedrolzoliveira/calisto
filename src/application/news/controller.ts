@@ -9,6 +9,7 @@ import { getNews } from './queries/get-news';
 import { newsCard } from '@/src/infra/http/www/templates/components/news-card';
 import { newsPuller } from '@/src/infra/http/www/templates/components/news-puller';
 import { newsLazyLoader } from '@/src/infra/http/www/templates/components/news-lazy-loader';
+import { UNIX_EPOCH_START_DATE } from './constants';
 
 export const newsController = Router();
 
@@ -70,7 +71,7 @@ newsController.get('/fetch',
       );
     }
 
-    if (data.addLazyLoading && news.length === data.limit) {
+    if (data.addLazyLoading && (news.length === data.limit || data.cursorLower.getTime() !== UNIX_EPOCH_START_DATE.getTime())) {
       newsCards.push(
         newsLazyLoader({
           profileId: data.profileId,
