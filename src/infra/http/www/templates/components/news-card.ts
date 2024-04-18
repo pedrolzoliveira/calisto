@@ -53,7 +53,7 @@ export function newsCard({ source, categories, ...news }: NewsCardProps) {
                   <p>·</p>
                   <p class="text-sm text-gray-700">${formatter.format(news.createdAt)}</p>
               </div>
-              <div class="flex flex-wrap space-x-1 space-y-1 pt-1">
+              <div class="flex flex-wrap pt-1 gap-1">
                 ${
                   categories.sort((a, b) => a.distance - b.distance).map(
                     ({ text, distance }) => html`
