@@ -55,7 +55,7 @@ export function newsCard({ source, categories, ...news }: NewsCardProps) {
               </div>
               <div class="flex space-x-1 pt-1">
                 ${
-                  categories.map(
+                  categories.sort((a, b) => a.distance - b.distance).map(
                     ({ text, distance }) => html`
                       <p
                         class="text-xs px-2 rounded-full bg-gray-200 text-gray-700 flex justify-center items-center select-none"
