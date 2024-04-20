@@ -9,8 +9,6 @@ import { logger } from '../infra/logger';
 import { getNews } from './news/queries/get-news';
 import { newsCard } from '../infra/http/www/templates/components/news-card';
 import { DateTime } from 'luxon';
-import { layout } from '../infra/http/www/templates/layout';
-import { html } from '@lit-labs/ssr';
 
 export const applicationController = Router();
 
@@ -62,10 +60,4 @@ applicationController.get('/learn-more', async (req, res) => {
   }
 
   return res.renderTemplate(learnMorePage(sources));
-});
-
-applicationController.get('/header', (req, res) => {
-  return res.renderTemplate(layout({
-    header: html`<light-beam-news-header></light-beam-news-header>`
-  }));
 });
