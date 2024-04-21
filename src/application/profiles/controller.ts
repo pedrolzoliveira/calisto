@@ -70,7 +70,16 @@ profilesController.delete('/',
   async (req, res) => {
     const { id } = profileSchema.pick({ id: true }).parse(req.query);
 
-    await deleteProfile(id);
+    const belongsToUser = Boolean(
+      await prismaClient.profile.findFirst({
+        select: { id: true },
+        where: { id, userId: req.session.user!.id }
+      })
+    );
+
+    if (belongsToUser) {
+      await deleteProfile(id);
+    }
 
     const profiles = await prismaClient.profile.findMany({
       select: {
