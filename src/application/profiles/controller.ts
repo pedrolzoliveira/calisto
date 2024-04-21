@@ -48,7 +48,16 @@ profilesController.put('/',
   async (req, res) => {
     const data = profileSchema.parse(req.body);
 
-    await updateProfile(data);
+    const belongsToUser = Boolean(
+      await prismaClient.profile.findFirst({
+        select: { id: true },
+        where: { id: data.id, userId: req.session.user!.id }
+      })
+    );
+
+    if (belongsToUser) {
+      await updateProfile(data);
+    }
 
     const profiles = await prismaClient.profile.findMany({
       select: {
