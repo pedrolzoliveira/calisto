@@ -21,9 +21,25 @@ newsController.get('/',
     }).parse(req.query);
 
     if (!data.profileId) {
-      const profile = await prismaClient.profile.findFirst({ select: { id: true }, where: { userId: req.session.user!.id } });
+      const cookieProfileId = req.cookies.profileId
+        ? String(req.cookies.profileId)
+        : undefined;
+
+      const profile = await prismaClient.profile.findFirst({
+        select: { id: true },
+        where: {
+          ...(cookieProfileId && { id: cookieProfileId }),
+          userId: req.session.user!.id
+        }
+      });
+
       if (profile) {
         return res.redirect(`?profileId=${profile.id}`);
+      }
+
+      if (cookieProfileId) {
+        res.clearCookie('profileId');
+        return res.redirect('/news');
       }
 
       return res.redirect('/profiles/new?firstProfile=true');
