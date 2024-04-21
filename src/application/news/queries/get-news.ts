@@ -4,6 +4,7 @@ import { UNIX_EPOCH_START_DATE } from '../constants';
 
 interface getNewsParams {
   limit?: number
+  userId: string
   profileId: string
   cursor?: {
     upper?: Date
@@ -23,6 +24,7 @@ type queryResult = Array<{
 
 export async function getNews({
   limit = Infinity,
+  userId,
   profileId,
   cursor
 }: getNewsParams): Promise<Array<{
@@ -47,7 +49,7 @@ export async function getNews({
         text IN(
           SELECT UNNEST(categories)
           FROM profiles
-          WHERE id = ${profileId})
+          WHERE id = ${profileId} AND user_id = ${userId})
     )
     SELECT
       news.link,

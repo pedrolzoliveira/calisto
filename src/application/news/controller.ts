@@ -16,9 +16,15 @@ export const newsController = Router();
 newsController.get('/',
   userAuthenticated,
   async (req, res) => {
-    const data = getNewsRequestSchema.partial({
+    const validation = getNewsRequestSchema.partial({
       profileId: true
-    }).parse(req.query);
+    }).safeParse(req.query);
+
+    if (!validation.success) {
+      return res.redirect('/news');
+    }
+
+    const data = validation.data;
 
     if (!data.profileId) {
       const cookieProfileId = req.cookies.profileId
@@ -43,6 +49,20 @@ newsController.get('/',
       }
 
       return res.redirect('/profiles/new?firstProfile=true');
+    }
+
+    const belongsToUser = Boolean(
+      await prismaClient.profile.findFirst({
+        select: { id: true },
+        where: {
+          id: data.profileId,
+          userId: req.session.user!.id
+        }
+      })
+    );
+
+    if (!belongsToUser) {
+      return res.redirect('/news');
     }
 
     const profiles = await prismaClient.profile.findMany({ select: { id: true, name: true }, where: { userId: req.session.user!.id } });
@@ -71,7 +91,8 @@ newsController.get('/fetch',
     const news = await getNews({
       limit: data.limit,
       cursor: { upper: data.cursorUpper, lower: data.cursorLower },
-      profileId: data.profileId
+      profileId: data.profileId,
+      userId: req.session.user!.id
     });
 
     const newsCards = news.map(newsCard);
