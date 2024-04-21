@@ -17,6 +17,14 @@ applicationController.use('/profiles', profilesController);
 applicationController.use('/users', usersController);
 
 applicationController.get('/', (req, res) => {
+  if (req.session.user) {
+    return res.redirect('/news');
+  }
+
+  return res.redirect('/landing-page');
+});
+
+applicationController.get('/landing-page', (req, res) => {
   return res.renderTemplate(landingPage());
 });
 
