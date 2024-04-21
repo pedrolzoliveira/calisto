@@ -32,8 +32,8 @@ applicationController.get('/fetch-landing-page-news', async (req, res) => {
   let news: Awaited<ReturnType<typeof getNews>>;
 
   try {
-    const { id: profileId } = await prismaClient.profile.findFirstOrThrow({
-      select: { id: true },
+    const { id: profileId, userId } = await prismaClient.profile.findFirstOrThrow({
+      select: { id: true, userId: true },
       where: {
         user: { role: 'admin' }
       },
@@ -43,6 +43,7 @@ applicationController.get('/fetch-landing-page-news', async (req, res) => {
     news = await getNews({
       limit: 20,
       profileId,
+      userId,
       cursor: { lower: DateTime.now().minus({ days: 3 }).toJSDate() }
     });
   } catch (error) {
