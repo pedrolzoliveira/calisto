@@ -52,6 +52,10 @@ export function learnMorePage(sources: string[]) {
             : nothing
           }
           <section>
+            <h2 class="text-2xl font-bold my-2">Entre em contanto!</h2>
+            <p>Para mais informações, entre em contato conosco através do email: <strong>contact@lightbeam.news</strong></p>
+          </section>
+          <section>
             <h2 class="text-2xl font-bold my-2">Comece Agora!</h2>
             <p>Pronto para transformar a maneira como você consome notícias? <a class="text-blue-600 italic hover:underline" href="/users/sign-up">Crie sua conta agora</a>.</p>
           </section>
