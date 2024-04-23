@@ -74,7 +74,7 @@ export function newsCard({ source, categories, ...news }: NewsCardProps) {
       </div>
       ${
         news.imageUrl
-        ? html`<object data="${news.imageUrl}"></object>`
+        ? html`<img src="${news.imageUrl}" onerror="this.classList.add('hidden')">`
         : nothing
       }
       <div class="p-4 space-y-2">
