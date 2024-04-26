@@ -21,7 +21,8 @@ exec('yarn tailwindcss -i ./src/infra/http/www/tailwind.css -o ./src/infra/http/
       entryPoints: [
         { in: './src/commands/run-server.ts', out: './run-server' },
         { in: './src/commands/run-scraper.ts', out: './run-scraper' },
-        { in: './src/commands/run-consumer.ts', out: './run-consumer' }
+        { in: './src/commands/run-consumer.ts', out: './run-consumer' },
+        { in: './src/commands/run-workers.ts', out: './run-workers' }
       ],
       platform: 'node',
       outdir: './dist',
