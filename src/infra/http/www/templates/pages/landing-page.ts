@@ -31,7 +31,7 @@ export function landingPage() {
             </div>
           </div>
           <div id="newsFeed" class="hidden lg:flex flex-col space-y-2 h-screen overflow-x-hidden overflow-y-hidden items-center w-[50vw]">
-            <div id="news-loader" hx-get="/fetch-landing-page-news" hx-swap="outerHTML" hx-trigger="revealed" hx></div>
+            <div id="news-loader" hx-get="/fetch-landing-page-news" hx-swap="outerHTML" hx-trigger="revealed"></div>
           </div>
         </main>
         <script type="text/javascript">
