@@ -77,6 +77,15 @@ export const signUpForm = (data?: SignUpFormProps) => {
       ${email(data?.email.value, data?.email.error)}
       ${password(data?.password.value)}
       ${confirmPassword(data?.confirmPassword.value)}
+      <div class="flex space-x-2">
+        <input type="checkbox" required/>
+        <p class="text-sm">
+          Eu li e concordo com a
+          <a href="https://www.iubenda.com/privacy-policy/25194377/cookie-policy" class="iubenda-white iubenda-noiframe iubenda-embed iubenda-noiframe " title="Política de Cookies ">Política de Cookies</a><script type="text/javascript">(function (w,d) {var loader = function () {var s = d.createElement("script"), tag = d.getElementsByTagName("script")[0]; s.src="https://cdn.iubenda.com/iubenda.js"; tag.parentNode.insertBefore(s,tag);}; if(w.addEventListener){w.addEventListener("load", loader, false);}else if(w.attachEvent){w.attachEvent("onload", loader);}else{w.onload = loader;}})(window, document);</script>
+          e a
+          <a href="https://www.iubenda.com/privacy-policy/25194377" class="iubenda-white iubenda-noiframe iubenda-embed iubenda-noiframe " title="Política de Privacidade ">Política de Privacidade</a><script type="text/javascript">(function (w,d) {var loader = function () {var s = d.createElement("script"), tag = d.getElementsByTagName("script")[0]; s.src="https://cdn.iubenda.com/iubenda.js"; tag.parentNode.insertBefore(s,tag);}; if(w.addEventListener){w.addEventListener("load", loader, false);}else if(w.attachEvent){w.attachEvent("onload", loader);}else{w.onload = loader;}})(window, document);</script>
+        </p>
+      </div>
       ${data?.error && html`<p class="text-red-600 italic">${data.error}</p>`}
       ${button({ type: 'submit', content: 'Criar conta' })}
       <p class="text-sm w-full">

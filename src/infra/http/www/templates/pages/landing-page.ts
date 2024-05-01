@@ -34,6 +34,12 @@ export function landingPage() {
             <div id="news-loader" hx-get="/fetch-landing-page-news" hx-swap="outerHTML" hx-trigger="revealed" hx></div>
           </div>
         </main>
+        <script type="text/javascript">
+          var _iub = _iub || [];
+          _iub.csConfiguration = {"askConsentAtCookiePolicyUpdate":true,"enableGdpr":false,"enableLgpd":true,"floatingPreferencesButtonDisplay":"bottom-right","lang":"pt-BR","perPurposeConsent":true,"siteId":3614416,"whitelabel":false,"cookiePolicyId":25194377, "banner":{ "acceptButtonCaptionColor":"#FFFFFF","acceptButtonColor":"#0073CE","acceptButtonDisplay":true,"backgroundColor":"#FFFFFF","closeButtonDisplay":false,"customizeButtonCaptionColor":"#4D4D4D","customizeButtonColor":"#DADADA","customizeButtonDisplay":true,"explicitWithdrawal":true,"position":"bottom","rejectButtonCaptionColor":"#FFFFFF","rejectButtonColor":"#0073CE","rejectButtonDisplay":true,"showTitle":false,"textColor":"#000000" }};
+        </script>
+        <script type="text/javascript" src="https://cs.iubenda.com/autoblocking/3614416.js"></script>
+        <script type="text/javascript" src="//cdn.iubenda.com/cs/iubenda_cs.js" charset="UTF-8" async></script>
       <script>
         // GPT-4 generated 
         function animateScroll(element, duration) {
