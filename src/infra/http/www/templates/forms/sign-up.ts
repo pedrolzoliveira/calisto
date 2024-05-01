@@ -112,4 +112,3 @@ export const signUpForm = (data?: SignUpFormProps) => {
 signUpForm.email = email;
 signUpForm.password = password;
 signUpForm.confirmPassword = confirmPassword;
-signUpForm.termsOfUserAndPrivacyPolicy = termsOfUserAndPrivacyPolicy;
