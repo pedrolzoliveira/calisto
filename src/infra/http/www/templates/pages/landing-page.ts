@@ -1,8 +1,9 @@
 import { html } from '@lit-labs/ssr';
 import { buttonClass } from '../styles/button';
 import { twJoin } from 'tailwind-merge';
+import { newsCard, type NewsCardProps } from '../components/news-card';
 
-export function landingPage() {
+export function landingPage(news: NewsCardProps[]) {
   return html`
     <!DOCTYPE html>
     <html lang="pt">
@@ -30,52 +31,57 @@ export function landingPage() {
               </p>
             </div>
           </div>
-          <div id="newsFeed" class="hidden lg:flex flex-col space-y-2 h-screen overflow-x-hidden overflow-y-hidden items-center w-[50vw]">
-            <div id="news-loader" hx-get="/fetch-landing-page-news" hx-swap="outerHTML" hx-trigger="revealed" hx></div>
+          <div id="newsFeed" class="hidden lg:block h-screen overflow-x-hidden overflow-y-hidden w-[50vw]">
+            <div id="newsFeedInner" class="flex flex-col space-y-2 items-center animate-scroll">
+              ${
+                news.length
+                ? news.map(newsCard)
+                : html`<div id="news-loader" hx-get="/fetch-landing-page-news" hx-swap="outerHTML" hx-trigger="load"></div>`
+              }
+            </div>
           </div>
         </main>
+        <style>
+          #newsFeedInner { animation: scroll 80s linear infinite }
+          @keyframes scroll {
+            to { transform: translateY(calc(-50% - 0.25rem)) }
+          }
+        </style>
+        ${
+          news.length
+          ? html`
+            <script type="text/javascript">
+              const newsCards = Array.from(newsFeedInner.children);
+              newsCards.forEach((item) => {
+                const duplicatedItem = item.cloneNode(true);
+                duplicatedItem.setAttribute('aria-hidden', true);
+                newsFeedInner.appendChild(duplicatedItem);
+              });
+            </script>
+          `
+          : html`
+            <script type="text/javascript">
+              document.body.addEventListener('htmx:afterRequest', (e) => {
+                if (!e.detail.successful) {
+                  return;
+                }
+
+                const newsCards = Array.from(newsFeedInner.children);
+                newsCards.forEach((item) => {
+                  const duplicatedItem = item.cloneNode(true);
+                  duplicatedItem.setAttribute('aria-hidden', true);
+                  newsFeedInner.appendChild(duplicatedItem);
+                });
+              })
+            </script>
+          `
+        }
         <script type="text/javascript">
           var _iub = _iub || [];
           _iub.csConfiguration = {"askConsentAtCookiePolicyUpdate":true,"enableGdpr":false,"enableLgpd":true,"floatingPreferencesButtonDisplay":"bottom-right","lang":"pt-BR","perPurposeConsent":true,"siteId":3614416,"whitelabel":false,"cookiePolicyId":25194377, "banner":{ "acceptButtonCaptionColor":"#FFFFFF","acceptButtonColor":"#0073CE","acceptButtonDisplay":true,"backgroundColor":"#FFFFFF","closeButtonDisplay":false,"customizeButtonCaptionColor":"#4D4D4D","customizeButtonColor":"#DADADA","customizeButtonDisplay":true,"explicitWithdrawal":true,"position":"bottom","rejectButtonCaptionColor":"#FFFFFF","rejectButtonColor":"#0073CE","rejectButtonDisplay":true,"showTitle":false,"textColor":"#000000" }};
         </script>
         <script type="text/javascript" src="https://cs.iubenda.com/autoblocking/3614416.js"></script>
         <script type="text/javascript" src="//cdn.iubenda.com/cs/iubenda_cs.js" charset="UTF-8" async></script>
-      <script>
-        // GPT-4 generated 
-        function animateScroll(element, duration) {
-          let start = element.scrollTop;
-          let end = element.scrollHeight - element.clientHeight;
-          let change = end - start;
-          let startTime = performance.now();
-
-          function scroll() {
-            let now = performance.now();
-            let elapsed = now - startTime;
-            let fraction = elapsed / duration;
-
-            if (fraction < 1) {
-              // Calculate the current scroll position
-              let currentPosition = start + change * fraction;
-              element.scrollTop = currentPosition;
-              requestAnimationFrame(scroll);
-            } else {
-              // Once we hit the bottom, reset to the top and start over
-              element.scrollTop = 0;
-              animateScroll(element, duration); // Repeat the animation
-            }
-          }
-          scroll();
-        }
-        // maybe we can use htmx:afterRequest - I did not did it right now cause I was afraid it would not work in the case where the request is done but the element is not swapped yet
-        // I need to investigate to see if this is really possible
-        // the only problem with afterSwap is that it's running multiples times
-        document.body.addEventListener('htmx:afterSwap', () => {
-          let newsFeed = document.getElementById('newsFeed');
-          if (newsFeed) {
-            animateScroll(newsFeed, 60_000); // Adjust the duration as needed
-          }
-        });
-      </script>
       </body>
     </html>
   `;
