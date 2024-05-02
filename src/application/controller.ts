@@ -25,8 +25,32 @@ applicationController.get('/', (req, res) => {
   return res.redirect('/landing-page');
 });
 
-applicationController.get('/landing-page', (req, res) => {
-  return res.renderTemplate(landingPage());
+applicationController.get('/landing-page', async (req, res) => {
+  res.renderTemplate(landingPage(lpCache.data));
+
+  if (lpCache.cachedAt && DateTime.now().diff(DateTime.fromJSDate(lpCache.cachedAt)).as('minutes') < 15) {
+    return;
+  }
+
+  try {
+    const { id: profileId, userId } = await prismaClient.profile.findFirstOrThrow({
+      select: { id: true, userId: true },
+      where: {
+        user: { role: 'admin' }
+      },
+      orderBy: { name: 'asc' }
+    });
+
+    const news = await getNews({
+      limit: 20,
+      profileId,
+      userId,
+      cursor: { lower: DateTime.now().minus({ days: 3 }).toJSDate() }
+    });
+
+    lpCache.data = news;
+    lpCache.cachedAt = new Date();
+  } catch {}
 });
 
 applicationController.get('/fetch-landing-page-news', async (req, res) => {
@@ -39,7 +63,7 @@ applicationController.get('/fetch-landing-page-news', async (req, res) => {
     res.renderTemplate(news.map(newsCard));
   }
 
-  if (lpCache.cachedAt && DateTime.now().diff(DateTime.fromJSDate(lpCache.cachedAt)).as('minutes') < 5) {
+  if (lpCache.cachedAt && DateTime.now().diff(DateTime.fromJSDate(lpCache.cachedAt)).as('minutes') < 15) {
     return;
   }
 

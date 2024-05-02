@@ -1,8 +1,9 @@
 import { html } from '@lit-labs/ssr';
 import { buttonClass } from '../styles/button';
 import { twJoin } from 'tailwind-merge';
+import { newsCard, type NewsCardProps } from '../components/news-card';
 
-export function landingPage() {
+export function landingPage(news: NewsCardProps[]) {
   return html`
     <!DOCTYPE html>
     <html lang="pt">
@@ -32,20 +33,49 @@ export function landingPage() {
           </div>
           <div id="newsFeed" class="hidden lg:block h-screen overflow-x-hidden overflow-y-hidden w-[50vw]">
             <div id="newsFeedInner" class="flex flex-col space-y-2 items-center animate-scroll">
-              <div id="news-loader" hx-get="/fetch-landing-page-news" hx-swap="outerHTML" hx-trigger="load"></div>
-              <div id="news-loader" hx-get="/fetch-landing-page-news" hx-swap="outerHTML" hx-trigger="load"></div>
+              ${
+                news.length
+                ? news.map(newsCard)
+                : html`<div id="news-loader" hx-get="/fetch-landing-page-news" hx-swap="outerHTML" hx-trigger="load"></div>`
+              }
             </div>
           </div>
         </main>
         <style>
-          #newsFeedInner {
-           animation: scroll 10s linear infinite 
-          }
-
+          #newsFeedInner { animation: scroll 60s linear infinite }
           @keyframes scroll {
             to { transform: translateY(calc(-50% - 0.25rem)) }
           }
         </style>
+        ${
+          news.length
+          ? html`
+            <script type="text/javascript">
+              const newsCards = Array.from(newsFeedInner.children);
+              newsCards.forEach((item) => {
+                const duplicatedItem = item.cloneNode(true);
+                duplicatedItem.setAttribute('aria-hidden', true);
+                newsFeedInner.appendChild(duplicatedItem);
+              });
+            </script>
+          `
+          : html`
+            <script type="text/javascript">
+              document.body.addEventListener('htmx:afterRequest', (e) => {
+                if (!e.detail.successful) {
+                  return;
+                }
+
+                const newsCards = Array.from(newsFeedInner.children);
+                newsCards.forEach((item) => {
+                  const duplicatedItem = item.cloneNode(true);
+                  duplicatedItem.setAttribute('aria-hidden', true);
+                  newsFeedInner.appendChild(duplicatedItem);
+                });
+              })
+            </script>
+          `
+        }
         <script type="text/javascript">
           var _iub = _iub || [];
           _iub.csConfiguration = {"askConsentAtCookiePolicyUpdate":true,"enableGdpr":false,"enableLgpd":true,"floatingPreferencesButtonDisplay":"bottom-right","lang":"pt-BR","perPurposeConsent":true,"siteId":3614416,"whitelabel":false,"cookiePolicyId":25194377, "banner":{ "acceptButtonCaptionColor":"#FFFFFF","acceptButtonColor":"#0073CE","acceptButtonDisplay":true,"backgroundColor":"#FFFFFF","closeButtonDisplay":false,"customizeButtonCaptionColor":"#4D4D4D","customizeButtonColor":"#DADADA","customizeButtonDisplay":true,"explicitWithdrawal":true,"position":"bottom","rejectButtonCaptionColor":"#FFFFFF","rejectButtonColor":"#0073CE","rejectButtonDisplay":true,"showTitle":false,"textColor":"#000000" }};
