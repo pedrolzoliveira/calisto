@@ -42,7 +42,7 @@ export function landingPage(news: NewsCardProps[]) {
           </div>
         </main>
         <style>
-          #newsFeedInner { animation: scroll 60s linear infinite }
+          #newsFeedInner { animation: scroll 80s linear infinite }
           @keyframes scroll {
             to { transform: translateY(calc(-50% - 0.25rem)) }
           }
