@@ -61,6 +61,7 @@
     "server": "nodemon --w './' --exec ' node esbuild.config.js && tailwindcss -i ./src/infra/http/www/tailwind.css -o ./src/infra/http/www/dist/tailwind.css && tsx --env-file=.env src/commands/run-server' -e ts",
     "scraper": "tsx --env-file=.env src/commands/run-scraper",
     "consumer": "tsx --env-file=.env src/commands/run-consumer",
+    "workers": "tsx --env-file=.env src/commands/run-workers",
     "build": "node esbuild.config.js",
     "test": "tsx --env-file=.env.test ./src/commands/run-tests.ts",
     "tailwind": "tailwindcss -i ./src/infra/http/www/tailwind.css -o ./src/infra/http/www/dist/tailwind.css --watch"
