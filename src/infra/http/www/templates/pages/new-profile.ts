@@ -18,6 +18,7 @@ export function newProfilePage(firstProfile = false) {
         </div>
         <div class="flex flex-col">
           <label for="categories">Categorias:</label>
+          <p class="text-xs mb-1">Para adicionar a categoria, aperte Enter.</p>
           <input-list maxLength=${20} inputMaxLength=${32} name="categories[]" required></input-list>
         </div>
         <div class="flex justify-end space-x-2">
