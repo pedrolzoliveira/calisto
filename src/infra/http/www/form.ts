@@ -1,6 +1,6 @@
 import { type ServerRenderedTemplate, html } from '@lit-labs/ssr';
 import { type Request, type Response } from 'express';
-import { type ZodError, type z, type ZodType } from 'zod';
+import { type z, type ZodType } from 'zod';
 
 export class ActionError extends Error {}
 
