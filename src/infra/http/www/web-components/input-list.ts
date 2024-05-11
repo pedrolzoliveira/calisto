@@ -1,5 +1,5 @@
 import { sanitizeWhiteSpace } from '@/src/utils/sanitize-white-space';
-import { LitElement, type PropertyValueMap, html } from 'lit';
+import { LitElement, type PropertyValueMap, html, nothing } from 'lit';
 import { customElement, property, query } from 'lit/decorators.js';
 import { repeat } from 'lit/directives/repeat.js';
 
@@ -74,6 +74,12 @@ export class InputList extends LitElement {
   }
 
   handleInput(event: InputEvent) {
+    if (this.value.length >= this.maxLength) {
+      this.inputValue = '';
+      (event.target as HTMLInputElement).value = '';
+      return;
+    }
+
     this.inputValue = (event.target as HTMLInputElement).value;
   }
 
@@ -87,13 +93,15 @@ export class InputList extends LitElement {
 
   render() {
     return html`
+      <div>
+        <p class="text-xs mb-1">Para adicionar a categoria, aperte Enter.</p>
         <div class="bg-white px-1 py-1 rounded border flex items-center space-x-1 flex-wrap cursor-text" @click=${this.handleDivClick}>
             ${
               repeat(
                 this.value,
                 value => value,
                 value => html`
-                 <div class="text-xs px-2 rounded bg-gray-200 text-gray-700 flex items-center space-x-1 m-1">
+                <div class="text-xs px-2 rounded bg-gray-200 text-gray-700 flex items-center space-x-1 m-1">
                     <p>${value}</p>
                     <button type="button" class="flex items-center rounded-full p-1" @click=${() => this.handleRemove(value)}>
                         <span class="material-symbols-outlined text-xs">close</span>
@@ -111,6 +119,8 @@ export class InputList extends LitElement {
             @keydown=${this.handleKeyDown}
             />
           </div>
+          ${this.maxLength !== Infinity ? html`<p class="text-xs text-right">${this.value.length}/${this.maxLength}</p>` : nothing}
+      </div>
       `;
   }
 }

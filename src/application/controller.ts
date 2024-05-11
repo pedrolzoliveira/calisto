@@ -10,12 +10,14 @@ import { getNews } from './news/queries/get-news';
 import { newsCard } from '../infra/http/www/templates/components/news-card';
 import { DateTime } from 'luxon';
 import { lpCache } from './landing-page-cache';
+import { formController } from './form-controller';
 
 export const applicationController = Router();
 
 applicationController.use('/news', newsController);
 applicationController.use('/profiles', profilesController);
 applicationController.use('/users', usersController);
+applicationController.use('/', formController);
 
 applicationController.get('/', (req, res) => {
   if (req.session.user) {
