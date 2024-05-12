@@ -16,6 +16,7 @@ import { isTokenValid } from './use-cases/is-token-valid';
 import { recoverPassword } from './use-cases/recover-password';
 import { authRequestSchema, emailSchema, passwordRecoveryRequestSchema } from './zod-schemas';
 import { logger } from '@/src/infra/logger';
+import { createExampleProfile } from '../profiles/use-cases/create-example-profile';
 
 export const usersController = Router();
 
@@ -82,11 +83,15 @@ usersController.post('/sign-up',
   async (req, res) => {
     try {
       const data = authRequestSchema.parse(req.body);
-      req.session.user = await signUp(data);
-      return res
-        .setHeader('HX-Push-Url', '/news')
-        .setHeader('HX-Redirect', '/news')
-        .end();
+      const user = await signUp(data);
+      req.session.user = user;
+      res.setHeader('HX-Redirect', '/news').end();
+
+      try {
+        await createExampleProfile(user.id);
+      } catch {}
+
+      return;
     } catch (error) {
       const signUpFormData = {
         email: {
