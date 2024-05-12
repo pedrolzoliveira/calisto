@@ -48,7 +48,7 @@ newsController.get('/',
         return res.redirect('/news');
       }
 
-      return res.redirect('/profiles/new?firstProfile=true');
+      return res.redirect('/profiles/new');
     }
 
     const belongsToUser = Boolean(
