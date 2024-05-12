@@ -1,6 +1,8 @@
 import { html } from '@lit-labs/ssr';
 import { profilesSelect } from './components/profiles-select';
 import { nothing } from 'lit';
+import { buttonClass } from './styles/button';
+import { twMerge } from 'tailwind-merge';
 
 export interface HeaderProps {
   profilesData?: {
@@ -32,10 +34,10 @@ export function header(props?: HeaderProps) {
           <span class="material-symbols-outlined">manage_accounts</span>
           <p class="text-sm">Gerenciar Perfis</p>
         </a>
-        <a href="/users/sign-out" class="hidden sm:flex items-center space-x-2 hover:bg-gray-50 px-4 py-2 rounded">
+        <button onclick="openConfirmLogoutDialog()" class="hidden sm:flex items-center space-x-2 hover:bg-gray-50 px-4 py-2 rounded">
           <span class="material-symbols-outlined">logout</span>
           <p class="text-sm">Sair</p>
-        </a>
+        </button>
         <div class="relative sm:hidden">
             <button id="menu-btn" class="flex items-center space-x-2 hover:bg-gray-50 px-4 py-2 rounded sm:hidden">
               <span class="material-symbols-outlined">menu</span>
@@ -49,13 +51,25 @@ export function header(props?: HeaderProps) {
                 <span class="material-symbols-outlined">manage_accounts</span>
                 <p class="text-sm">Gerenciar Perfis</p>
               </a>
-              <a href="/users/sign-out" class="flex items-center space-x-2 hover:bg-gray-50 px-4 py-3 rounded">
+              <button onclick="openConfirmLogoutDialog()" class="flex items-center space-x-2 hover:bg-gray-50 px-4 py-3 rounded w-full">
                 <span class="material-symbols-outlined">logout</span>
                 <p class="text-sm">Sair</p>
-              </a>
+              </button>
             </dialog>
           </div>
       </div>
+      <dialog id="confirm-logout" class="rounded" onclick="handleClickOutsideConfirmLogoutDialog(event)">
+        <div class="p-4 sm:max-w-96 space-y-4">
+          <h1 class="text-lg font-bold">Você tem certeza que deseja sair?</h1>
+          <div class="flex justify-end space-x-2">
+            <button type="button" class=${twMerge(buttonClass, 'bg-gray-600 hover:bg-gray-500')} onclick="closeConfirmLogoutDialog()">Cancelar</button>
+            <a
+              class=${twMerge(buttonClass, 'bg-red-700 hover:bg-red-600 w-20 text-center')}
+              href="/users/sign-out"
+            >Sair</a>
+          </div>
+        </div>
+      </dialog>
     </header>
     <script>
       const menuBtn = document.getElementById('menu-btn');
@@ -81,5 +95,24 @@ export function header(props?: HeaderProps) {
         });
         document.body.setAttribute('data-event-click-attached-close-menu', '');
       }
+
+      function openConfirmLogoutDialog() {
+        const dialog = document.querySelector('#confirm-logout');
+        dialog.showModal();
+      }
+
+      function closeConfirmLogoutDialog() {
+        const dialog = document.querySelector('#confirm-logout');
+        dialog.close();
+      }
+
+      function handleClickOutsideConfirmLogoutDialog(event) {
+        const dialog = document.querySelector('#confirm-logout');
+        if (event.target === dialog) {
+          event.preventDefault();
+          closeConfirmLogoutDialog();
+        }
+      }
+
     </script>`;
 }
