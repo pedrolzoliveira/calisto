@@ -15,7 +15,7 @@ export const profilesController = Router();
 profilesController.delete('/',
   userAuthenticated,
   async (req, res) => {
-    const { id } = profileSchema.pick({ id: true }).parse(req.query);
+    const { id } = profileSchema.pick({ id: true }).parse(req.body);
 
     const belongsToUser = Boolean(
       await prismaClient.profile.findFirst({
