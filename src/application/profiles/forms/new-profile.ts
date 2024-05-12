@@ -36,10 +36,6 @@ export const newProfileForm = new Form({
       where: { userId: req.session.user!.id }
     });
 
-    if (profiles.length === 1) {
-      return res.setHeader('HX-Redirect', '/news').end();
-    }
-
     return res.setHeader('HX-Push-Url', '/profiles').renderTemplate(
       profilesTable({ profiles })
     );
