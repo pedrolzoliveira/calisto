@@ -4,8 +4,8 @@ import express, { urlencoded } from 'express';
 import cookieParser from 'cookie-parser';
 import { join } from 'path';
 import { type TemplateResult } from 'lit';
-import { render } from '@lit-labs/ssr';
-import { RenderResultReadable } from '@lit-labs/ssr/lib/render-result-readable';
+import { render } from '@/src/packages/lit-ssr/render';
+import { RenderResultReadable } from '@/src/packages/lit-ssr/render-result-readable';
 
 import { applicationController } from '@/src/application/controller';
 import { session } from './session';
