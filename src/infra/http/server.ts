@@ -1,12 +1,13 @@
 import 'express-async-errors';
+import './www/server-components';
 
 import express, { urlencoded } from 'express';
 import cookieParser from 'cookie-parser';
 import { join } from 'path';
 import { type TemplateResult } from 'lit';
-import { render } from '@/src/packages/lit-ssr/render';
+// import { render } from '@/src/packages/lit-ssr/render';
 import { RenderResultReadable } from '@/src/packages/lit-ssr/render-result-readable';
-
+import { render, html } from '@lit-labs/ssr';
 import { applicationController } from '@/src/application/controller';
 import { session } from './session';
 import { asyncLocalStorage } from './async-storage';
@@ -47,3 +48,14 @@ server.use('/assets', express.static(join(__dirname, 'www', 'assets')));
 server.use(urlencoded({ extended: true }));
 
 server.use('/', applicationController);
+
+server.get('/testing-route', (_, res) => {
+  res.renderTemplate(
+    html`
+      <lbn-layout>
+        <div slot="body">Hi Im the body</div>
+        <div slot="header">Hi Im the header</div>
+      </lbn-layout>
+    `
+  );
+});

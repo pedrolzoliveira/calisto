@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/method-signature-style */
 /// <reference lib="dom" />
 
 /**
@@ -842,9 +843,11 @@ And the inner template was:
         }
         renderInfo.customElementHostStack.push(instance);
         const shadowContents = instance.renderShadow(renderInfo);
-        // Only emit a DSR if renderShadow() emitted something (returning
-        // undefined allows effectively no-op rendering the element)
-        if (shadowContents !== undefined) {
+
+        // @ts-expect-error element is LitElement
+        if (shadowContents !== undefined && instance.element?.createRenderRoot?.() === instance.element) {
+          yield * shadowContents;
+        } else if (shadowContents !== undefined) {
           const { mode = 'open', delegatesFocus } =
             instance.shadowRootOptions ?? {};
           // `delegatesFocus` is intentionally allowed to coerce to boolean to

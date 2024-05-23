@@ -5,9 +5,9 @@ import { repeat } from 'lit/directives/repeat.js';
 
 @customElement('input-list')
 export class InputList extends LitElement {
-  createRenderRoot() {
-    return this;
-  }
+  // createRenderRoot() {
+  //   return this;
+  // }
 
   static readonly formAssociated = true;
   private readonly internals: ElementInternals = this.attachInternals();

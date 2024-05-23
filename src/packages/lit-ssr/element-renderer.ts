@@ -1,3 +1,5 @@
+/* eslint-disable new-cap */
+/* eslint-disable @typescript-eslint/triple-slash-reference */
 /// <reference lib="dom" />
 
 /**
