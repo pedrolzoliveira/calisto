@@ -2,21 +2,15 @@ import { Router } from 'express';
 import { layout } from '@/src/infra/http/www/templates/layout';
 import { signInPage } from '@/src/infra/http/www/templates/pages/sign-in';
 import { signUpPage } from '@/src/infra/http/www/templates/pages/sign-up';
-import { signIn } from './use-cases/sign-in';
-import { signUp } from './use-cases/sign-up';
 import { userUnauthenticated } from './middlewares/user-unauthenticated';
-import { emailAvailable } from './use-cases/email-available';
-import { signUpForm } from '@/src/infra/http/www/templates/forms/sign-up';
-import { signInForm } from '@/src/infra/http/www/templates/forms/sign-in';
 import { forgotPassword } from '@/src/infra/http/www/templates/pages/forgot-password';
 import { sendPasswordRecoveryEmail } from './use-cases/send-password-recovery-email';
 import { recoveryEmailSent } from '@/src/infra/http/www/templates/pages/recovery-email-sent';
 import { passwordRecoveryPage } from '@/src/infra/http/www/templates/pages/password-recovery';
 import { isTokenValid } from './use-cases/is-token-valid';
 import { recoverPassword } from './use-cases/recover-password';
-import { authRequestSchema, emailSchema, passwordRecoveryRequestSchema } from './zod-schemas';
+import { authRequestSchema, passwordRecoveryRequestSchema } from './zod-schemas';
 import { logger } from '@/src/infra/logger';
-import { createExampleProfile } from '../profiles/use-cases/create-example-profile';
 
 export const usersController = Router();
 
@@ -30,44 +24,6 @@ usersController.get('/sign-in',
     );
   });
 
-usersController.post('/sign-in',
-  userUnauthenticated,
-  async (req, res) => {
-    try {
-      const data = authRequestSchema.parse(req.body);
-      req.session.user = await signIn(data);
-      return res
-        .setHeader('HX-Push-Url', '/news')
-        .setHeader('HX-Redirect', '/news')
-        .end();
-    } catch (error) {
-      const signInFormData = {
-        email: {
-          value: req.body.email
-        },
-        password: {
-          value: req.body.password
-        }
-      };
-
-      if (error instanceof Error && error.message === 'Email ou senha incorretos') {
-        return res.renderTemplate(
-          signInForm({
-            ...signInFormData,
-            error: error.message
-          })
-        );
-      }
-
-      return res.renderTemplate(
-        signInForm({
-          ...signInFormData,
-          error: 'Erro desconhecido ao logar'
-        })
-      );
-    }
-  });
-
 usersController.get('/sign-up',
   userUnauthenticated,
   (req, res) => {
@@ -76,75 +32,6 @@ usersController.get('/sign-up',
         body: signUpPage()
       })
     );
-  });
-
-usersController.post('/sign-up',
-  userUnauthenticated,
-  async (req, res) => {
-    try {
-      const data = authRequestSchema.parse(req.body);
-      const user = await signUp(data);
-      req.session.user = user;
-      res.setHeader('HX-Redirect', '/news').end();
-
-      try {
-        await createExampleProfile(user.id);
-      } catch {}
-
-      return;
-    } catch (error) {
-      const signUpFormData = {
-        email: {
-          value: req.body.email
-        },
-        password: {
-          value: req.body.password
-        },
-        confirmPassword: {
-          value: req.body.password
-        }
-      };
-      if (error instanceof Error && error.message === 'Email já cadastrado') {
-        return res.renderTemplate(
-          signUpForm({
-            ...signUpFormData,
-            error: error.message,
-            email: {
-              ...signUpFormData.email,
-              error: error.message
-            }
-          })
-        );
-      }
-
-      return res.renderTemplate(
-        signUpForm({
-          ...signUpFormData,
-          error: 'Erro desconhecido ao cadastrar'
-        })
-      );
-    }
-  });
-
-usersController.post('/sign-up/email',
-  async (req, res) => {
-    const validation = emailSchema.safeParse(req.body.email);
-
-    let error: string | undefined;
-    let email = String(req.body.email);
-
-    if (validation.success) {
-      email = validation.data;
-      const emailIsAvailable = await emailAvailable(email);
-
-      if (!emailIsAvailable) {
-        error = 'Email já cadastrado';
-      }
-    } else {
-      error = validation.error.errors[0].message;
-    }
-
-    return res.renderTemplate(signUpForm.email(email, error));
   });
 
 usersController.get('/sign-out',
