@@ -16,7 +16,7 @@ export const signInForm = new Form({
     res.setHeader('HX-Redirect', '/news').end();
   },
   render: ({ actionError, route }) => html`
-    <form hx-post="${route}" class="flex flex-col space-y-4 w-full sm:w-96" hx-indicator="#submit-button">
+    <form hx-post="${route}" class="flex flex-col space-y-4 w-full sm:w-96" hx-indicator="#submit-button" hx-swap="outerHTML">
       <style>
         .htmx-request#submit-button p {
           display: none;

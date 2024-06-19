@@ -30,7 +30,7 @@ export const signUpForm = new Form({
     } catch {}
   },
   render: ({ route, actionError }) => html`
-    <form hx-post="${route}" class="flex flex-col space-y-4 w-full sm:w-96" hx-indicator="#submit-button">
+    <form hx-post="${route}" class="flex flex-col space-y-4 w-full sm:w-96" hx-indicator="#submit-button" hx-swap="outerHTML">
       <style>
         .htmx-request#submit-button p {
           display: none;
