@@ -70,7 +70,7 @@ export const signUpForm = new Form({
           name: 'password',
           initialValue: '',
           render: ({ value }) => html`
-          <div class="flex flex-col">
+          <div hx-target="this" hx-swap="outerHTML" class="flex flex-col">
             <label for="password">Senha</label>
             <input
               class=${inputClass}
@@ -90,7 +90,7 @@ export const signUpForm = new Form({
           name: 'confirm_password',
           initialValue: '',
           render: ({ value }) => html`
-          <div class="flex flex-col">
+          <div hx-target="this" hx-swap="outerHTML" class="flex flex-col">
             <label for="confirm_password">Confirmar Senha</label>
             <input
               class=${inputClass}
