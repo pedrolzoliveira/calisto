@@ -49,7 +49,7 @@ export const signUpForm = new Form({
           name: 'email',
           initialValue: '',
           render: ({ value, endpoint, errors }) => html`
-          <div hx-target="this" hx-swap="outerHTML" class="flex flex-col">
+          <div hx-indicator="this" hx-target="this" hx-swap="outerHTML" class="flex flex-col">
             <label for="email">Email</label>
             <input
               class=${inputClass}
@@ -70,7 +70,7 @@ export const signUpForm = new Form({
           name: 'password',
           initialValue: '',
           render: ({ value }) => html`
-          <div hx-target="this" hx-swap="outerHTML" class="flex flex-col">
+          <div hx-indicator="this" hx-target="this" hx-swap="outerHTML" class="flex flex-col">
             <label for="password">Senha</label>
             <input
               class=${inputClass}
@@ -90,7 +90,7 @@ export const signUpForm = new Form({
           name: 'confirm_password',
           initialValue: '',
           render: ({ value }) => html`
-          <div hx-target="this" hx-swap="outerHTML" class="flex flex-col">
+          <div hx-indicator="this" hx-target="this" hx-swap="outerHTML" class="flex flex-col">
             <label for="confirm_password">Confirmar Senha</label>
             <input
               class=${inputClass}
@@ -108,7 +108,7 @@ export const signUpForm = new Form({
         ${field({
           name: 'terms',
           initialValue: false,
-          render: ({ value, name }) => html`<input name=${name} type="checkbox" ?checked=${value} required/>`
+          render: ({ value, name }) => html`<input hx-indicator="this" name=${name} type="checkbox" ?checked=${value} required/>`
         })}
         <p class="text-sm">
           Eu li e concordo com a

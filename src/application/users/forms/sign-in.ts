@@ -35,7 +35,7 @@ export const signInForm = new Form({
           name: 'email',
           initialValue: '',
           render: ({ value, endpoint }) => html`
-          <div hx-target="this" hx-swap="outerHTML" class="flex flex-col">
+          <div hx-indicator="this" hx-target="this" hx-swap="outerHTML" class="flex flex-col">
             <label for="email">Email</label>
             <input
               class=${inputClass}
@@ -54,7 +54,7 @@ export const signInForm = new Form({
           name: 'password',
           initialValue: '',
           render: ({ value, endpoint }) => html`
-          <div hx-target="this" hx-swap="outerHTML" class="flex flex-col">
+          <div hx-indicator="this" hx-target="this" hx-swap="outerHTML" class="flex flex-col">
             <label for="password">Senha</label>
             <input
               class=${inputClass}
